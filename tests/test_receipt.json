@@ -1,0 +1,9 @@
+{
+  "payload": {
+    "action": "payment",
+    "amount": 100,
+    "currency": "EUR"
+  },
+  "hash": "TEST_HASH_PLACEHOLDER",
+  "signature": "TEST_SIGNATURE_PLACEHOLDER"
+}

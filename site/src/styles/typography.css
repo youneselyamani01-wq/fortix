@@ -1,0 +1,15 @@
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+
+/* Existing licensed Didot face, reserved for the major brand statements. */
+@font-face {
+  font-family: "Theano Didot";
+  src: url("/fonts/theano-didot/TheanoDidot-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

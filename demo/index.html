@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FortiX — Demo Index</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #f5f7f8;
+      --surface: #ffffff;
+      --border:  #d4dde4;
+      --text:    #17212b;
+      --dim:     #61717e;
+      --mute:    #7a8893;
+      --accent:  #16784f;
+      --mono:    'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+      --sans:    system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+    header .brand { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+    header .sub   { font-family: var(--mono); font-size: 11px; color: var(--mute); letter-spacing: 0.08em; }
+    main {
+      flex: 1;
+      max-width: 720px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 56px 32px 80px;
+    }
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .lead {
+      font-size: 14px;
+      color: var(--dim);
+      line-height: 1.65;
+      max-width: 540px;
+      margin-bottom: 40px;
+    }
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--mute);
+      letter-spacing: 0.06em;
+      margin-bottom: 48px;
+    }
+    .flow .step {
+      color: var(--dim);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      font-size: 11px;
+    }
+    .flow .arrow { color: var(--mute); font-size: 12px; }
+    .section-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin-bottom: 12px;
+    }
+    .card-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 40px; }
+    .card {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color 120ms ease;
+    }
+    .card:hover { border-color: #9aabb7; }
+    .card-left { display: flex; flex-direction: column; gap: 5px; }
+    .card-name { font-size: 13px; font-weight: 500; }
+    .card-desc { font-size: 12px; color: var(--dim); line-height: 1.5; }
+    .card-tag  {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mute);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      align-self: flex-start;
+    }
+    .card-tag.official { color: var(--accent); border-color: rgba(16,185,129,0.3); }
+    .card-tag.archive  { color: var(--mute); opacity: 0.7; }
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 36px 0;
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 18px 32px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--mute);
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <span class="brand">FortiX</span>
+    <span class="sub">Demo Index</span>
+  </header>
+
+  <main>
+    <p class="eyebrow">FortiX · Enterprise Agent Governance Layer</p>
+    <h1>Trust layer for sensitive AI and agentic actions</h1>
+    <p class="lead">
+      Enterprise AI systems can now act. FortiX makes those actions governable
+      and verifiable: govern before execution, issue a receipt at execution,
+      and verify independently after execution.
+    </p>
+
+    <div class="flow">
+      <span class="step">Agent</span>
+      <span class="arrow">→</span>
+      <span class="step">Tool</span>
+      <span class="arrow">→</span>
+      <span class="step">Policy</span>
+      <span class="arrow">→</span>
+      <span class="step">Execution</span>
+      <span class="arrow">→</span>
+      <span class="step">ADR</span>
+      <span class="arrow">→</span>
+      <span class="step">Verify</span>
+    </div>
+
+    <p class="section-label">Official demo</p>
+    <div class="card-list">
+      <a href="fortix-control-console.html" class="card">
+        <div class="card-left">
+          <span class="card-name">FortiX Agent Governance Console</span>
+          <span class="card-desc">
+            Runtime governance dashboard with agent identity, tool execution,
+            policy checkpoints, human review, ADR receipt, and independent verification.
+          </span>
+        </div>
+        <span class="card-tag official">Official</span>
+      </a>
+      <a href="fortix-control-console.html?context=supply_chain" class="card">
+        <div class="card-left">
+          <span class="card-name">Autonomous Supply Chain Adjustment</span>
+          <span class="card-desc">
+            Agent detects disruption, prepares logistics reroute and procurement
+            recommendation, escalates supplier substitution, issues ADR, and verifies.
+          </span>
+        </div>
+        <span class="card-tag official">Supply Chain</span>
+      </a>
+    </div>
+
+    <p class="section-label">Payment scenario</p>
+    <div class="card-list">
+      <a href="fortipay.html" class="card">
+        <div class="card-left">
+          <span class="card-name">FortiPay — Payment Governance</span>
+          <span class="card-desc">
+            Payment-specific demo. EUR 180,000 cross-border transfer (FR → UAE).
+            REQUIRE_REVIEW decision. ADR receipt generated and verified.
+          </span>
+        </div>
+        <span class="card-tag">Payments</span>
+      </a>
+      <a href="fortix-pilot-payment.html" class="card">
+        <div class="card-left">
+          <span class="card-name">FortiX Pilot &mdash; Payment Decision Receipt</span>
+          <span class="card-desc">
+            Realistic pilot scenario. Sensitive payment governed, receipted, and independently verified.
+          </span>
+        </div>
+        <span class="card-tag">Pilot</span>
+      </a>
+    </div>
+
+    <p class="section-label">Quantum scenario</p>
+    <div class="card-list">
+      <a href="fortix-quantum-governance.html" class="card">
+        <div class="card-left">
+          <span class="card-name">FortiX Quantum Governance</span>
+          <span class="card-desc">
+            PQC migration decisions governed, receipted, and independently verifiable.
+          </span>
+        </div>
+        <span class="card-tag">Quantum</span>
+      </a>
+    </div>
+
+    <p class="section-label">Independent verifier · Vérificateur indépendant</p>
+    <div class="card-list">
+      <a href="fortix-verify-console.html" class="card">
+        <div class="card-left">
+          <span class="card-name">Independent Verifier · Vérificateur indépendant</span>
+          <span class="card-desc">
+            Verify an exported ADR receipt without relying on the originating system.<br>
+            Vérifier un reçu ADR exporté sans dépendre du système d&rsquo;origine.
+          </span>
+        </div>
+        <span class="card-tag official">Verify</span>
+      </a>
+    </div>
+
+    <hr />
+
+    <p class="section-label">Archive — previous iterations</p>
+    <div class="card-list">
+      <a href="archive/fortix-agent-flow.html" class="card">
+        <div class="card-left">
+          <span class="card-name">FortiX Agent Flow</span>
+          <span class="card-desc">Earlier agentic workflow demo. Kept for reference.</span>
+        </div>
+        <span class="card-tag archive">Archive</span>
+      </a>
+    </div>
+
+    <hr />
+
+    <p class="section-label">Sector contexts</p>
+    <div class="card-list">
+      <div class="card" style="cursor: default;">
+        <div class="card-left">
+          <span class="card-name">Banking · Healthcare · Industry · Supply Chain · Public Sector</span>
+          <span class="card-desc">
+            The console adapts terminology, risk labels, review queues, and KPIs by context.
+            See <code style="font-size:11px;">scenarios/README.md</code>.
+          </span>
+        </div>
+        <span class="card-tag">Available</span>
+      </div>
+    </div>
+  </main>
+
+  <footer>FortiX · ADR Protocol v1.0 · demo/index.html</footer>
+
+</body>
+</html>

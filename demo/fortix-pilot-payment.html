@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FortiX Pilot - Payment Decision Receipt</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080b0f;
+      --panel: #111820;
+      --panel2: #0c1219;
+      --line: #263646;
+      --text: #edf4f8;
+      --muted: #91a4b1;
+      --orange: #f2a23a;
+      --green: #46d18d;
+      --blue: #72b7ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #101821, var(--bg));
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; padding: 34px 0 48px; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+    }
+    .brand { display: flex; align-items: baseline; gap: 12px; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    h1 { margin: 0; font-size: 20px; letter-spacing: 0; }
+    .badge {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 2px 8px;
+      letter-spacing: .06em;
+    }
+    .back {
+      color: var(--muted);
+      font-size: 12px;
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      padding: 7px 11px;
+      transition: color .15s, border-color .15s, background .15s;
+    }
+    .back:hover { color: var(--text); border-color: #3b556c; background: rgba(255,255,255,.07); }
+    .lang-toggle {
+      display: flex;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+    }
+    .lang-toggle button {
+      min-height: 28px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 0 10px;
+      color: var(--muted);
+      font: 11px Consolas, monospace;
+      letter-spacing: .06em;
+    }
+    .lang-toggle button:hover { background: rgba(255,255,255,.07); transform: none; }
+    .lang-toggle button.active { color: var(--green); background: rgba(70,209,141,.12); }
+    .intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      margin: 26px 0 18px;
+      flex-wrap: wrap;
+    }
+    .title { max-width: 760px; }
+    h2 { margin: 0 0 8px; font-size: clamp(30px, 5vw, 56px); line-height: .98; letter-spacing: 0; }
+    .subtitle { margin: 0; color: #c8d7de; font-size: 15px; line-height: 1.65; max-width: 720px; }
+    .intro-actions { display: grid; gap: 12px; justify-items: end; }
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .07em;
+      white-space: nowrap;
+    }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+    .panel {
+      grid-column: span 6;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      padding: 20px;
+      min-width: 0;
+      box-shadow: 0 18px 46px rgba(0,0,0,.32);
+      transition: transform .18s ease, border-color .18s ease;
+    }
+    .panel:hover { transform: translateY(-2px); border-color: #3b556c; }
+    .panel.is-hidden { display: none; }
+    .panel.reveal { animation: rise .28s ease both; }
+    .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .head h3 {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+    .pill-orange { color: var(--orange); background: rgba(242,162,58,.13); border-color: rgba(242,162,58,.38); }
+    .pill-green { color: var(--green); background: rgba(70,209,141,.12); border-color: rgba(70,209,141,.35); }
+    .pill-blue { color: var(--blue); background: rgba(114,183,255,.10); border-color: rgba(114,183,255,.30); }
+    button {
+      min-height: 36px;
+      border: 1px solid #3a5266;
+      border-radius: 6px;
+      background: #16222d;
+      color: var(--text);
+      padding: 0 14px;
+      font: 13px/1 inherit;
+      font-weight: 760;
+      cursor: pointer;
+      transition: background .16s, transform .16s;
+    }
+    button:hover { background: #1c2b38; transform: translateY(-1px); }
+    button:disabled { cursor: default; opacity: .68; transform: none; }
+    button:disabled:hover { background: #16222d; transform: none; }
+    .decision-big { font-size: 38px; line-height: 1; font-weight: 780; color: var(--orange); margin: 0 0 10px; }
+    .verify-mark { font-size: 38px; line-height: 1; font-weight: 780; color: var(--green); margin: 0 0 10px; }
+    .status-line { color: #c8d7de; font-size: 14px; line-height: 1.6; margin: 0 0 14px; }
+    .kv { display: grid; grid-template-columns: 160px 1fr; gap: 8px 14px; font-size: 13px; }
+    .key { color: var(--muted); }
+    code { font-family: "SFMono-Regular", Consolas, monospace; letter-spacing: 0; overflow-wrap: anywhere; }
+    .reason-list { display: grid; gap: 8px; margin-top: 14px; }
+    .reason {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #090f15;
+      padding: 9px 12px;
+      color: #b8cad4;
+      font: 12px Consolas, monospace;
+    }
+    .hash-block, .sig-block, pre {
+      display: block;
+      background: #080d13;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+      font: 11px/1.55 Consolas, monospace;
+      overflow-wrap: anywhere;
+      color: #b8cad4;
+    }
+    .hash-block { color: var(--text); }
+    .sig-block { margin-top: 8px; }
+    .receipt-json { display: none; }
+    .receipt-json.open { display: block; }
+    pre { margin: 12px 0 0; max-height: 320px; overflow: auto; white-space: pre-wrap; }
+    .doctrine {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border: 1px solid rgba(70,209,141,.2);
+      border-radius: 8px;
+      background: rgba(70,209,141,.04);
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      color: #c8d7de;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .doctrine strong { color: var(--green); }
+    .contrast {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.035);
+    }
+    .contrast-title {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .contrast-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .contrast-item {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #090f15;
+      padding: 14px;
+    }
+    .contrast-label {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font: 11px Consolas, monospace;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .contrast-text { margin: 0; color: #c8d7de; font-size: 13px; line-height: 1.65; }
+    footer {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 860px) {
+      header, .intro { align-items: flex-start; flex-direction: column; }
+      .header-actions { justify-content: flex-start; }
+      .intro-actions { justify-items: start; }
+      .panel { grid-column: 1 / -1; }
+      .kv { grid-template-columns: 1fr; gap: 4px; }
+      .decision-big, .verify-mark { font-size: 30px; }
+      .flow { white-space: normal; flex-wrap: wrap; }
+      .contrast-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="brand">
+        <h1>FortiX</h1>
+        <span class="badge" data-en="Pilot - Payment Decision Receipt" data-fr="Pilote - Recu de decision de paiement">Pilot - Payment Decision Receipt</span>
+      </div>
+      <div class="header-actions">
+        <div class="lang-toggle" aria-label="Language">
+          <button class="lang-btn active" type="button" data-lang="en" onclick="setLanguage('en')">EN</button>
+          <button class="lang-btn" type="button" data-lang="fr" onclick="setLanguage('fr')">FR</button>
+        </div>
+        <a href="index.html" class="back" data-en="← Back to Demo Index" data-fr="← Retour a l’index des demos">← Back to Demo Index</a>
+      </div>
+    </header>
+
+    <section class="intro">
+      <div class="title">
+        <h2 data-en="Bank Payment Decision Receipt" data-fr="Recu de decision de paiement bancaire">Bank Payment Decision Receipt</h2>
+        <p class="subtitle" data-en="A sensitive cross-border payment is governed before execution, receipted as an ADR, and verified independently after issuance." data-fr="Un paiement transfrontalier sensible est gouverne avant execution, atteste par un ADR, puis verifie de maniere independante apres emission.">A sensitive cross-border payment is governed before execution, receipted as an ADR, and verified independently after issuance.</p>
+      </div>
+      <div class="intro-actions">
+        <div class="flow">
+          <span data-en="Action" data-fr="Action">Action</span>
+          <span>-></span>
+          <span>Control</span>
+          <span>-></span>
+          <span>ADR</span>
+          <span>-></span>
+          <span>Verify</span>
+        </div>
+        <button id="run-pilot" type="button" data-en="Run Pilot Decision" data-fr="Lancer la decision pilote" data-en-complete="Pilot Decision Receipted" data-fr-complete="Decision pilote attestee">Run Pilot Decision</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <div class="head">
+          <h3 data-en="Action" data-fr="Action">Action</h3>
+          <span class="pill pill-blue">payment.submit</span>
+        </div>
+        <div class="kv">
+          <div class="key">amount</div><code>180000</code>
+          <div class="key">currency</div><code>EUR</code>
+          <div class="key">origin</div><code>FR</code>
+          <div class="key">destination</div><code>AE</code>
+          <div class="key">risk_flags</div><code>cross_border, high_amount</code>
+          <div class="key">policy_id</div><code>bank-policy-v1</code>
+        </div>
+        <pre id="action-json"></pre>
+      </article>
+
+      <article class="panel is-hidden" id="control-panel">
+        <div class="head">
+          <h3>FortiX Control</h3>
+          <span class="pill pill-orange" data-en="Pending Review" data-fr="Revue en attente">Pending Review</span>
+        </div>
+        <div class="decision-big">REQUIRE_REVIEW</div>
+        <p class="status-line" data-en="Status: pending bank review" data-fr="Statut : revue bancaire en attente">Status: pending bank review</p>
+        <p class="status-line" data-en="FortiX does not execute the payment. It governs the decision before execution." data-fr="FortiX n'execute pas le paiement. Il gouverne la decision avant execution.">FortiX does not execute the payment. It governs the decision before execution.</p>
+        <div class="reason-list">
+          <div class="reason">high_amount</div>
+          <div class="reason">cross_border</div>
+          <div class="reason">regulatory_exposure</div>
+          <div class="reason">human_approval_required</div>
+        </div>
+      </article>
+
+      <article class="panel is-hidden" id="receipt-panel">
+        <div class="head">
+          <h3 data-en="ADR Receipt" data-fr="Recu ADR">ADR Receipt</h3>
+          <span class="pill pill-green">ADR v1.0</span>
+        </div>
+        <p class="status-line" data-en="The report explains. The receipt attests." data-fr="Le rapport explique. Le recu atteste.">The report explains. The receipt attests.</p>
+        <code class="hash-block" id="receipt-hash"></code>
+        <code class="sig-block" id="receipt-signature"></code>
+        <div class="kv" style="margin-top:12px">
+          <div class="key">key_id</div><code id="receipt-key"></code>
+        </div>
+        <button id="toggle-receipt" type="button" data-en="View full receipt" data-fr="Voir le recu complet" data-en-open="Hide full receipt" data-fr-open="Masquer le recu complet">View full receipt</button>
+        <pre class="receipt-json" id="receipt-json"></pre>
+      </article>
+
+      <article class="panel is-hidden" id="verify-panel">
+        <div class="head">
+          <h3 data-en="Independent Verification" data-fr="Verification independante">Independent Verification</h3>
+          <span class="pill pill-green">VALID</span>
+        </div>
+        <div class="verify-mark">VALID</div>
+        <p class="status-line" data-en="This decision is independently verifiable." data-fr="Cette decision est verifiable de maniere independante.">This decision is independently verifiable.</p>
+        <p class="status-line" data-en="Offline-compatible. Stateless. No access to the originating payment system required." data-fr="Compatible hors ligne. Sans etat. Aucun acces au systeme de paiement d'origine requis.">Offline-compatible. Stateless. No access to the originating payment system required.</p>
+        <div class="kv">
+          <div class="key">hash</div><code>verified</code>
+          <div class="key">signature</div><code>verified</code>
+          <div class="key">action_executed</div><code>false</code>
+        </div>
+      </article>
+    </section>
+
+    <div class="doctrine">
+      <div data-en="Govern before execution. Issue a receipt at execution. Verify independently after execution." data-fr="Gouverner avant execution. Emettre un recu a l'execution. Verifier independamment apres execution.">Govern before execution. Issue a receipt at execution. Verify independently after execution.</div>
+      <div data-en="FortiX governs the decision, produces the receipt, and enables independent verification." data-fr="FortiX gouverne la decision, produit le recu et permet une verification independante.">FortiX governs the decision, produces the receipt, and enables independent verification.</div>
+      <div data-en="No payment execution. No backend required for this static demo." data-fr="Aucune execution de paiement. Aucun backend requis pour cette demo statique.">No payment execution. No backend required for this static demo.</div>
+    </div>
+
+    <section class="contrast" aria-label="Before and after FortiX">
+      <div class="contrast-title" data-en="Before / After FortiX" data-fr="Avant / Apres FortiX">Before / After FortiX</div>
+      <div class="contrast-grid">
+        <div class="contrast-item">
+          <div class="contrast-label" data-en="Before" data-fr="Avant">Before</div>
+          <p class="contrast-text" data-en="The payment decision remains log-bound, system-bound, and difficult to verify independently." data-fr="La decision de paiement reste dependante des logs, du systeme d'origine et difficile a verifier independamment.">The payment decision remains log-bound, system-bound, and difficult to verify independently.</p>
+        </div>
+        <div class="contrast-item">
+          <div class="contrast-label" data-en="After FortiX" data-fr="Apres FortiX">After FortiX</div>
+          <p class="contrast-text" data-en="The decision is governed, receipted, portable, and independently verifiable." data-fr="La decision est gouvernee, attestee par un recu, portable et verifiable independamment.">The decision is governed, receipted, portable, and independently verifiable.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>FortiX Pilot - Payment Decision Receipt - static demo</span>
+      <code>demo/fortix-pilot-payment.html</code>
+    </footer>
+  </main>
+
+  <script>
+    let currentLanguage = "en";
+
+    function languageStateKey(lang, state) {
+      return lang + state.charAt(0).toUpperCase() + state.slice(1);
+    }
+
+    function translatedText(element, lang) {
+      const state = element.dataset.state;
+      if (state) {
+        const stateText = element.dataset[languageStateKey(lang, state)];
+        if (stateText) return stateText;
+      }
+      return element.dataset[lang];
+    }
+
+    function setLanguage(lang) {
+      currentLanguage = lang === "fr" ? "fr" : "en";
+      document.documentElement.lang = currentLanguage;
+      document.querySelectorAll("[data-en][data-fr]").forEach((element) => {
+        const text = translatedText(element, currentLanguage);
+        if (text) element.textContent = text;
+      });
+      document.querySelectorAll("[data-lang]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.lang === currentLanguage);
+      });
+      try {
+        localStorage.setItem("fortixPilotPaymentLanguage", currentLanguage);
+      } catch (_error) {
+        // Static demo remains usable without storage.
+      }
+    }
+
+    const action = {
+      action: "payment.submit",
+      amount: 180000,
+      currency: "EUR",
+      origin: "FR",
+      destination: "AE",
+      risk_flags: ["cross_border", "high_amount"],
+      policy_id: "bank-policy-v1"
+    };
+
+    const receipt = {
+      version: "1.0",
+      payload: {
+        pilot: "fortix-decision-receipt-pilot-v2",
+        object_type: "bank_payment_decision",
+        action: action,
+        control: {
+          status: "pending_review",
+          decision: "REVIEW",
+          policy_id: "bank-policy-v1",
+          reason_codes: [
+            "high_amount",
+            "cross_border",
+            "regulatory_exposure",
+            "human_approval_required"
+          ],
+          human_layer: "pending_bank_review",
+          action_executed: false
+        },
+        receipt_purpose: "governance_decision_attestation"
+      },
+      hash: "0bf62a367a8d211192ddb78006329cbc98e7159e0148cb05bf9c6b43c8e79c04",
+      signature: "a177c121ae680f4be75ba54ebc5ad0e6ecc245bd0721d1c4d13d59809137f538e9bc8275b3820a0db2efecc2a41b6f86dfa0a9c7ad6ce6faf6b270e1f6ae1206",
+      algorithm: {
+        hash: "BLAKE3",
+        signature: "Ed25519"
+      },
+      key_id: "fortix-pilot-demo-key-001"
+    };
+
+    document.getElementById("action-json").textContent = JSON.stringify(action, null, 2);
+    document.getElementById("receipt-hash").textContent = "hash: " + receipt.hash;
+    document.getElementById("receipt-signature").textContent = "signature: " + receipt.signature;
+    document.getElementById("receipt-key").textContent = receipt.key_id;
+    document.getElementById("receipt-json").textContent = JSON.stringify(receipt, null, 2);
+
+    const runButton = document.getElementById("run-pilot");
+    const controlPanel = document.getElementById("control-panel");
+    const receiptPanel = document.getElementById("receipt-panel");
+    const verifyPanel = document.getElementById("verify-panel");
+
+    runButton.addEventListener("click", () => {
+      controlPanel.classList.remove("is-hidden");
+      controlPanel.classList.add("reveal");
+      runButton.dataset.state = "complete";
+      setLanguage(currentLanguage);
+      runButton.disabled = true;
+
+      window.setTimeout(() => {
+        receiptPanel.classList.remove("is-hidden");
+        receiptPanel.classList.add("reveal");
+      }, 320);
+
+      window.setTimeout(() => {
+        verifyPanel.classList.remove("is-hidden");
+        verifyPanel.classList.add("reveal");
+      }, 720);
+    });
+
+    document.getElementById("toggle-receipt").addEventListener("click", (event) => {
+      const receiptBlock = document.getElementById("receipt-json");
+      const open = receiptBlock.classList.toggle("open");
+      if (open) {
+        event.currentTarget.dataset.state = "open";
+      } else {
+        delete event.currentTarget.dataset.state;
+      }
+      setLanguage(currentLanguage);
+    });
+
+    try {
+      currentLanguage = localStorage.getItem("fortixPilotPaymentLanguage") || "en";
+    } catch (_error) {
+      currentLanguage = "en";
+    }
+    setLanguage(currentLanguage);
+  </script>
+</body>
+</html>

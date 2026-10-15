@@ -1,0 +1,15 @@
+/* FortiX editorial materials. Never alias these to functional/semantic tokens.
+ * RGB interpretation, not official WGSN/Coloro or Pantone conversions. */
+:root {
+  --brand-plum: #22172f;
+  --brand-blue: #284ee8;
+  --brand-blue-deep: #1734a8;
+  --brand-blue-light: #9fb5ff;
+  --brand-orange: #f58345;
+  --brand-clay: #e7d3c3;
+  --brand-paper: #f8f3ed;
+  --brand-rule: #b8a697;
+  --brand-text: #554943;
+  --brand-meadow: #78916b;
+  --brand-pink: #efa8c8;
+}

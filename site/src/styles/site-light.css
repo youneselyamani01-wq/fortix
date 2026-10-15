@@ -1,0 +1,74 @@
+/* Light cobalt / turquoise / orange editorial palette.
+ * Didot is reserved for brand statements; section headings and body use Inter.
+ * No aliases into evidence or verdict semantics. */
+.fortix-site {
+  --font-brand: "Theano Didot", Didot, "Bodoni MT", Georgia, serif;
+  --font-display: var(--font-sans);
+  --site-bg-primary: #faf8f3;
+  --site-bg-secondary: #eaf4fc;
+  --site-surface: #ffffff;
+  --site-text-primary: #10243a;
+  --site-text-secondary: #40536a;
+  --site-text-muted: #52647a;
+  --site-blue: #2455f5;
+  --site-blue-light: #e4edff;
+  --site-coral: #ffad73;
+  --site-aqua: #7cecdf;
+  --site-sea-blue: #007d89;
+  --site-pink: #f7b5db;
+  --site-magenta: #a72f70;
+  --site-lavender: #ded4ff;
+  --site-accent: #2455f5;
+  --site-accent-soft: var(--site-blue-light);
+  --site-orange: #c2410c;
+  --atmosphere-aqua: #c1f8f0;
+  --atmosphere-mist: #dbeaff;
+  --atmosphere-lavender: #e5d5ff;
+  --atmosphere-coral: #ffcab6;
+  --atmosphere-sea-glass: #c1f8f0;
+  --site-rule: #d2e1ec;
+  --site-rule-strong: #829db3;
+  --site-shadow-soft: 0 12px 36px #10243a0c;
+  --canvas: var(--site-bg-primary);
+  --canvas-raised: var(--site-bg-secondary);
+  --surface: var(--site-surface);
+  --surface-soft: #edf7fc;
+  --surface-hover: #dff3fa;
+  --ink: var(--site-text-primary);
+  --ink-soft: var(--site-text-secondary);
+  --muted: var(--site-text-muted);
+  --rule: var(--site-rule);
+  --rule-strong: var(--site-rule-strong);
+  --accent: var(--site-accent);
+  --accent-ink: #fff;
+  --accent-soft: var(--site-accent-soft);
+  --accent-line: #8da6df;
+  --container-max: 1200px;
+  --container-wide: 1320px;
+  background: var(--site-bg-primary);
+  color: var(--site-text-primary);
+  min-height: 100vh;
+}
+.fortix-site :is(h1, h2, h3, h4, h5, h6) { font-family: var(--font-display); font-synthesis: none; }
+.fortix-site .section { padding-block: clamp(84px, 8.5vw, 132px); border-top: 0; scroll-margin-top: 70px; }
+.fortix-site .section-kicker { font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: .08em; margin-bottom: 26px; color: var(--site-accent); }
+.fortix-site .section-kicker::before { width: 22px; background: var(--site-orange); }
+.fortix-site .section-title { max-width: 24ch; font-family: var(--font-display); font-size: clamp(34px, 3.7vw, 54px); font-weight: 600; font-synthesis: none; line-height: 1.12; letter-spacing: -.025em; text-wrap: balance; }
+.fortix-site .section-lede { max-width: 61ch; margin-top: 28px; font-size: 17px; line-height: 1.75; }
+.fortix-site .button { font-family: var(--font-sans); border-radius: 4px; padding: 14px 24px; min-height: 48px; font-size: 14px; font-weight: 600; letter-spacing: -.01em; text-decoration: none; box-shadow: none; }
+.fortix-site .button--primary { color: #fff; background: var(--site-blue); border-color: var(--site-blue); }
+.fortix-site .button--primary:hover { color: #fff; background: #1b3a96; border-color: #1b3a96; filter: none; transform: none; }
+.fortix-site .button--ghost { background: #fff; color: var(--site-text-primary); border-color: var(--site-rule-strong); }
+.fortix-site .button--ghost:hover { background: var(--site-blue-light); border-color: var(--site-blue); }
+.fortix-site .button[aria-disabled=true] { color: #526574; border-color: #a7becf; background: #edf4f9; cursor: default; }
+.fortix-site :focus-visible { outline: 2px solid var(--site-accent); outline-offset: 4px; }
+.fortix-site .status-tag { border-radius: 3px; padding: 4px 8px; font-size: 11px; }
+@media(max-width:1000px) { .fortix-site .container, .fortix-site .container-wide { width: calc(100% - 56px); } }
+@media(max-width:600px) {
+  .fortix-site .container, .fortix-site .container-wide { width: calc(100% - 40px); }
+  .fortix-site .section { padding-block: 68px; }
+  .fortix-site .section-title { font-size: clamp(28px, 7.8vw, 36px); letter-spacing: -.022em; }
+  .fortix-site .section-kicker { font-size: 10px; line-height: 1.6; margin-bottom: 22px; }
+  .fortix-site .section-lede { font-size: 16px; line-height: 1.7; }
+  .fortix-site .button { white-space: normal; text-align: center; padding: 13px 18px; }
+}

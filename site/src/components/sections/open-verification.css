@@ -1,0 +1,31 @@
+.open-verification__list {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.open-verification__list li {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  background: var(--surface);
+}
+
+.open-verification__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.open-verification__row strong {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.open-verification__list p {
+  margin-top: var(--space-2);
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.55;
+}

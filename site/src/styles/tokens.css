@@ -1,0 +1,115 @@
+:root {
+  color-scheme: dark;
+
+  /* Neutrals */
+  --canvas: #07090d;
+  --canvas-raised: #0b0e14;
+  --surface: #10141c;
+  --surface-soft: rgba(255, 255, 255, 0.03);
+  --surface-hover: rgba(255, 255, 255, 0.06);
+  --ink: #eef1f5;
+  --ink-soft: #a8b0bd;
+  --muted: #747f91;
+  --rule: rgba(148, 163, 184, 0.14);
+  --rule-strong: rgba(148, 163, 184, 0.26);
+
+  /* Experience / spatial accents. These organize depth and attention; they
+     never establish evidence, trust, or a verdict. */
+  --experience-violet: #aa91ff;
+  --experience-cyan: #50d3dc;
+  --experience-violet-soft: rgba(170, 145, 255, 0.13);
+  --experience-cyan-soft: rgba(80, 211, 220, 0.1);
+  --experience-coral-soft: rgba(255, 128, 102, 0.1);
+
+  --accent: #7c9cff;
+  --accent-soft: rgba(124, 156, 255, 0.12);
+  --accent-line: rgba(124, 156, 255, 0.34);
+  --accent-ink: #061024;
+
+  /* Semantic verdicts */
+  --valid: #4fd39a;
+  --valid-soft: rgba(79, 211, 154, 0.12);
+  --valid-line: rgba(79, 211, 154, 0.34);
+  --invalid: #ff7a8f;
+  --invalid-soft: rgba(255, 122, 143, 0.12);
+  --invalid-line: rgba(255, 122, 143, 0.36);
+  --warning: #f2bd62;
+  --warning-soft: rgba(242, 189, 98, 0.12);
+  --warning-line: rgba(242, 189, 98, 0.34);
+
+  /* Typography */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Spacing (8px base, doubling) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 96px;
+  --space-9: 128px;
+
+  /* Layout */
+  --container-max: 1200px;
+  --container-wide: 1440px;
+
+  /* Radius — restrained, never SaaS-rounded */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  /* Motion */
+  --motion-fast: 140ms;
+  --motion-medium: 260ms;
+  --motion-slow: 480ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  --nav-height: 64px;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --canvas: #f6f4ef;
+  --canvas-raised: #faf9f5;
+  --surface: #fffdf8;
+  --surface-soft: rgba(20, 22, 26, 0.03);
+  --surface-hover: rgba(20, 22, 26, 0.05);
+  --ink: #14161b;
+  --ink-soft: #4b5160;
+  --muted: #676f7d;
+  --rule: rgba(20, 22, 26, 0.1);
+  --rule-strong: rgba(20, 22, 26, 0.18);
+
+  --experience-violet: #5c3cc4;
+  --experience-cyan: #007f93;
+  --experience-violet-soft: rgba(92, 60, 196, 0.09);
+  --experience-cyan-soft: rgba(0, 127, 147, 0.08);
+  --experience-coral-soft: rgba(199, 71, 53, 0.08);
+
+  --accent: #3552c9;
+  --accent-soft: rgba(53, 82, 201, 0.08);
+  --accent-line: rgba(53, 82, 201, 0.3);
+  --accent-ink: #f4f6ff;
+
+  --valid: #1f7a52;
+  --valid-soft: rgba(31, 122, 82, 0.08);
+  --valid-line: rgba(31, 122, 82, 0.3);
+  --invalid: #b0273f;
+  --invalid-soft: rgba(176, 39, 63, 0.08);
+  --invalid-line: rgba(176, 39, 63, 0.3);
+  --warning: #8a5a10;
+  --warning-soft: rgba(138, 90, 16, 0.08);
+  --warning-line: rgba(138, 90, 16, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-medium: 0ms;
+    --motion-slow: 0ms;
+  }
+}

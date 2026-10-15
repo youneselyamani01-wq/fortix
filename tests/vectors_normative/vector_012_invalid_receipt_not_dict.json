@@ -1,0 +1,7 @@
+{
+  "name": "invalid receipt not dict",
+  "description": "Receipt is not a JSON object and verification must fail.",
+  "expected_verification_result": false,
+  "public_key": "e63cc9f1bfea63e045538d59abdabe2c1aee0557daf2894bf3115d177d16506c",
+  "receipt": "not-a-dict"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "valid numeric payload",
+  "description": "Receipt payload contains integers and floats. Used to verify deterministic canonicalization across Python and Go implementations.",
+  "expected_verification_result": true,
+  "public_key": "ca987f7a6cd863424641d4500dc7deba9782533ee071c5f00bc300bc85452437",
+  "receipt": {
+    "version": "1.0",
+    "payload": {
+      "amount": 1.5,
+      "count": 42,
+      "label": "transfer",
+      "ratio": 0.1
+    },
+    "hash": "1af2e51aa7011814d3da16143bf9595721af0d79739393e4fc72495627ec0f06",
+    "signature": "69da5118b1056754f8833c716dc96a93f7596cd5c3a7e4e7ae501ce0b562fee24c50fec7720d8a09cce7c9f47c6f6f08c55b9853414f5a40fdd4399da7b8e706",
+    "algorithm": {
+      "hash": "BLAKE3",
+      "signature": "Ed25519"
+    },
+    "key_id": "test-key-015"
+  }
+}

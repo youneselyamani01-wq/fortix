@@ -1,0 +1,249 @@
+/*
+ * D-006/NX GATE 2 — the comparison bench.
+ *
+ * Deliberately quiet chrome around loud evidence. The bench exists to let a
+ * human compare eight drawings; anything the page adds competes with the thing
+ * being judged, so the frame is porcelain and ink and the colour budget is
+ * spent entirely inside the canvases.
+ *
+ * The palette is the validated FortiX one from nx.css — no second system.
+ */
+
+.g2 {
+  min-height: 100vh;
+  padding: 26px 30px 40px;
+  background: var(--nx-porcelain);
+  color: var(--nx-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.g2-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.g2-kicker {
+  margin: 0 0 6px;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2);
+}
+
+.g2-head h1 {
+  margin: 0;
+  font-size: 1.42rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.g2-question {
+  margin: 8px 0 0;
+  max-width: 68ch;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--nx-ink-2);
+}
+
+.g2-invariant {
+  display: flex;
+  gap: 22px;
+  margin: 0;
+  padding: 10px 16px;
+  border: 1px solid var(--nx-mineral);
+  border-radius: 3px;
+  background: var(--nx-paper);
+}
+.g2-invariant div { display: flex; flex-direction: column; gap: 3px; }
+.g2-invariant dt {
+  font-size: 0.56rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2);
+}
+.g2-invariant dd {
+  margin: 0;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+.g2-invariant code { font-size: 0.76rem; }
+
+.g2-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.g2-nav-label {
+  font-size: 0.56rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2);
+  margin-right: 2px;
+}
+.g2-nav i { width: 1px; height: 0.9rem; background: var(--nx-rule); margin: 0 8px; }
+.g2-nav a {
+  padding: 3px 10px;
+  border: 1px solid var(--nx-mineral);
+  border-radius: 2px;
+  background: var(--nx-paper);
+  color: var(--nx-ink-2);
+  font-size: 0.74rem;
+  text-decoration: none;
+  transition: border-color var(--nx-motion), color var(--nx-motion);
+}
+.g2-nav a:hover { border-color: var(--nx-ink); color: var(--nx-ink); }
+.g2-nav a[aria-current="page"] {
+  border-color: var(--nx-ink);
+  color: var(--nx-ink);
+  font-weight: 500;
+  background: color-mix(in srgb, var(--nx-ink) 6%, var(--nx-paper));
+}
+
+.g2-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.7rem;
+  color: var(--nx-ink-2);
+}
+.g2-legend li { display: flex; align-items: center; gap: 6px; }
+.g2-legend li span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.g2-legend-rule svg { display: block; }
+
+.g2-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
+  gap: 18px;
+}
+.g2-grid-solo { grid-template-columns: 1fr; }
+
+.g2-cell {
+  margin: 0;
+  border: 1px solid var(--nx-mineral);
+  border-radius: 3px;
+  background: var(--nx-paper);
+  overflow: hidden;
+}
+
+.g2-cell figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--nx-rule);
+  font-size: 0.78rem;
+}
+.g2-cell figcaption strong {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: var(--nx-ink);
+  color: var(--nx-porcelain);
+  font-size: 0.68rem;
+}
+.g2-cell figcaption span {
+  margin-left: auto;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  color: var(--nx-ink-2);
+}
+
+.g2-canvas { display: block; width: 100%; height: auto; }
+
+.g2-canvas .g2-ordinal {
+  font-size: 6.4px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.g2-canvas .g2-lane-label {
+  font-size: 8px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.g2-canvas .g2-axis-label {
+  font-size: 7.4px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.g2-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 22px;
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--nx-rule);
+}
+.g2-detail h2 {
+  margin: 0 0 8px;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2);
+  font-weight: 500;
+}
+.g2-detail dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 5px 18px;
+}
+.g2-detail dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 3px;
+  border-bottom: 1px dotted var(--nx-rule);
+  font-size: 0.72rem;
+}
+.g2-detail dt { color: var(--nx-ink-2); }
+.g2-detail dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.g2-detail ul {
+  margin: 0;
+  padding-left: 15px;
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: var(--nx-ink-2);
+}
+.g2-detail li + li { margin-top: 5px; }
+
+.g2-foot {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--nx-rule);
+}
+.g2-foot p {
+  margin: 0;
+  max-width: 92ch;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--nx-ink-2);
+}
+
+@media (max-width: 900px) {
+  .g2 { padding: 18px 16px 28px; }
+  .g2-grid { grid-template-columns: 1fr; }
+  .g2-detail { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,745 @@
+{
+  "action_time": "2026-08-01T00:00:03.760Z",
+  "authority_history": [
+    {
+      "causal_links": {
+        "causal_chain_id": "fortix.demo.d004.authority-to-action.intersection-001",
+        "predecessor_evidence_id": "fortix:evidence:blake3:ca2c8176aa7d6007dfed523e676befb4e11832f34639f1916acc1e77cd2ee062"
+      },
+      "cryptographic_profile": {
+        "cryptographic_profile_id": "fortix.crypto.ed25519-blake3.v1",
+        "key_id": "fortix.demo.key.d002",
+        "signature_algorithm": "Ed25519",
+        "trust_anchor_id": "fortix.demo.anchor.d002"
+      },
+      "evidence_id": "fortix:evidence:blake3:7a8b35bf192217d4f26440ccc25e451dfb647decf89867237b02b7d3a9f49822",
+      "evidence_integrity": {
+        "canonicalization_profile": "fortix.canonical-json.sorted-utf8.v1",
+        "digest_algorithm": "BLAKE3-256",
+        "payload_digest": "41c500cbce5d8b26dfa3004b285af01772240ef98b08e233e1807b325b478d0f"
+      },
+      "evidence_payload": {
+        "policy_authority_status": {
+          "authority_id": "fortix.demo.policy-authority.d002",
+          "authority_status": "ACTIVE",
+          "effective_from": "2026-08-01T00:00:00.000Z",
+          "effective_until": null,
+          "policy_digest": "24133fd794293a7a02bfd967692d692b3e5c330a263f498ce8061f2eaabbeb84",
+          "policy_id": "fortix.demo.policy.emergency-braking",
+          "policy_version": "1.0",
+          "verification_time": "2026-08-01T00:00:03.760Z"
+        }
+      },
+      "evidence_profile": "fortix.evidence.canonical.v1",
+      "evidence_type": "POLICY_AUTHORITY_STATUS",
+      "evidence_version": "1.0",
+      "identity_profile": "fortix.evidence-id.sorted-json-blake3.v1",
+      "issuer": {
+        "issuer_id": "fortix.demo.evidence-recorder.d004",
+        "issuer_type": "DEMO_EVIDENCE_RECORDER"
+      },
+      "lifecycle": {
+        "compatibility_version": "1.0",
+        "effective_from": "2026-08-01T00:00:03.760Z",
+        "effective_until": null,
+        "issued_at": "2026-08-01T00:00:03.760Z"
+      },
+      "schema_version": "1.0",
+      "signature": "559fde2c8f4a407458ec85577347bfbac6eafeae79b0f60f11efc1e8d2e918402e763f34c117e840556f6af2e469e6c22e93576446fb0c740b1a1d1e57c73e02",
+      "significant_event": {
+        "event_id": "d004.applicable-authority-active",
+        "event_time": "2026-08-01T00:00:03.760Z",
+        "event_type": "POLICY_AUTHORITY_STATUS"
+      },
+      "subject": {
+        "subject_id": "fortix.demo.scenario.intersection-001",
+        "subject_type": "demo_governed_action"
+      },
+      "trust_boundary": {
+        "crossing_type": "demo-authority-to-action",
+        "trust_boundary_id": "fortix.demo.vehicle-stack"
+      },
+      "verification_profile": {
+        "required_evidence_profile": "fortix.evidence.canonical.v1",
+        "verification_profile": "fortix.evidence.policy-authority-status.v1"
+      }
+    },
+    {
+      "causal_links": {
+        "causal_chain_id": "fortix.demo.d004.authority-to-action.intersection-001",
+        "predecessor_evidence_id": "fortix:evidence:blake3:ca2c8176aa7d6007dfed523e676befb4e11832f34639f1916acc1e77cd2ee062"
+      },
+      "cryptographic_profile": {
+        "cryptographic_profile_id": "fortix.crypto.ed25519-blake3.v1",
+        "key_id": "fortix.demo.key.d002",
+        "signature_algorithm": "Ed25519",
+        "trust_anchor_id": "fortix.demo.anchor.d002"
+      },
+      "evidence_id": "fortix:evidence:blake3:fe0d9627b91cf1381178b75c831d7b633fbdbe7395720000f6fe14fa8c648dc7",
+      "evidence_integrity": {
+        "canonicalization_profile": "fortix.canonical-json.sorted-utf8.v1",
+        "digest_algorithm": "BLAKE3-256",
+        "payload_digest": "a8e68a013bed3c902f53d2956e9f3b675fc91d280a0332d0bad1e24338f6cd12"
+      },
+      "evidence_payload": {
+        "policy_authority_status": {
+          "authority_id": "fortix.demo.policy-authority.d002",
+          "authority_status": "REVOKED",
+          "effective_from": "2026-08-01T00:00:06.000Z",
+          "effective_until": null,
+          "policy_digest": "24133fd794293a7a02bfd967692d692b3e5c330a263f498ce8061f2eaabbeb84",
+          "policy_id": "fortix.demo.policy.emergency-braking",
+          "policy_version": "1.0",
+          "verification_time": "2026-08-01T00:00:06.000Z"
+        }
+      },
+      "evidence_profile": "fortix.evidence.canonical.v1",
+      "evidence_type": "POLICY_AUTHORITY_STATUS",
+      "evidence_version": "1.0",
+      "identity_profile": "fortix.evidence-id.sorted-json-blake3.v1",
+      "issuer": {
+        "issuer_id": "fortix.demo.evidence-recorder.d004",
+        "issuer_type": "DEMO_EVIDENCE_RECORDER"
+      },
+      "lifecycle": {
+        "compatibility_version": "1.0",
+        "effective_from": "2026-08-01T00:00:06.000Z",
+        "effective_until": null,
+        "issued_at": "2026-08-01T00:00:06.000Z"
+      },
+      "schema_version": "1.0",
+      "signature": "a0f23fd2e6aa985e3e881992d392e7b73ddac450a2744214a575568eb18bd56e21f76289896a1e10b5d1ac0b2808fbbc7c4894ef8bb9b7412c6620f9d1492205",
+      "significant_event": {
+        "event_id": "d004.applicable-authority-later-revoked",
+        "event_time": "2026-08-01T00:00:06.000Z",
+        "event_type": "POLICY_AUTHORITY_STATUS"
+      },
+      "subject": {
+        "subject_id": "fortix.demo.scenario.intersection-001",
+        "subject_type": "demo_governed_action"
+      },
+      "trust_boundary": {
+        "crossing_type": "demo-authority-to-action",
+        "trust_boundary_id": "fortix.demo.vehicle-stack"
+      },
+      "verification_profile": {
+        "required_evidence_profile": "fortix.evidence.canonical.v1",
+        "verification_profile": "fortix.evidence.policy-authority-status.v1"
+      }
+    }
+  ],
+  "bindings": {
+    "actuator_acknowledgement_evidence_id": "fortix:evidence:blake3:40a0e22be00235d03e685a50ef69ceafdf4654ab163e7d4c1eaeb3ef90ae5b0f",
+    "authority_evidence_id": "fortix:evidence:blake3:7a8b35bf192217d4f26440ccc25e451dfb647decf89867237b02b7d3a9f49822",
+    "brake_command_evidence_id": "fortix:evidence:blake3:04b4659a1cdba2556a43798f37e14a97ad618c31467254a0d2fdd3e237baf57d",
+    "braking_decision_evidence_id": "fortix:evidence:blake3:73cac242c6cd4421493e9890f82384ec96d376dece64393c628e91c65dd27bb2",
+    "execution_binding_evidence_id": "fortix:evidence:blake3:d9ef353539f94d3275fa9c620825fefe5ba61bd46a1f6eebea70e3a1f49e1a51",
+    "operational_intent_evidence_id": "fortix:evidence:blake3:f07b2f43660c5820656b5cdf1529c6d889b6d28d5d355b606c31967d8f76b2b4",
+    "physical_result_evidence_ids": [
+      "fortix:evidence:blake3:24a94eab0fb93328ce46a996a370cddb8b2b7f97134a5cfc779641f1d79db97f",
+      "fortix:evidence:blake3:05fd0262d5ccd312f2474e30c1bce32980a44331ac16811051afd943da9ff29d"
+    ],
+    "policy_application_evidence_id": "fortix:evidence:blake3:ca2c8176aa7d6007dfed523e676befb4e11832f34639f1916acc1e77cd2ee062",
+    "result_evidence_id": "fortix:evidence:blake3:281b5fd61936107ae34f6eb96a596aa9844648649779fff01852c4795028001c",
+    "threshold_intent_evidence_id": "fortix:evidence:blake3:9d415ac53d5a2b33a478a6e793deecc9b9ac436d891b2c17006f4b9b12bb937d"
+  },
+  "capability_state": {
+    "access": "AVAILABLE",
+    "execution_capability": "AVAILABLE"
+  },
+  "control_conditions": {
+    "EXPIRED": {
+      "authority_evidence": {
+        "causal_links": {
+          "causal_chain_id": "fortix.demo.d004.authority-to-action.intersection-001",
+          "predecessor_evidence_id": "fortix:evidence:blake3:ca2c8176aa7d6007dfed523e676befb4e11832f34639f1916acc1e77cd2ee062"
+        },
+        "cryptographic_profile": {
+          "cryptographic_profile_id": "fortix.crypto.ed25519-blake3.v1",
+          "key_id": "fortix.demo.key.d002",
+          "signature_algorithm": "Ed25519",
+          "trust_anchor_id": "fortix.demo.anchor.d002"
+        },
+        "evidence_id": "fortix:evidence:blake3:7d50f2ed221ced99fdaad0a4e371b29a83840a11799d832a09047b1b5ece1d1b",
+        "evidence_integrity": {
+          "canonicalization_profile": "fortix.canonical-json.sorted-utf8.v1",
+          "digest_algorithm": "BLAKE3-256",
+          "payload_digest": "f94406e66d30713de91fbccdd77d4e5f6dab355e6f4083433824a5300e220199"
+        },
+        "evidence_payload": {
+          "policy_authority_status": {
+            "authority_id": "fortix.demo.policy-authority.d002",
+            "authority_status": "EXPIRED",
+            "effective_from": "2026-08-01T00:00:00.000Z",
+            "effective_until": "2026-08-01T00:00:03.760Z",
+            "policy_digest": "24133fd794293a7a02bfd967692d692b3e5c330a263f498ce8061f2eaabbeb84",
+            "policy_id": "fortix.demo.policy.emergency-braking",
+            "policy_version": "1.0",
+            "verification_time": "2026-08-01T00:00:03.760Z"
+          }
+        },
+        "evidence_profile": "fortix.evidence.canonical.v1",
+        "evidence_type": "POLICY_AUTHORITY_STATUS",
+        "evidence_version": "1.0",
+        "identity_profile": "fortix.evidence-id.sorted-json-blake3.v1",
+        "issuer": {
+          "issuer_id": "fortix.demo.evidence-recorder.d004",
+          "issuer_type": "DEMO_EVIDENCE_RECORDER"
+        },
+        "lifecycle": {
+          "compatibility_version": "1.0",
+          "effective_from": "2026-08-01T00:00:03.760Z",
+          "effective_until": null,
+          "issued_at": "2026-08-01T00:00:03.760Z"
+        },
+        "schema_version": "1.0",
+        "signature": "3e34d8394a9400f680e4a27c80ba990c5cd293c17708cf2ada1cb5bafbc88596aab9a41c0ca06f8e9cce3f621db48808191a26c635a4c9f92cfa49c281f12709",
+        "significant_event": {
+          "event_id": "d004.control.authority-expired",
+          "event_time": "2026-08-01T00:00:03.760Z",
+          "event_type": "POLICY_AUTHORITY_STATUS"
+        },
+        "subject": {
+          "subject_id": "fortix.demo.scenario.intersection-001",
+          "subject_type": "demo_governed_action"
+        },
+        "trust_boundary": {
+          "crossing_type": "demo-authority-to-action",
+          "trust_boundary_id": "fortix.demo.vehicle-stack"
+        },
+        "verification_profile": {
+          "required_evidence_profile": "fortix.evidence.canonical.v1",
+          "verification_profile": "fortix.evidence.policy-authority-status.v1"
+        }
+      }
+    },
+    "MISSING": {
+      "authority_evidence": null
+    },
+    "REVOKED": {
+      "authority_evidence": {
+        "causal_links": {
+          "causal_chain_id": "fortix.demo.d004.authority-to-action.intersection-001",
+          "predecessor_evidence_id": "fortix:evidence:blake3:ca2c8176aa7d6007dfed523e676befb4e11832f34639f1916acc1e77cd2ee062"
+        },
+        "cryptographic_profile": {
+          "cryptographic_profile_id": "fortix.crypto.ed25519-blake3.v1",
+          "key_id": "fortix.demo.key.d002",
+          "signature_algorithm": "Ed25519",
+          "trust_anchor_id": "fortix.demo.anchor.d002"
+        },
+        "evidence_id": "fortix:evidence:blake3:b5197671054caae5072aabbb921ac89dec65a106f6f7e93592b3e6561be41631",
+        "evidence_integrity": {
+          "canonicalization_profile": "fortix.canonical-json.sorted-utf8.v1",
+          "digest_algorithm": "BLAKE3-256",
+          "payload_digest": "43d7a69b1e23a8e753a3813c47306f70ba6d7a9a019b0a2779ccc0aceef2c56f"
+        },
+        "evidence_payload": {
+          "policy_authority_status": {
+            "authority_id": "fortix.demo.policy-authority.d002",
+            "authority_status": "REVOKED",
+            "effective_from": "2026-08-01T00:00:00.000Z",
+            "effective_until": null,
+            "policy_digest": "24133fd794293a7a02bfd967692d692b3e5c330a263f498ce8061f2eaabbeb84",
+            "policy_id": "fortix.demo.policy.emergency-braking",
+            "policy_version": "1.0",
+            "verification_time": "2026-08-01T00:00:03.760Z"
+          }
+        },
+        "evidence_profile": "fortix.evidence.canonical.v1",
+        "evidence_type": "POLICY_AUTHORITY_STATUS",
+        "evidence_version": "1.0",
+        "identity_profile": "fortix.evidence-id.sorted-json-blake3.v1",
+        "issuer": {
+          "issuer_id": "fortix.demo.evidence-recorder.d004",
+          "issuer_type": "DEMO_EVIDENCE_RECORDER"
+        },
+        "lifecycle": {
+          "compatibility_version": "1.0",
+          "effective_from": "2026-08-01T00:00:03.760Z",
+          "effective_until": null,
+          "issued_at": "2026-08-01T00:00:03.760Z"
+        },
+        "schema_version": "1.0",
+        "signature": "b603af245bc7e00a786dc1a9cd2855db315d26733e11a2c7bfa953fa7951a35c042af8071d4965553f9dd4c384b635d88b8fea642ea23e60fcad9a0147f6eb0f",
+        "significant_event": {
+          "event_id": "d004.control.authority-revoked",
+          "event_time": "2026-08-01T00:00:03.760Z",
+          "event_type": "POLICY_AUTHORITY_STATUS"
+        },
+        "subject": {
+          "subject_id": "fortix.demo.scenario.intersection-001",
+          "subject_type": "demo_governed_action"
+        },
+        "trust_boundary": {
+          "crossing_type": "demo-authority-to-action",
+          "trust_boundary_id": "fortix.demo.vehicle-stack"
+        },
+        "verification_profile": {
+          "required_evidence_profile": "fortix.evidence.canonical.v1",
+          "verification_profile": "fortix.evidence.policy-authority-status.v1"
+        }
+      }
+    },
+    "SUSPENDED": {
+      "authority_evidence": {
+        "causal_links": {
+          "causal_chain_id": "fortix.demo.d004.authority-to-action.intersection-001",
+          "predecessor_evidence_id": "fortix:evidence:blake3:ca2c8176aa7d6007dfed523e676befb4e11832f34639f1916acc1e77cd2ee062"
+        },
+        "cryptographic_profile": {
+          "cryptographic_profile_id": "fortix.crypto.ed25519-blake3.v1",
+          "key_id": "fortix.demo.key.d002",
+          "signature_algorithm": "Ed25519",
+          "trust_anchor_id": "fortix.demo.anchor.d002"
+        },
+        "evidence_id": "fortix:evidence:blake3:7fde20f3521ccc52e2cdcddbfd46f79ca85fdc8aa9f04c4792c846df81333635",
+        "evidence_integrity": {
+          "canonicalization_profile": "fortix.canonical-json.sorted-utf8.v1",
+          "digest_algorithm": "BLAKE3-256",
+          "payload_digest": "0e49bda1cfb9a94649804410796648989a7891bfed46c1efa2324be638e72697"
+        },
+        "evidence_payload": {
+          "policy_authority_status": {
+            "authority_id": "fortix.demo.policy-authority.d002",
+            "authority_status": "SUSPENDED",
+            "effective_from": "2026-08-01T00:00:00.000Z",
+            "effective_until": null,
+            "policy_digest": "24133fd794293a7a02bfd967692d692b3e5c330a263f498ce8061f2eaabbeb84",
+            "policy_id": "fortix.demo.policy.emergency-braking",
+            "policy_version": "1.0",
+            "verification_time": "2026-08-01T00:00:03.760Z"
+          }
+        },
+        "evidence_profile": "fortix.evidence.canonical.v1",
+        "evidence_type": "POLICY_AUTHORITY_STATUS",
+        "evidence_version": "1.0",
+        "identity_profile": "fortix.evidence-id.sorted-json-blake3.v1",
+        "issuer": {
+          "issuer_id": "fortix.demo.evidence-recorder.d004",
+          "issuer_type": "DEMO_EVIDENCE_RECORDER"
+        },
+        "lifecycle": {
+          "compatibility_version": "1.0",
+          "effective_from": "2026-08-01T00:00:03.760Z",
+          "effective_until": null,
+          "issued_at": "2026-08-01T00:00:03.760Z"
+        },
+        "schema_version": "1.0",
+        "signature": "c64164bfbb04dbf3105e22aeb49320fa3271a6670f52d7446dbf9647418914362341afd02a48990faa4f29c3bb2aac0d6e5980b8aa4f8f0151535e7d94a18d0e",
+        "significant_event": {
+          "event_id": "d004.control.authority-suspended",
+          "event_time": "2026-08-01T00:00:03.760Z",
+          "event_type": "POLICY_AUTHORITY_STATUS"
+        },
+        "subject": {
+          "subject_id": "fortix.demo.scenario.intersection-001",
+          "subject_type": "demo_governed_action"
+        },
+        "trust_boundary": {
+          "crossing_type": "demo-authority-to-action",
+          "trust_boundary_id": "fortix.demo.vehicle-stack"
+        },
+        "verification_profile": {
+          "required_evidence_profile": "fortix.evidence.canonical.v1",
+          "verification_profile": "fortix.evidence.policy-authority-status.v1"
+        }
+      }
+    },
+    "UNKNOWN": {
+      "authority_evidence": {
+        "causal_links": {
+          "causal_chain_id": "fortix.demo.d004.authority-to-action.intersection-001",
+          "predecessor_evidence_id": "fortix:evidence:blake3:ca2c8176aa7d6007dfed523e676befb4e11832f34639f1916acc1e77cd2ee062"
+        },
+        "cryptographic_profile": {
+          "cryptographic_profile_id": "fortix.crypto.ed25519-blake3.v1",
+          "key_id": "fortix.demo.key.d002",
+          "signature_algorithm": "Ed25519",
+          "trust_anchor_id": "fortix.demo.anchor.d002"
+        },
+        "evidence_id": "fortix:evidence:blake3:66779aaf94d92b708980418ed5385400ec31574629a31f9d3e5ef0b45c231d72",
+        "evidence_integrity": {
+          "canonicalization_profile": "fortix.canonical-json.sorted-utf8.v1",
+          "digest_algorithm": "BLAKE3-256",
+          "payload_digest": "bcd3cf6a38f250e27eb651eecc2eab29962120ed157de22480b3a2d56bcec78c"
+        },
+        "evidence_payload": {
+          "policy_authority_status": {
+            "authority_id": "fortix.demo.policy-authority.d002",
+            "authority_status": "UNKNOWN",
+            "effective_from": "2026-08-01T00:00:00.000Z",
+            "effective_until": null,
+            "policy_digest": "24133fd794293a7a02bfd967692d692b3e5c330a263f498ce8061f2eaabbeb84",
+            "policy_id": "fortix.demo.policy.emergency-braking",
+            "policy_version": "1.0",
+            "verification_time": "2026-08-01T00:00:03.760Z"
+          }
+        },
+        "evidence_profile": "fortix.evidence.canonical.v1",
+        "evidence_type": "POLICY_AUTHORITY_STATUS",
+        "evidence_version": "1.0",
+        "identity_profile": "fortix.evidence-id.sorted-json-blake3.v1",
+        "issuer": {
+          "issuer_id": "fortix.demo.evidence-recorder.d004",
+          "issuer_type": "DEMO_EVIDENCE_RECORDER"
+        },
+        "lifecycle": {
+          "compatibility_version": "1.0",
+          "effective_from": "2026-08-01T00:00:03.760Z",
+          "effective_until": null,
+          "issued_at": "2026-08-01T00:00:03.760Z"
+        },
+        "schema_version": "1.0",
+        "signature": "6f25c82429eb30db1571bbd4b01428a0828b8df92c7cf2ebb69f347156ea33ebfb39433d619d3613f790e9a4fedf1f626a4c67fd550af9ebb680427ec81d3503",
+        "significant_event": {
+          "event_id": "d004.control.authority-unknown",
+          "event_time": "2026-08-01T00:00:03.760Z",
+          "event_type": "POLICY_AUTHORITY_STATUS"
+        },
+        "subject": {
+          "subject_id": "fortix.demo.scenario.intersection-001",
+          "subject_type": "demo_governed_action"
+        },
+        "trust_boundary": {
+          "crossing_type": "demo-authority-to-action",
+          "trust_boundary_id": "fortix.demo.vehicle-stack"
+        },
+        "verification_profile": {
+          "required_evidence_profile": "fortix.evidence.canonical.v1",
+          "verification_profile": "fortix.evidence.policy-authority-status.v1"
+        }
+      }
+    }
+  },
+  "governed_chain": [
+    {
+      "causal_links": {
+        "causal_chain_id": "fortix.demo.d004.authority-to-action.intersection-001",
+        "predecessor_evidence_id": null
+      },
+      "cryptographic_profile": {
+        "cryptographic_profile_id": "fortix.crypto.ed25519-blake3.v1",
+        "key_id": "fortix.demo.key.d002",
+        "signature_algorithm": "Ed25519",
+        "trust_anchor_id": "fortix.demo.anchor.d002"
+      },
+      "evidence_id": "fortix:evidence:blake3:f07b2f43660c5820656b5cdf1529c6d889b6d28d5d355b606c31967d8f76b2b4",
+      "evidence_integrity": {
+        "canonicalization_profile": "fortix.canonical-json.sorted-utf8.v1",
+        "digest_algorithm": "BLAKE3-256",
+        "payload_digest": "dec44f7032b2166892d03670895a03a70093b1d3481d2f2b89acf2ad688d38d3"
+      },
+      "evidence_payload": {
+        "intent": {
+          "action": "complete-right-turn",
+          "constraint": "maintain-defined-safety-envelope",
+          "meaning": "Complete the right turn while maintaining the defined safety envelope.",
+          "scenario_time_ms": 0
+        }
+      },
+      "evidence_profile": "fortix.evidence.canonical.v1",
+      "evidence_type": "INTENT",
+      "evidence_version": "1.0",
+      "identity_profile": "fortix.evidence-id.sorted-json-blake3.v1",
+      "issuer": {
+        "issuer_id": "fortix.demo.evidence-recorder.d004",
+        "issuer_type": "DEMO_EVIDENCE_RECORDER"
+      },
+      "lifecycle": {
+        "compatibility_version": "1.0",
+        "effective_from": "2026-08-01T00:00:00.000Z",
+        "effective_until": null,
+        "issued_at": "2026-08-01T00:00:00.000Z"
+      },
+      "schema_version": "1.0",
+      "signature": "302be930cf5cc83968889b4bc1627401747d69028a0015874e71f229d5f453418935aa242fc6bdd69a72613c487da514add49c70d504c17eeee7532bc7baa20f",
+      "significant_event": {
+        "event_id": "d004.operational-intent",
+        "event_time": "2026-08-01T00:00:00.000Z",
+        "event_type": "INTENT"
+      },
+      "subject": {
+        "subject_id": "fortix.demo.scenario.intersection-001",
+        "subject_type": "demo_governed_action"
+      },
+      "trust_boundary": {
+        "crossing_type": "demo-authority-to-action",
+        "trust_boundary_id": "fortix.demo.vehicle-stack"
+      },
+      "verification_profile": {
+        "required_evidence_profile": "fortix.evidence.canonical.v1",
+        "verification_profile": "fortix.evidence.intent.v1"
+      }
+    },
+    {
+      "causal_links": {
+        "causal_chain_id": "fortix.demo.d004.authority-to-action.intersection-001",
+        "predecessor_evidence_id": "fortix:evidence:blake3:f07b2f43660c5820656b5cdf1529c6d889b6d28d5d355b606c31967d8f76b2b4"
+      },
+      "cryptographic_profile": {
+        "cryptographic_profile_id": "fortix.crypto.ed25519-blake3.v1",
+        "key_id": "fortix.demo.key.d002",
+        "signature_algorithm": "Ed25519",
+        "trust_anchor_id": "fortix.demo.anchor.d002"
+      },
+      "evidence_id": "fortix:evidence:blake3:ca2c8176aa7d6007dfed523e676befb4e11832f34639f1916acc1e77cd2ee062",
+      "evidence_integrity": {
+        "canonicalization_profile": "fortix.canonical-json.sorted-utf8.v1",
+        "digest_algorithm": "BLAKE3-256",
+        "payload_digest": "178c9a3e072ff99c7c41e618fd994731037e8b011878600688294900c10bbb49"
+      },
+      "evidence_payload": {
+        "policy_decision": {
+          "evaluation_evidence": {
+            "action_decision_evidence_id": "fortix:evidence:blake3:73cac242c6cd4421493e9890f82384ec96d376dece64393c628e91c65dd27bb2",
+            "operational_intent_evidence_id": "fortix:evidence:blake3:f07b2f43660c5820656b5cdf1529c6d889b6d28d5d355b606c31967d8f76b2b4",
+            "trigger_evidence_id": "fortix:evidence:blake3:9d415ac53d5a2b33a478a6e793deecc9b9ac436d891b2c17006f4b9b12bb937d"
+          },
+          "evaluation_result": "ALLOW",
+          "evaluation_time": "2026-08-01T00:00:03.760Z",
+          "policy_authority_id": "fortix.demo.policy-authority.d002",
+          "policy_digest": "24133fd794293a7a02bfd967692d692b3e5c330a263f498ce8061f2eaabbeb84",
+          "policy_id": "fortix.demo.policy.emergency-braking",
+          "policy_profile": "fortix.demo.policy.emergency-braking.v1",
+          "policy_version": "1.0",
+          "reason_code": "EMERGENCY_BRAKING_ALLOWED"
+        }
+      },
+      "evidence_profile": "fortix.evidence.canonical.v1",
+      "evidence_type": "POLICY_DECISION",
+      "evidence_version": "1.0",
+      "identity_profile": "fortix.evidence-id.sorted-json-blake3.v1",
+      "issuer": {
+        "issuer_id": "fortix.demo.evidence-recorder.d004",
+        "issuer_type": "DEMO_EVIDENCE_RECORDER"
+      },
+      "lifecycle": {
+        "compatibility_version": "1.0",
+        "effective_from": "2026-08-01T00:00:03.760Z",
+        "effective_until": null,
+        "issued_at": "2026-08-01T00:00:03.760Z"
+      },
+      "schema_version": "1.0",
+      "signature": "d1ec763ad9836fd240db8d0abfec053ffdee588d352228607b3dae628a3c97ecc2f607ee1e3b3bb322745e470f9cffda21c7d9448769207c22a4378079655e02",
+      "significant_event": {
+        "event_id": "d004.emergency-braking-policy-application",
+        "event_time": "2026-08-01T00:00:03.760Z",
+        "event_type": "POLICY_DECISION"
+      },
+      "subject": {
+        "subject_id": "fortix.demo.scenario.intersection-001",
+        "subject_type": "demo_governed_action"
+      },
+      "trust_boundary": {
+        "crossing_type": "demo-authority-to-action",
+        "trust_boundary_id": "fortix.demo.vehicle-stack"
+      },
+      "verification_profile": {
+        "required_evidence_profile": "fortix.evidence.canonical.v1",
+        "verification_profile": "fortix.evidence.policy-decision.v1"
+      }
+    },
+    {
+      "causal_links": {
+        "causal_chain_id": "fortix.demo.d004.authority-to-action.intersection-001",
+        "predecessor_evidence_id": "fortix:evidence:blake3:ca2c8176aa7d6007dfed523e676befb4e11832f34639f1916acc1e77cd2ee062"
+      },
+      "cryptographic_profile": {
+        "cryptographic_profile_id": "fortix.crypto.ed25519-blake3.v1",
+        "key_id": "fortix.demo.key.d002",
+        "signature_algorithm": "Ed25519",
+        "trust_anchor_id": "fortix.demo.anchor.d002"
+      },
+      "evidence_id": "fortix:evidence:blake3:7a8b35bf192217d4f26440ccc25e451dfb647decf89867237b02b7d3a9f49822",
+      "evidence_integrity": {
+        "canonicalization_profile": "fortix.canonical-json.sorted-utf8.v1",
+        "digest_algorithm": "BLAKE3-256",
+        "payload_digest": "41c500cbce5d8b26dfa3004b285af01772240ef98b08e233e1807b325b478d0f"
+      },
+      "evidence_payload": {
+        "policy_authority_status": {
+          "authority_id": "fortix.demo.policy-authority.d002",
+          "authority_status": "ACTIVE",
+          "effective_from": "2026-08-01T00:00:00.000Z",
+          "effective_until": null,
+          "policy_digest": "24133fd794293a7a02bfd967692d692b3e5c330a263f498ce8061f2eaabbeb84",
+          "policy_id": "fortix.demo.policy.emergency-braking",
+          "policy_version": "1.0",
+          "verification_time": "2026-08-01T00:00:03.760Z"
+        }
+      },
+      "evidence_profile": "fortix.evidence.canonical.v1",
+      "evidence_type": "POLICY_AUTHORITY_STATUS",
+      "evidence_version": "1.0",
+      "identity_profile": "fortix.evidence-id.sorted-json-blake3.v1",
+      "issuer": {
+        "issuer_id": "fortix.demo.evidence-recorder.d004",
+        "issuer_type": "DEMO_EVIDENCE_RECORDER"
+      },
+      "lifecycle": {
+        "compatibility_version": "1.0",
+        "effective_from": "2026-08-01T00:00:03.760Z",
+        "effective_until": null,
+        "issued_at": "2026-08-01T00:00:03.760Z"
+      },
+      "schema_version": "1.0",
+      "signature": "559fde2c8f4a407458ec85577347bfbac6eafeae79b0f60f11efc1e8d2e918402e763f34c117e840556f6af2e469e6c22e93576446fb0c740b1a1d1e57c73e02",
+      "significant_event": {
+        "event_id": "d004.applicable-authority-active",
+        "event_time": "2026-08-01T00:00:03.760Z",
+        "event_type": "POLICY_AUTHORITY_STATUS"
+      },
+      "subject": {
+        "subject_id": "fortix.demo.scenario.intersection-001",
+        "subject_type": "demo_governed_action"
+      },
+      "trust_boundary": {
+        "crossing_type": "demo-authority-to-action",
+        "trust_boundary_id": "fortix.demo.vehicle-stack"
+      },
+      "verification_profile": {
+        "required_evidence_profile": "fortix.evidence.canonical.v1",
+        "verification_profile": "fortix.evidence.policy-authority-status.v1"
+      }
+    },
+    {
+      "causal_links": {
+        "causal_chain_id": "fortix.demo.d004.authority-to-action.intersection-001",
+        "predecessor_evidence_id": "fortix:evidence:blake3:7a8b35bf192217d4f26440ccc25e451dfb647decf89867237b02b7d3a9f49822"
+      },
+      "cryptographic_profile": {
+        "cryptographic_profile_id": "fortix.crypto.ed25519-blake3.v1",
+        "key_id": "fortix.demo.key.d002",
+        "signature_algorithm": "Ed25519",
+        "trust_anchor_id": "fortix.demo.anchor.d002"
+      },
+      "evidence_id": "fortix:evidence:blake3:d9ef353539f94d3275fa9c620825fefe5ba61bd46a1f6eebea70e3a1f49e1a51",
+      "evidence_integrity": {
+        "canonicalization_profile": "fortix.canonical-json.sorted-utf8.v1",
+        "digest_algorithm": "BLAKE3-256",
+        "payload_digest": "b9a892f27c0664058b3aff3aea9c2a9c7e6ec5841b1c5035190bfdb6c09ddfa6"
+      },
+      "evidence_payload": {
+        "execution": {
+          "action": "emergency-braking",
+          "action_decision_evidence_id": "fortix:evidence:blake3:73cac242c6cd4421493e9890f82384ec96d376dece64393c628e91c65dd27bb2",
+          "applicable_authority_evidence_id": "fortix:evidence:blake3:7a8b35bf192217d4f26440ccc25e451dfb647decf89867237b02b7d3a9f49822",
+          "observed_execution_evidence_id": "fortix:evidence:blake3:04b4659a1cdba2556a43798f37e14a97ad618c31467254a0d2fdd3e237baf57d",
+          "scenario_time_ms": 3810
+        }
+      },
+      "evidence_profile": "fortix.evidence.canonical.v1",
+      "evidence_type": "EXECUTION",
+      "evidence_version": "1.0",
+      "identity_profile": "fortix.evidence-id.sorted-json-blake3.v1",
+      "issuer": {
+        "issuer_id": "fortix.demo.evidence-recorder.d004",
+        "issuer_type": "DEMO_EVIDENCE_RECORDER"
+      },
+      "lifecycle": {
+        "compatibility_version": "1.0",
+        "effective_from": "2026-08-01T00:00:03.810Z",
+        "effective_until": null,
+        "issued_at": "2026-08-01T00:00:03.810Z"
+      },
+      "schema_version": "1.0",
+      "signature": "e5e5daabcb4ef44774ed77e3c43dcbaed8b3116d1a015b834609667547a1f5d6b3daa505f2876f1eca78668bf6554f191d9d917f7c20176d582dc50d86d75003",
+      "significant_event": {
+        "event_id": "d004.authority-bound-brake-execution",
+        "event_time": "2026-08-01T00:00:03.810Z",
+        "event_type": "EXECUTION"
+      },
+      "subject": {
+        "subject_id": "fortix.demo.scenario.intersection-001",
+        "subject_type": "demo_governed_action"
+      },
+      "trust_boundary": {
+        "crossing_type": "demo-authority-to-action",
+        "trust_boundary_id": "fortix.demo.vehicle-stack"
+      },
+      "verification_profile": {
+        "required_evidence_profile": "fortix.evidence.canonical.v1",
+        "verification_profile": "fortix.evidence.execution.v1"
+      }
+    },
+    {
+      "causal_links": {
+        "causal_chain_id": "fortix.demo.d004.authority-to-action.intersection-001",
+        "predecessor_evidence_id": "fortix:evidence:blake3:d9ef353539f94d3275fa9c620825fefe5ba61bd46a1f6eebea70e3a1f49e1a51"
+      },
+      "cryptographic_profile": {
+        "cryptographic_profile_id": "fortix.crypto.ed25519-blake3.v1",
+        "key_id": "fortix.demo.key.d002",
+        "signature_algorithm": "Ed25519",
+        "trust_anchor_id": "fortix.demo.anchor.d002"
+      },
+      "evidence_id": "fortix:evidence:blake3:281b5fd61936107ae34f6eb96a596aa9844648649779fff01852c4795028001c",
+      "evidence_integrity": {
+        "canonicalization_profile": "fortix.canonical-json.sorted-utf8.v1",
+        "digest_algorithm": "BLAKE3-256",
+        "payload_digest": "7f952ca047c27f08ed3aa95c270a6e5f1dc45bcb53e7f69f1bef5422a3839655"
+      },
+      "evidence_payload": {
+        "result": {
+          "action": "emergency-braking",
+          "actuator_acknowledgement_evidence_id": "fortix:evidence:blake3:40a0e22be00235d03e685a50ef69ceafdf4654ab163e7d4c1eaeb3ef90ae5b0f",
+          "execution_binding_evidence_id": "fortix:evidence:blake3:d9ef353539f94d3275fa9c620825fefe5ba61bd46a1f6eebea70e3a1f49e1a51",
+          "observed_result_evidence_ids": [
+            "fortix:evidence:blake3:24a94eab0fb93328ce46a996a370cddb8b2b7f97134a5cfc779641f1d79db97f",
+            "fortix:evidence:blake3:05fd0262d5ccd312f2474e30c1bce32980a44331ac16811051afd943da9ff29d"
+          ],
+          "outcome": "execution-observed-before-closest-point-window",
+          "scenario_time_ms": 5340
+        }
+      },
+      "evidence_profile": "fortix.evidence.canonical.v1",
+      "evidence_type": "RESULT",
+      "evidence_version": "1.0",
+      "identity_profile": "fortix.evidence-id.sorted-json-blake3.v1",
+      "issuer": {
+        "issuer_id": "fortix.demo.evidence-recorder.d004",
+        "issuer_type": "DEMO_EVIDENCE_RECORDER"
+      },
+      "lifecycle": {
+        "compatibility_version": "1.0",
+        "effective_from": "2026-08-01T00:00:05.340Z",
+        "effective_until": null,
+        "issued_at": "2026-08-01T00:00:05.340Z"
+      },
+      "schema_version": "1.0",
+      "signature": "e95ee326db5899ce609e2e854567f87e249407ac5e758ceaf5856e289e94907850c5a582ddd49b5bf78d532aa6205ae261341d156868e6e21e0a1a73b386b108",
+      "significant_event": {
+        "event_id": "d004.authority-bound-action-result",
+        "event_time": "2026-08-01T00:00:05.340Z",
+        "event_type": "RESULT"
+      },
+      "subject": {
+        "subject_id": "fortix.demo.scenario.intersection-001",
+        "subject_type": "demo_governed_action"
+      },
+      "trust_boundary": {
+        "crossing_type": "demo-authority-to-action",
+        "trust_boundary_id": "fortix.demo.vehicle-stack"
+      },
+      "verification_profile": {
+        "required_evidence_profile": "fortix.evidence.canonical.v1",
+        "verification_profile": "fortix.evidence.result.v1"
+      }
+    }
+  ],
+  "policy_artifact": {
+    "policy_authority_id": "fortix.demo.policy-authority.d002",
+    "policy_body": {
+      "emergency_braking_action": "AUTHORIZED_WHEN_THRESHOLD_EXCEEDED",
+      "normal_turn": "AUTHORIZED_WITHIN_SAFETY_ENVELOPE",
+      "safety_threshold": "MUST_NOT_BE_IGNORED",
+      "scope": "DEMO_OPERATIONAL_POLICY_NOT_ROAD_LAW"
+    },
+    "policy_id": "fortix.demo.policy.emergency-braking",
+    "policy_profile": "fortix.demo.policy.emergency-braking.v1",
+    "policy_version": "1.0"
+  },
+  "profile": "fortix.demo.authority-to-action.v1",
+  "schema_version": "1.0"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "valid non ascii payload",
+  "description": "Receipt contains UTF-8 non-ASCII characters and must verify successfully.",
+  "expected_verification_result": true,
+  "public_key": "ca987f7a6cd863424641d4500dc7deba9782533ee071c5f00bc300bc85452437",
+  "receipt": {
+    "version": "1.0",
+    "payload": {
+      "action": "décision",
+      "actor": "fortix-cœur",
+      "timestamp": "2026-03-11T15:00:00Z",
+      "comment": "paiement validé à Zürich"
+    },
+    "hash": "f66ed01c27d96a79737a1b68de7fdfff6968cd03d16a1128ac89e5b19c19cbf0",
+    "signature": "460f0e86e5784729fcbb981c7818574529d2f98d8e4529e011a4471b5c8687748014d48139c39feebc339ba3d5ea07c8a677453eb8da77b74252569062d4ca01",
+    "algorithm": {
+      "hash": "BLAKE3",
+      "signature": "Ed25519"
+    },
+    "key_id": "test-key-010"
+  }
+}

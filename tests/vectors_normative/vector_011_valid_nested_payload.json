@@ -1,0 +1,28 @@
+{
+  "name": "valid nested payload",
+  "description": "Receipt contains nested JSON objects and must verify successfully.",
+  "expected_verification_result": true,
+  "public_key": "ca987f7a6cd863424641d4500dc7deba9782533ee071c5f00bc300bc85452437",
+  "receipt": {
+    "version": "1.0",
+    "payload": {
+      "action": "test",
+      "actor": "fortix-core",
+      "timestamp": "2026-03-11T15:00:00Z",
+      "context": {
+        "env": "sandbox",
+        "risk": {
+          "level": "medium",
+          "score": 42
+        }
+      }
+    },
+    "hash": "7d143aeee31011c8ede7a680aa1bf2c77398ac199207374e51226f3116dba74f",
+    "signature": "fa230ac19694f8a04210dff80feb85e44bf56f2644f9876a473ef9afc80347a1610f6ec33d0875ec736db5b22f04f85e0daf69a0104f6b831a66269af37aad05",
+    "algorithm": {
+      "hash": "BLAKE3",
+      "signature": "Ed25519"
+    },
+    "key_id": "test-key-011"
+  }
+}

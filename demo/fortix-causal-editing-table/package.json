@@ -1,0 +1,86 @@
+{
+  "name": "fortix-causal-editing-table",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.18.0 <23"
+  },
+  "packageManager": "npm@10.9.8",
+  "scripts": {
+    "dev": "cross-env WRANGLER_LOG_PATH=.wrangler/wrangler.log node scripts/run-local-demo.mjs dev",
+    "build": "cross-env WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build",
+    "start": "cross-env WRANGLER_LOG_PATH=.wrangler/wrangler.log node scripts/run-local-demo.mjs start",
+    "test:d002": "node --test tests/evidence-model.test.ts",
+    "test:d003": "node --test tests/d003-verification.test.ts",
+    "test:d005": "node --test tests/operational-cycle.test.ts",
+    "test:d006a": "node --test tests/stage-geometry.test.ts tests/d006a-visual-contract.test.ts",
+    "test:d006b": "node --test tests/d006b1-participation.test.ts",
+    "test:d006c": "node --test tests/d006c-mission-continuity.test.ts tests/d006c-bilingual.test.ts tests/d006c-authorization-qr.test.ts tests/d006c-story-timeline.test.ts tests/d006c-routing-provenance.test.ts tests/d006c-final-maturation.test.ts tests/d006c1-portable-evidence.test.ts tests/d006c1-receipt-projection.test.ts tests/d006c1-financial-closure.test.ts tests/d006e-reconciliation-idempotency.test.ts tests/d006e-network-reload-state.test.ts tests/d006e-mission-isolation.test.ts tests/d006g-evidence-integrity.test.ts tests/d006g-locale-hydration.test.ts tests/d006g-trust-boundaries.test.ts tests/d006g-vehicle-orientation.test.ts tests/d006g-proof-layout.test.ts tests/d006g-p2r-adversarial.test.ts tests/d006g-p2r-proof-projection.test.ts tests/d006g-p3-trust-authorization.test.ts tests/d006g-p3-network-evidence.test.ts tests/d006g-p3-causal-edges.test.ts tests/d006c-ethernet-link.test.ts tests/d006c-evidence-continuity.test.ts tests/d006c-final-convergence.test.ts tests/d006c-obstacle-clearance.test.ts tests/pending-authority-color.test.ts tests/proof-label-placement.test.ts tests/visual-events.test.ts",
+    "test:d006d": "node --test tests/d006d-network-transitions.test.ts tests/d006d-offline-evidence.test.ts tests/d006d-offline-verification.test.ts tests/d006d-integration-contract.test.ts",
+    "test:d006c1": "node --test tests/d006c1-convergence-integration.test.ts tests/d006c1-portable-evidence.test.ts tests/d006c1-receipt-projection.test.ts tests/d006c1-financial-closure.test.ts tests/d006c-story-timeline.test.ts tests/d006c-routing-provenance.test.ts tests/d006c-final-maturation.test.ts",
+    "test:d006c2": "node --test tests/d006c2-public-experience.test.ts",
+    "test": "npm run build && npm run test:unit && npm run test:rendered",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "env:check": "node scripts/env/check-runtime.mjs",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "node --test tests/authority-model.test.ts tests/cinematic-state.test.ts tests/d003-verification.test.ts tests/d006a-visual-contract.test.ts tests/d006b1-participation.test.ts tests/d006c-bilingual.test.ts tests/d006c-authorization-qr.test.ts tests/d006c2-public-experience.test.ts tests/d006c-story-timeline.test.ts tests/d006c-routing-provenance.test.ts tests/d006c-final-maturation.test.ts tests/d006c3-live-causality.test.ts tests/d006c3r1-proof-causality.test.ts tests/d006nx0-evidence-completeness.test.ts tests/d006nx1-adapter.test.ts tests/d006nx1-structure.test.ts tests/d006nx1-workspace.test.ts tests/d006nx1-checkpoint-b.test.ts tests/d006nx1-proof-geometry.test.ts tests/d006nx1-reading-order.test.ts tests/d006nx1-action-families.test.ts tests/d006nx1-checkpoint-c.test.ts tests/d006nx3-peb-transport.test.ts tests/d006nx3-b2-production.test.ts tests/d006nx3-verifier-surface.test.ts tests/d006nx3-motion.test.ts tests/d006nx3-offline-verifier.test.ts tests/d006nx3-adversarial.test.ts tests/d006nx3-i18n.test.ts tests/d006nx3-graph-integrity.test.ts tests/d006nx4-control-language.test.ts tests/d006c1-portable-evidence.test.ts tests/d006c1-receipt-projection.test.ts tests/d006c1-financial-closure.test.ts tests/d006e-reconciliation-idempotency.test.ts tests/d006e-network-reload-state.test.ts tests/d006e-mission-isolation.test.ts tests/d006g-evidence-integrity.test.ts tests/d006g-locale-hydration.test.ts tests/d006g-trust-boundaries.test.ts tests/d006g-vehicle-orientation.test.ts tests/d006g-proof-layout.test.ts tests/d006g-p2r-adversarial.test.ts tests/d006g-p2r-proof-projection.test.ts tests/d006g-p3-trust-authorization.test.ts tests/d006g-p3-network-evidence.test.ts tests/d006g-p3-causal-edges.test.ts tests/d006c-ethernet-link.test.ts tests/d006c-evidence-continuity.test.ts tests/d006c-final-convergence.test.ts tests/d006c-mission-continuity.test.ts tests/d006c-obstacle-clearance.test.ts tests/d006d-network-transitions.test.ts tests/d006d-offline-evidence.test.ts tests/d006d-offline-verification.test.ts tests/d006d-integration-contract.test.ts tests/env-001-runtime.test.ts tests/evidence-model.test.ts tests/harmony-model.test.ts tests/master-story.test.ts tests/operational-cycle.test.ts tests/pending-authority-color.test.ts tests/physical-sync.test.ts tests/proof-label-placement.test.ts tests/review-flow.test.ts tests/stage-geometry.test.ts tests/timeline-model.test.ts tests/visual-events.test.ts tests/fsr2-demo-handoff.test.ts tests/fsr2-peb-inspection.test.ts tests/fsr2-received-graph.test.ts tests/regression-verifier-entry.test.ts tests/d006-inspection.test.ts tests/link-sentinel-launcher.test.mjs tests/received-receipt-labels.test.ts tests/graph-handoff.test.ts tests/graph-display.test.ts tests/mission-reset.test.ts tests/physical-cold-baseline.test.ts tests/physical-adapter-binding.test.ts tests/network-adapter-identity.test.ts tests/network-connectivity.test.ts tests/mobile-physical-link.test.ts tests/guided-verifier.test.ts tests/modular-verifier-routing.test.ts tests/modular-verifier-navigation.test.ts tests/modular-verifier-catalog.test.ts tests/modular-graph-modes.test.ts tests/c1-number-semantics.test.ts tests/guided-story.test.ts tests/boundary-guidance.test.ts tests/verifier-graph-context.test.ts tests/received-provenance.test.ts tests/verifier-business-search.test.ts tests/verifier-presentation.test.ts tests/ux-focus-relations.test.ts tests/evidence-ux-completion.test.ts tests/verifier-story-context.test.ts tests/boundary-cleanup.test.ts tests/context-restoration-cleanup.test.ts tests/received-network.test.ts tests/verifier-simplification.test.ts tests/d006-inmission-central.test.ts tests/d006-inmission-reconciliation.test.ts tests/d006-inmission-hook.test.ts",
+    "test:guided-verifier": "node --test tests/guided-verifier.test.ts",
+    "test:network-continuity": "node --test tests/network-connectivity.test.ts tests/physical-adapter-binding.test.ts tests/network-adapter-identity.test.ts tests/mobile-physical-link.test.ts tests/d006d-network-transitions.test.ts tests/d006d-offline-evidence.test.ts tests/d006e-reconciliation-idempotency.test.ts tests/d006-inmission-central.test.ts tests/d006-inmission-reconciliation.test.ts tests/d006-inmission-hook.test.ts",
+    "test:rendered": "node --test tests/rendered-html.test.mjs",
+    "validate": "npm run env:check && npm run typecheck && npm run lint && npm run test:unit && npm run test:d006c1 && npm run build && npm run test:rendered",
+    "test:env": "node --test tests/env-001-runtime.test.ts",
+    "test:d006c3": "node --test tests/d006c3-live-causality.test.ts",
+    "test:d006c3r1": "node --test tests/d006c3r1-proof-causality.test.ts",
+    "test:d006nx0": "node --test tests/d006nx0-evidence-completeness.test.ts",
+    "test:d006nx1": "node --test tests/d006nx1-adapter.test.ts tests/d006nx1-structure.test.ts tests/d006nx1-workspace.test.ts tests/d006nx1-checkpoint-b.test.ts tests/d006nx1-proof-geometry.test.ts tests/d006nx1-reading-order.test.ts tests/d006nx1-action-families.test.ts tests/d006nx1-checkpoint-c.test.ts tests/d006nx1-checkpoint-c-r1.test.ts tests/d006nx1-checkpoint-c-r2.test.ts tests/d006nx-gate1-causal-graph.test.ts",
+    "test:d006nx2": "node --test tests/d006nx2-gate2-variants.test.ts",
+    "test:d006nx3": "node --test tests/d006nx3-peb-transport.test.ts tests/d006nx3-b2-production.test.ts tests/d006nx3-verifier-surface.test.ts tests/d006nx3-motion.test.ts tests/d006nx3-offline-verifier.test.ts tests/d006nx3-adversarial.test.ts tests/d006nx3-i18n.test.ts tests/d006nx3-graph-integrity.test.ts",
+    "test:d006nx3:b2": "node --test tests/d006nx3-b2-production.test.ts",
+    "test:d006nx4": "node --test tests/d006nx4-control-language.test.ts",
+    "dev:lan": "cross-env FORTIX_LAN_MODE=1 WRANGLER_LOG_PATH=.wrangler/wrangler.log node scripts/run-local-demo.mjs dev --hostname 0.0.0.0 --port 3000",
+    "test:guided-ux": "node --test tests/modular-verifier-routing.test.ts tests/modular-verifier-navigation.test.ts tests/modular-verifier-catalog.test.ts tests/modular-graph-modes.test.ts tests/verifier-graph-context.test.ts tests/c1-number-semantics.test.ts tests/guided-story.test.ts tests/boundary-guidance.test.ts",
+    "test:ux-completion": "node --test --experimental-test-isolation=none tests/received-provenance.test.ts tests/verifier-business-search.test.ts tests/verifier-presentation.test.ts tests/ux-focus-relations.test.ts tests/evidence-ux-completion.test.ts tests/verifier-story-context.test.ts",
+    "test:ux-cleanup": "node --test --experimental-test-isolation=none tests/boundary-cleanup.test.ts tests/context-restoration-cleanup.test.ts tests/verifier-presentation.test.ts tests/verifier-story-context.test.ts tests/boundary-guidance.test.ts tests/guided-story.test.ts"
+  },
+  "dependencies": {
+    "@noble/hashes": "^2.0.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.52.0",
+    "@eslint/js": "9.39.4",
+    "@next/eslint-plugin-next": "16.2.6",
+    "@tailwindcss/postcss": "4.2.1",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.2",
+    "@vitejs/plugin-rsc": "0.5.26",
+    "cross-env": "^10.1.0",
+    "eslint": "9.39.4",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "16.4.0",
+    "react-server-dom-webpack": "19.2.8",
+    "tailwindcss": "4.2.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.59.3",
+    "vinext": "1.0.0-beta.2",
+    "vite": "8.2.1",
+    "wrangler": "4.122.0"
+  },
+  "overrides": {
+    "@babel/core": "7.29.6",
+    "minimatch@3.1.5": {
+      "brace-expansion": "1.1.18"
+    },
+    "minimatch@10.2.5": {
+      "brace-expansion": "5.0.9"
+    },
+    "fast-uri": "3.1.5",
+    "js-yaml": "4.3.1"
+  },
+  "type": "module"
+}

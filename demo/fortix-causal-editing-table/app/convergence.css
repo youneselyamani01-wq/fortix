@@ -1,0 +1,4076 @@
+/* D-006G P2R: the network lane is no longer a separate overlay. Network and
+   reconciliation records are ordinary evidence leaves now, projected from the
+   journal like everything else, so they inherit .proof-leaf geometry and the
+   bespoke .network-proof-event rules that positioned them by hand are gone. */
+:root {
+  --fx-porcelain: #f5f2ea;
+  --fx-paper: #fffdf8;
+  --fx-ink: #17181c;
+  --fx-ink-2: #4d4e54;
+  --fx-rule: rgba(23, 24, 28, 0.17);
+  --fx-rule-strong: rgba(23, 24, 28, 0.34);
+  /* Experience colors describe actors, space and temporary causal emphasis.
+     They never establish trust, evidence validity or a verdict. */
+  --fx-ultramarine: #4057ff;
+  --fx-orchid: #a66cff;
+  --fx-magenta: #bd2fd1;
+  --fx-tangerine: #ff7a45;
+  --fx-pending-authority: #ff941f;
+  --fx-pending-authority-ink: #a94700;
+  --fx-solar: #ffd84a;
+  --fx-glacier: #8dd8ff;
+  /* Semantic colors remain a separate, locked verdict/status layer. */
+  --fx-valid: #00b65f;
+  --fx-invalid: #ff7a45;
+  --fx-indeterminate: #8dd8ff;
+  --fx-revoked: #ffd84a;
+  --fx-cyan: #00bce2;
+  --fx-orange: #f74902;
+  --fx-teal: #009ea1;
+  --fx-radius: 22px;
+}
+
+/* Stage metrics. These are the DEFAULTS and must stay above the responsive
+   overrides at :1041 and :1058 — custom properties cascade by source order at
+   equal specificity, and this block previously sat below them, so both media
+   queries were dead and every travelling receipt was mis-registered by the
+   width of a label column that no longer existed on small screens. */
+.convergence-shell {
+  --stage-label-w: 150px;
+  --stage-label-row-h: 0px;
+}
+
+html {
+  background: var(--fx-porcelain);
+  color-scheme: light;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    linear-gradient(rgba(23, 24, 28, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 24, 28, 0.025) 1px, transparent 1px),
+    var(--fx-porcelain);
+  background-size: 32px 32px;
+  color: var(--fx-ink);
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
+.convergence-shell * {
+  box-sizing: border-box;
+}
+
+.convergence-shell {
+  position: relative;
+  width: min(1520px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 0 clamp(18px, 3vw, 46px);
+  color: var(--fx-ink);
+}
+
+.convergence-shell button,
+.convergence-shell input {
+  font: inherit;
+}
+
+.convergence-shell button:focus-visible,
+.convergence-shell input:focus-visible,
+.convergence-shell a:focus-visible {
+  outline: 3px solid var(--fx-ultramarine);
+  outline-offset: 3px;
+}
+
+.convergence-header {
+  display: flex;
+  min-height: 82px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid var(--fx-ink);
+}
+
+.fortix-mark {
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.fortix-mark strong {
+  font-size: 1.34rem;
+  letter-spacing: -0.055em;
+}
+
+.fortix-mark span,
+.section-index,
+.clock-readout span,
+.instrument-heading span,
+.reality-event span,
+.receipt-birth-callout span {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.fortix-mark span {
+  color: var(--fx-ink-2);
+}
+
+/* C3-R1 §6: the public language mode. EN | FR, nothing else. */
+.language-mode {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--fx-ink);
+  border-radius: 999px;
+  background: var(--fx-paper);
+}
+.language-mode > i {
+  width: 1px;
+  height: 14px;
+  background: color-mix(in srgb, var(--fx-ink) 34%, transparent);
+}
+.language-mode button {
+  min-width: 40px;
+  min-height: 30px;
+  padding: 4px 9px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fx-ink);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .58rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  cursor: pointer;
+}
+.language-mode button[aria-pressed="true"] {
+  background: var(--fx-ink);
+  color: var(--fx-paper);
+}
+.language-mode button:focus-visible { outline: 2px solid var(--fx-ultramarine); outline-offset: 1px; }
+
+.journey-language {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journey-language li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 16px;
+  border-left: 1px solid var(--fx-rule);
+  color: #999890;
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+
+.journey-language li:last-child {
+  border-right: 1px solid var(--fx-rule);
+}
+
+.journey-language li span {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.55rem;
+}
+
+.journey-language li.is-active {
+  color: var(--fx-ink);
+  box-shadow: inset 0 -3px var(--fx-ultramarine);
+}
+
+.mission-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.55fr);
+  align-items: end;
+  gap: 40px;
+  padding: clamp(34px, 5vw, 74px) 0 28px;
+}
+
+.section-index {
+  margin: 0 0 14px;
+  color: var(--fx-ultramarine);
+}
+
+.mission-intro h1,
+.evidence-handoff h2 {
+  margin: 0;
+  font-size: clamp(3.15rem, 6.7vw, 7.4rem);
+  font-weight: 560;
+  letter-spacing: -0.075em;
+  line-height: 0.84;
+}
+
+.mission-intro > p {
+  max-width: 28ch;
+  margin: 0 0 8px auto;
+  color: var(--fx-ink-2);
+  font-size: clamp(1rem, 1.55vw, 1.32rem);
+  line-height: 1.35;
+}
+
+.master-instrument {
+  display: grid;
+  grid-template-columns: auto auto minmax(220px, 1fr) minmax(205px, 0.42fr);
+  align-items: center;
+  gap: 18px;
+  min-height: 76px;
+  border: 1px solid var(--fx-ink);
+  border-radius: 16px 16px 0 0;
+  background: var(--fx-ink);
+  color: var(--fx-porcelain);
+  padding: 12px;
+}
+
+.continuity-strip {
+  --continuity-color: var(--fx-ultramarine);
+  display: grid;
+  grid-template-columns: minmax(230px, .7fr) minmax(320px, 1.3fr) auto;
+  min-height: 58px;
+  align-items: center;
+  gap: 18px;
+  padding: 8px 14px;
+  border-right: 1px solid var(--fx-ink);
+  border-left: 1px solid var(--fx-ink);
+  background: var(--fx-paper);
+}
+
+.continuity-strip[data-network-phase="OFFLINE"] { --continuity-color: var(--fx-ink); }
+.continuity-strip[data-network-phase="RESTORED"] { --continuity-color: var(--fx-cyan); }
+
+.continuity-state {
+  position: relative;
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  gap: 2px 8px;
+  align-items: center;
+}
+
+.continuity-state > i {
+  grid-row: 1 / 3;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--continuity-color);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--continuity-color) 24%, var(--fx-paper));
+}
+
+.continuity-state > span {
+  color: var(--continuity-color);
+  font: 800 .53rem var(--font-geist-mono), monospace;
+  letter-spacing: .11em;
+}
+
+.continuity-state > strong {
+  color: var(--fx-ink);
+  font-size: .76rem;
+}
+
+.continuity-strip dl {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) auto;
+  gap: 10px;
+  margin: 0;
+}
+
+.continuity-strip dl > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 8px;
+  align-items: baseline;
+  min-width: 0;
+  padding-left: 12px;
+  border-left: 1px solid var(--fx-rule-strong);
+}
+
+.continuity-strip dt {
+  color: var(--fx-ink-2);
+  font: 700 .43rem var(--font-geist-mono), monospace;
+  letter-spacing: .09em;
+}
+
+.continuity-strip dd {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--fx-ink);
+  font: 700 .5rem var(--font-geist-mono), monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.continuity-receipt small {
+  grid-column: 1 / -1;
+  color: var(--continuity-color);
+  font: 700 .43rem var(--font-geist-mono), monospace;
+  letter-spacing: .06em;
+}
+
+.continuity-strip > button {
+  padding: 6px 9px;
+  border: 1px solid var(--fx-ultramarine);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fx-ultramarine);
+  cursor: pointer;
+  font-size: .58rem;
+  font-weight: 750;
+}
+
+.transport {
+  display: flex;
+  gap: 7px;
+}
+
+.transport button,
+.analyze-button,
+.human-decision-instrument button {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--fx-ultramarine);
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 0.73rem;
+  font-weight: 720;
+}
+
+.transport button:first-child {
+  width: 42px;
+  padding: 0;
+  border-color: rgba(255,255,255,.25);
+  background: transparent;
+}
+
+.transport button:disabled,
+.formation-action button:disabled,
+.analyze-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.play-control {
+  min-width: 118px;
+}
+
+.play-control span {
+  margin-right: 7px;
+}
+
+.clock-readout {
+  display: grid;
+  gap: 3px;
+  min-width: 100px;
+}
+
+.clock-readout span {
+  color: var(--fx-glacier);
+}
+
+.clock-readout strong {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 1.2rem;
+}
+
+.clock-track input {
+  width: 100%;
+  height: 16px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.clock-track input::-webkit-slider-runnable-track {
+  height: 3px;
+  background: linear-gradient(90deg, var(--fx-glacier) var(--progress), rgba(255,255,255,.23) var(--progress));
+}
+
+.clock-track input::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  appearance: none;
+  border: 3px solid var(--fx-ink);
+  border-radius: 50%;
+  background: var(--fx-glacier);
+  box-shadow: 0 0 0 1px var(--fx-glacier);
+}
+
+.clock-track > div {
+  display: flex;
+  justify-content: space-between;
+  color: #8e908f;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.55rem;
+}
+
+.dual-timeline {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--fx-ink);
+  border-top: 0;
+  background: var(--fx-paper);
+}
+
+.shared-clock-cursor {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  border-left: 1px dashed rgba(64, 87, 255, 0.56);
+  pointer-events: none;
+}
+
+.shared-clock-cursor i {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fx-ultramarine);
+}
+
+.timeline-band {
+  display: grid;
+  grid-template-columns: var(--stage-label-w) minmax(0, 1fr);
+  position: relative;
+  min-height: 0;
+}
+
+.timeline-band + .timeline-band {
+  border-top: 1px solid var(--fx-ink);
+}
+
+.timeline-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 16px;
+  border-right: 1px solid var(--fx-rule-strong);
+  background: #f0ede5;
+}
+
+.timeline-label > span {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--fx-ink);
+  border-radius: 50%;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.58rem;
+}
+
+.timeline-label div {
+  display: grid;
+  gap: 4px;
+}
+
+.timeline-label strong {
+  max-width: 8ch;
+  font-size: 0.74rem;
+  letter-spacing: 0.07em;
+  line-height: 1.1;
+}
+
+.timeline-label small {
+  color: var(--fx-ink-2);
+  font-size: 0.68rem;
+}
+
+.reality-canvas {
+  position: relative;
+  height: var(--stage-reality-h);
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(141,216,255,.24) 0 44%, transparent 44%),
+    var(--fx-paper);
+}
+
+.city-grid {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0 84px, rgba(23,24,28,.05) 84px 85px);
+}
+
+.city-road {
+  position: absolute;
+  right: 0;
+  bottom: 50px;
+  left: 0;
+  height: 95px;
+  border-top: 1px solid var(--fx-ink);
+  border-bottom: 1px solid var(--fx-ink);
+  background: #dedbd4;
+}
+
+.city-road i {
+  position: absolute;
+  top: 46px;
+  left: 0;
+  width: 100%;
+  border-top: 2px dashed rgba(23,24,28,.35);
+}
+
+.city-road i:last-child {
+  top: -18px;
+  left: 28%;
+  width: 68px;
+  height: 131px;
+  border: 0;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.86) 0 8px, transparent 8px 15px);
+}
+
+.autonomous-taxi {
+  position: absolute;
+  z-index: 6;
+  bottom: 84px;
+  width: 86px;
+  height: 34px;
+  transform: translateX(-50%);
+  border: 2px solid var(--fx-ink);
+  border-radius: 12px 17px 7px 7px;
+  background: var(--fx-solar);
+  box-shadow: 7px 7px 0 rgba(23,24,28,.12);
+}
+
+.autonomous-taxi::before {
+  content: "";
+  position: absolute;
+  top: -16px;
+  left: 20px;
+  width: 46px;
+  height: 19px;
+  border: 2px solid var(--fx-ink);
+  border-bottom: 0;
+  border-radius: 19px 22px 0 0;
+  background: var(--fx-glacier);
+}
+
+.autonomous-taxi span {
+  position: absolute;
+  z-index: 2;
+  top: 9px;
+  left: 9px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.55rem;
+  font-weight: 800;
+}
+
+/* Taxi 07 runs on four wheels.
+   The two <i> children are the near-side pair. Each carries a ::before that
+   is the far-side wheel of the same axle, drawn slightly up and behind and
+   dimmed so the vehicle reads as a body on four wheels rather than a
+   silhouette on two.
+   This block previously ended in `> i:last-child`, which matched nothing:
+   the taxi's last child is a .brake-light <b> (or the .actor-emission <u>),
+   never an <i>. Both wheels therefore took `left: 13px`, superimposed
+   pixel-for-pixel, and the vehicle rendered with a single visible wheel.
+   `:last-of-type` selects among the <i> siblings, which is what was meant. */
+.autonomous-taxi > i {
+  position: absolute;
+  bottom: -8px;
+  left: 13px;
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--fx-paper);
+  border-radius: 50%;
+  background: var(--fx-ink);
+}
+
+.autonomous-taxi > i:last-of-type {
+  right: 13px;
+  left: auto;
+}
+
+/* The far-side wheel of each axle.
+   It cannot be placed *behind* the bodywork: .autonomous-taxi is a stacking
+   context, and a negative-z descendant still paints after its own stacking
+   context's background. An earlier attempt at that put two ringed discs flat
+   on the yellow paintwork. So the far wheel is drawn as the shadowed tyre it
+   would actually be — no paper ring, darker, tucked below and outboard of the
+   near wheel, where a far wheel really shows. */
+.autonomous-taxi > i::before {
+  content: "";
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #3c3d44;
+}
+
+.convergence-shell[data-scene="braking"] .autonomous-taxi {
+  transform: translateX(-50%) rotate(-1deg);
+  box-shadow: -14px 0 0 rgba(255,122,69,.25);
+}
+
+.reality-event {
+  position: absolute;
+  z-index: 10;
+  top: 22px;
+  left: 24px;
+  display: grid;
+  max-width: min(450px, 60%);
+  gap: 6px;
+  padding: 14px 18px;
+  border-left: 5px solid currentColor;
+  border-radius: 0 10px 10px 0;
+  background: rgba(255,253,248,.91);
+  box-shadow: 0 12px 35px rgba(23,24,28,.08);
+}
+
+.reality-event strong {
+  color: var(--fx-ink);
+  font-size: clamp(1.15rem, 2vw, 1.7rem);
+  letter-spacing: -0.035em;
+}
+
+.event-tone-ultramarine { color: var(--fx-ultramarine); }
+.event-tone-orchid { color: var(--fx-orchid); }
+.event-tone-tangerine { color: var(--fx-tangerine); }
+.event-tone-solar { color: #b78c00; }
+.event-tone-glacier { color: #2189bd; }
+/* D-006G: the bank. Locked-palette system-exchange cyan, darkened for AA
+   contrast on the bone proof canvas exactly as glacier and solar are. */
+.event-tone-cyan { color: #00707f; }
+
+.smart-light {
+  position: absolute;
+  z-index: 4;
+  left: var(--prop-x);
+  bottom: var(--prop-bottom);
+  transform: translateX(-50%);
+  display: grid;
+  width: 28px;
+  gap: 4px;
+  padding: 5px;
+  border: 2px solid var(--fx-ink);
+  border-radius: 14px;
+  background: var(--fx-ink);
+  opacity: .28;
+}
+
+.smart-light::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 12px;
+  height: 68px;
+  border-left: 3px solid var(--fx-ink);
+}
+
+.smart-light span {
+  position: absolute;
+  right: 38px;
+  top: 7px;
+  width: max-content;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .5rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.smart-light > i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #5a5654;
+}
+
+.smart-light > i:first-of-type { background: var(--fx-tangerine); }
+.smart-light > i:nth-of-type(2) { background: var(--fx-solar); }
+.smart-light > i.is-go { background: var(--fx-ultramarine); box-shadow: 0 0 0 5px rgba(64,87,255,.2); }
+.smart-light.is-active { opacity: 1; }
+
+.city-infrastructure {
+  position: absolute;
+  left: var(--prop-x);
+  bottom: var(--prop-bottom);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--fx-orchid);
+  opacity: .2;
+}
+
+.city-infrastructure i {
+  width: 42px;
+  height: 64px;
+  border: 2px solid currentColor;
+  background: repeating-linear-gradient(0deg, transparent 0 8px, rgba(166,108,255,.16) 8px 12px);
+}
+
+.city-infrastructure span,
+.road-obstacle span,
+.garage-object span,
+.base-object span {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .5rem;
+  font-weight: 700;
+}
+
+.city-infrastructure.is-active { opacity: 1; }
+
+.road-obstacle {
+  position: absolute;
+  z-index: 5;
+  left: var(--prop-x);
+  bottom: var(--prop-bottom);
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  color: var(--fx-tangerine);
+}
+
+.road-obstacle i {
+  width: 30px;
+  height: 24px;
+  border: 2px solid var(--fx-ink);
+  border-radius: 50% 50% 7px 7px;
+  background: var(--fx-tangerine);
+}
+
+.routing-provenance-cue {
+  position: absolute;
+  z-index: 9;
+  top: 22px;
+  right: 24px;
+  display: grid;
+  max-width: 42%;
+  gap: 3px;
+  padding: 9px 12px;
+  border: 1px solid var(--fx-rule-strong);
+  background: rgba(255, 253, 248, .92);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .52rem;
+  overflow-wrap: anywhere;
+}
+
+.routing-provenance-cue span { color: var(--fx-orchid); font-weight: 800; }
+.routing-provenance-cue strong { color: var(--fx-ink); }
+.routing-provenance-cue small { color: var(--fx-ink-2); }
+
+.congestion-queue {
+  grid-template-columns: repeat(3, 24px);
+  gap: 3px;
+}
+
+.congestion-queue i {
+  width: 24px;
+  height: 18px;
+  border-radius: 8px 8px 3px 3px;
+}
+
+.garage-object,
+.base-object {
+  position: absolute;
+  z-index: 3;
+  left: var(--prop-x);
+  bottom: var(--prop-bottom);
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.garage-object i,
+.base-object i {
+  width: 130px;
+  height: 78px;
+  border: 2px solid var(--fx-ink);
+  background: linear-gradient(90deg, var(--fx-paper) 0 25%, var(--fx-solar) 25% 75%, var(--fx-paper) 75%);
+}
+
+.base-object i {
+  width: 86px;
+  height: 54px;
+  border-radius: 50px 50px 4px 4px;
+  background: var(--fx-glacier);
+}
+
+.garage-object .maintenance-action {
+  position: absolute;
+  width: 42px;
+  height: 4px;
+  top: 33px;
+  background: var(--fx-ink);
+  opacity: 0;
+  transform-origin: 4px 2px;
+}
+
+.garage-object.is-working .maintenance-action {
+  opacity: 1;
+  transform: translateX(var(--maintenance-shift)) rotate(var(--maintenance-rotation));
+}
+
+.event-ribbon {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: repeat(9, minmax(92px, 1fr));
+  min-height: 50px;
+  border-top: 1px solid var(--fx-rule-strong);
+  overflow-x: auto;
+}
+
+.event-ribbon button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  border: 0;
+  border-right: 1px solid var(--fx-rule);
+  background: transparent;
+  color: #aaa79f;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+  font-size: .58rem;
+}
+
+.event-ribbon button i {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.event-ribbon button.is-reached { color: var(--fx-ink-2); }
+.event-ribbon button.is-reached i { background: currentColor; }
+.event-ribbon button.is-current { background: rgba(64,87,255,.07); color: var(--fx-ultramarine); font-weight: 720; }
+
+.human-decision-instrument {
+  position: absolute;
+  z-index: 30;
+  top: 20px;
+  right: 24px;
+  display: grid;
+  width: min(360px, calc(100% - 48px));
+  gap: 11px;
+  padding: 18px;
+  border: 1px solid var(--fx-ink);
+  border-top: 6px solid var(--fx-pending-authority);
+  border-radius: 10px;
+  background: var(--fx-paper);
+  box-shadow: 12px 12px 0 var(--fx-ink);
+}
+
+.human-decision-instrument > span {
+  color: var(--fx-pending-authority-ink);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+
+.human-decision-instrument dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+}
+
+.human-decision-instrument dl div {
+  padding: 8px;
+  border: 1px solid var(--fx-rule);
+}
+
+.human-decision-instrument dl div:first-child {
+  border-color: var(--fx-pending-authority);
+  background: rgba(255,148,31,.09);
+}
+
+.human-decision-instrument dt { color: var(--fx-ink-2); font-size: .58rem; }
+.human-decision-instrument dd { margin: 4px 0 0; color: var(--fx-pending-authority-ink); font-family: var(--font-geist-mono), monospace; font-weight: 800; }
+.human-decision-instrument > div { display: flex; gap: 8px; }
+.human-decision-instrument button:last-child { background: transparent; border-color: var(--fx-ink); color: var(--fx-ink); }
+.human-decision-instrument .payment-boundary-note {
+  color: var(--fx-ink-2);
+  font: 600 .52rem/1.4 var(--font-geist-mono), monospace;
+}
+
+.proof-timeline {
+  min-height: 360px;
+}
+
+.proof-tree-canvas {
+  position: relative;
+  height: var(--stage-proof-h);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 94% 50%, rgba(166,108,255,.12), transparent 18%),
+    linear-gradient(90deg, rgba(64,87,255,.04), transparent 60%),
+    var(--fx-paper);
+}
+
+.proof-spine {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--fx-ultramarine), var(--fx-orchid));
+  transform-origin: left;
+}
+
+/* D-006G P3-C — the declared causal edges.
+   Kept quiet on purpose. These lines carry the graph's meaning, but a viewer
+   must be able to read the lanes without first disentangling the lattice, so
+   the edges sit behind the leaves and stay well below them in contrast. An
+   edge that leaves its lane is a boundary crossing — one trust domain's
+   evidence supporting another's — and is the one thing here allowed to be
+   loud, because it is the fact the demonstration exists to show. */
+.proof-edges {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.proof-edge {
+  fill: none;
+  stroke: rgba(31, 37, 51, .10);
+  stroke-width: .75;
+  stroke-linecap: round;
+}
+
+/* Measured, not guessed. At full mission there are 59 edges, 26 of them
+   crossing a trust boundary, and at the contrast this started with the cyan
+   arcs read louder than the evidence they connect — the leaves receded behind
+   their own connectors. A boundary crossing still has to be the thing that
+   catches the eye, so it keeps the hue and the dash, but at a weight that
+   supports the leaves rather than competing with them. */
+.proof-edge.crosses-domain {
+  stroke: rgba(0, 158, 161, .26);
+  stroke-width: .9;
+  stroke-dasharray: 2.5 3.5;
+}
+
+/* An observed input crosses a boundary without claiming command authority. */
+.proof-edge.observed-input {
+  stroke: rgba(91, 74, 168, .3);
+  stroke-dasharray: 1.25 2.75;
+}
+
+.proof-leaf {
+  position: absolute;
+  top: var(--branch-top);
+  left: var(--leaf-x);
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.2);
+}
+
+.proof-leaf::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 4px;
+  left: 4px;
+  width: 1px;
+  height: 100%;
+  background: currentColor;
+  opacity: .46;
+}
+
+.proof-leaf[data-side="above"] {
+  transform-origin: bottom;
+}
+
+.proof-leaf i {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+  background: var(--fx-paper);
+  transform: rotate(45deg);
+}
+
+.proof-leaf span {
+  position: absolute;
+  top: 16px;
+  left: 1px;
+  display: none;
+  width: 105px;
+  color: var(--fx-ink-2);
+  font-size: .53rem;
+  line-height: 1.15;
+}
+
+.proof-leaf.is-grown {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.proof-leaf.is-grown i {
+  background: currentColor;
+}
+
+.proof-leaf.is-active {
+  z-index: 5;
+}
+
+.proof-leaf.is-active i {
+  box-shadow: 0 0 0 7px color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.proof-leaf.is-active span {
+  display: block;
+  padding: 5px 7px;
+  border: 1px solid var(--fx-rule);
+  border-radius: 5px;
+  background: rgba(255,253,248,.94);
+}
+
+.receipt-birth-callout {
+  position: absolute;
+  bottom: 14px;
+  left: 18px;
+  display: grid;
+  gap: 2px;
+  padding: 9px 12px 9px 15px;
+  border-left: 3px solid currentColor;
+  background: #f0ede5;
+}
+
+.receipt-birth-callout strong {
+  color: var(--fx-ink);
+  font-size: .69rem;
+}
+
+.evidence-handoff {
+  padding: clamp(58px, 8vw, 110px) 0 46px;
+}
+
+.evidence-handoff > header {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  align-items: end;
+  gap: 50px;
+  margin-bottom: 30px;
+}
+
+.evidence-handoff h2 {
+  font-size: clamp(2.6rem, 5vw, 5.4rem);
+}
+
+.handoff-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(330px, .65fr);
+  gap: 16px;
+}
+
+.verifier-instrument {
+  position: relative;
+  min-height: 370px;
+  border: 1px solid var(--fx-ink);
+  border-radius: var(--fx-radius);
+  background: var(--fx-paper);
+}
+
+.instrument-heading {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+}
+
+.receipt-convergence-object::before,
+
+.verifier-instrument {
+  padding: 58px 24px 22px;
+  background: var(--fx-ink);
+  color: var(--fx-paper);
+}
+
+.instrument-heading {
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #b9bab7;
+}
+
+.instrument-heading i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #5d5e61;
+}
+
+.instrument-heading i.is-analyzing { background: var(--fx-solar); }
+
+.instrument-idle {
+  margin: 35px 0 0;
+  color: #77797c;
+  font-size: .74rem;
+  text-align: center;
+}
+
+.analyze-button { width: 100%; min-height: 48px; border-radius: 9px; background: var(--fx-paper); color: var(--fx-ink); }
+
+.instrument-verdict {
+  --verdict-color: var(--fx-invalid);
+  --verdict-ink: var(--verifier-invalid-ink, var(--fx-invalid));
+  display: grid;
+  gap: 5px;
+  padding: 15px;
+  border: 1px solid #65676a;
+  border-left: 5px solid var(--verdict-color);
+  border-radius: 7px;
+  background: #242529;
+}
+
+.instrument-verdict span,
+.instrument-verdict small { color: #aaa; font: .53rem var(--font-geist-mono), monospace; letter-spacing: .08em; }
+.instrument-verdict strong { color: var(--verdict-ink); font-size: 1.45rem; }
+.instrument-verdict.verdict-valid {
+  --verdict-color: var(--fx-valid);
+  --verdict-ink: var(--verifier-valid-ink, var(--fx-valid));
+}
+.instrument-verdict.verdict-invalid {
+  --verdict-color: var(--fx-invalid);
+  --verdict-ink: var(--verifier-invalid-ink, var(--fx-invalid));
+}
+.instrument-verdict.verdict-revoked {
+  --verdict-color: var(--fx-revoked);
+  --verdict-ink: var(--verifier-revoked-ink, var(--fx-revoked));
+  border-left-style: double;
+  border-left-width: 8px;
+}
+
+.convergence-footer {
+  display: flex;
+  min-height: 74px;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--fx-ink);
+  color: var(--fx-ink-2);
+  font-size: .65rem;
+}
+
+.convergence-footer strong { color: var(--fx-ink); font-size: 1rem; }
+
+@keyframes proof-pulse {
+  50% { transform: rotate(45deg) scale(1.25); }
+}
+
+@media (max-width: 1050px) {
+  .journey-language li { padding-inline: 9px; }
+  .master-instrument { grid-template-columns: auto auto 1fr; }
+  .continuity-strip { grid-template-columns: 1fr 1.5fr; }
+  .continuity-strip > button { grid-column: 1 / -1; justify-self: start; }
+
+  .convergence-shell { --stage-label-w: 118px; }
+  .event-ribbon, .smart-city-boundary { grid-column: 2; }
+
+  .handoff-workbench { grid-template-columns: 1fr; }
+  .formation-station, .verifier-instrument { min-height: 330px; }}
+
+@media (max-width: 760px) {
+  .convergence-header { align-items: flex-start; flex-direction: column; padding: 18px 0; }
+  .journey-language { width: 100%; overflow-x: auto; }
+  .journey-language li { flex: 1; justify-content: center; }
+  .mission-intro { grid-template-columns: 1fr; gap: 18px; }
+  .mission-intro h1 { font-size: clamp(3rem, 16vw, 5.6rem); }
+  .mission-intro > p { margin-left: 0; }
+  .master-instrument { grid-template-columns: 1fr auto; }
+  .continuity-strip { grid-template-columns: 1fr; gap: 9px; padding-block: 11px; }
+  .continuity-strip dl { grid-template-columns: 1fr; }
+  .clock-track { grid-column: 1 / -1; }
+  .convergence-shell { --stage-label-w: 0px; --stage-label-row-h: 66px; }
+  .timeline-band { grid-template-columns: 1fr; }
+  .timeline-label { min-height: 66px; border-right: 0; border-bottom: 1px solid var(--fx-rule-strong); }
+  .timeline-label strong { max-width: none; }
+  .event-ribbon, .smart-city-boundary { grid-column: 1; }
+  .reality-event { max-width: calc(100% - 48px); }
+
+  .proof-leaf span { width: 78px; }
+  .evidence-handoff > header { grid-template-columns: 1fr; }
+
+  .convergence-footer { align-items: flex-start; flex-direction: column; justify-content: center; gap: 5px; }}
+
+@media (max-width: 500px) {
+  .convergence-shell { padding-inline: 10px; }
+  .fortix-mark { align-items: flex-start; flex-direction: column; gap: 3px; }
+  .journey-language li { min-width: 94px; }
+  .master-instrument { border-radius: 12px 12px 0 0; }
+  .transport .play-control { min-width: 98px; }
+  .clock-readout strong { font-size: .98rem; }
+
+  .event-ribbon { grid-template-columns: repeat(9, 102px); }
+
+  .proof-tree-canvas { overflow-x: clip; }
+
+  .verifier-instrument { padding-inline: 16px; }}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .convergence-shell *,
+  .convergence-shell *::before,
+  .convergence-shell *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }}
+
+/* Living-proof convergence: actor-born receipts, causal growth, and revelation. */
+.proof-leaf.is-active i,
+.instrument-heading i.is-analyzing {
+  animation: none;
+}
+
+.smart-light > i {
+  background: #5a5654 !important;
+  box-shadow: none !important;
+}
+
+.smart-light[data-signal="RED"] .signal-red {
+  background: var(--fx-tangerine) !important;
+  box-shadow: 0 0 0 5px rgba(255,122,69,.22) !important;
+}
+
+.smart-light[data-signal="YELLOW"] .signal-yellow {
+  background: var(--fx-solar) !important;
+  box-shadow: 0 0 0 5px rgba(255,216,74,.2) !important;
+}
+
+.smart-light[data-signal="GREEN"] .signal-green {
+  background: var(--fx-ultramarine) !important;
+  box-shadow: 0 0 0 5px rgba(64,87,255,.18) !important;
+}
+
+.smart-light > strong {
+  position: absolute;
+  top: 100%;
+  left: 34px;
+  margin-top: 11px;
+  color: var(--fx-ink);
+  font: 700 .5rem var(--font-geist-mono), monospace;
+  letter-spacing: .08em;
+}
+
+.autonomous-taxi .brake-light {
+  position: absolute;
+  z-index: 4;
+  left: -4px;
+  display: block;
+  width: 8px;
+  height: 7px;
+  border: 1px solid var(--fx-ink);
+  border-radius: 4px 1px 1px 4px;
+  /* A rear lamp at rest is red and lit, not grey. Grey read as a dead bulb,
+     which left the vehicle with no persistent rear cue at all. */
+  background: #a3301f;
+  opacity: .72;
+}
+
+.autonomous-taxi .brake-light-upper { top: 5px; }
+.autonomous-taxi .brake-light-lower { top: 18px; }
+
+/* D-006G P2: the front of the vehicle.
+   Anchored to `right` in the taxi's own box, exactly as the rear lamps are
+   anchored to `left`, so front and rear are properties of the vehicle rather
+   than of the screen. The rounded corners mirror the rear lamps' so the two
+   ends read differently even in a still frame with the taxi at a standstill —
+   which is the acceptance test: freeze any frame and the front is obvious. */
+.autonomous-taxi .head-light {
+  position: absolute;
+  z-index: 4;
+  right: -5px;
+  display: block;
+  width: 9px;
+  height: 8px;
+  border: 1px solid var(--fx-ink);
+  border-radius: 1px 4px 4px 1px;
+  background: var(--fx-paper);
+  box-shadow: 5px 0 11px rgba(255, 249, 214, .8);
+}
+
+.autonomous-taxi .head-light-upper { top: 5px; }
+.autonomous-taxi .head-light-lower { top: 18px; }
+
+.autonomous-taxi.has-brake-lights .brake-light {
+  background: var(--fx-tangerine);
+  box-shadow: -11px 0 18px rgba(255,122,69,.88);
+  opacity: 1;
+}
+
+.autonomous-taxi .brake-status {
+  position: absolute;
+  right: 100%;
+  bottom: 43px;
+  width: max-content;
+  padding: 4px 6px;
+  border: 1px solid var(--fx-tangerine);
+  background: var(--fx-paper);
+  color: var(--fx-tangerine);
+  font: 700 .48rem var(--font-geist-mono), monospace;
+  letter-spacing: .08em;
+}
+
+.travelling-receipt {
+  position: absolute;
+  z-index: 35;
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-content: center;
+  justify-items: center;
+  transform: translate(-50%, -50%) scale(var(--receipt-scale));
+  border: 1px solid currentColor;
+  border-radius: 46% 54% 52% 48%;
+  background: var(--fx-paper);
+  box-shadow: 0 8px 22px rgba(23,24,28,.13), inset 0 0 0 5px color-mix(in srgb, currentColor 10%, transparent);
+  pointer-events: none;
+}
+
+.travelling-receipt::before {
+  content: "";
+  position: absolute;
+  right: 50%;
+  bottom: 100%;
+  height: 38px;
+  border-left: 1px dashed currentColor;
+  opacity: .42;
+}
+
+.travelling-receipt > i {
+  width: 8px;
+  height: 8px;
+  margin-bottom: 2px;
+  transform: rotate(45deg);
+  background: currentColor;
+}
+
+.travelling-receipt > span {
+  max-width: 48px;
+  overflow: hidden;
+  color: currentColor;
+  font: 700 .38rem var(--font-geist-mono), monospace;
+  letter-spacing: .04em;
+  text-overflow: ellipsis;
+}
+
+.travelling-receipt > strong {
+  color: var(--fx-ink);
+  font-size: .38rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.proof-root {
+  position: absolute;
+  top: 50%;
+  left: 3.2%;
+  width: 28px;
+  height: 64px;
+  transform: translateY(-50%);
+}
+
+.proof-root::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  left: 13px;
+  width: 4px;
+  border-radius: 4px;
+  background: var(--fx-ultramarine);
+}
+
+.proof-root i {
+  position: absolute;
+  bottom: 6px;
+  left: 13px;
+  width: 20px;
+  border-top: 2px solid var(--fx-ultramarine);
+  transform-origin: left;
+}
+
+.proof-root i:nth-child(1) { transform: rotate(28deg); }
+.proof-root i:nth-child(2) { transform: rotate(0deg); }
+.proof-root i:nth-child(3) { transform: rotate(-28deg); }
+
+.proof-spine {
+  left: 4.7%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--fx-ultramarine), var(--fx-orchid) 60%, var(--fx-tangerine));
+}
+
+.proof-leaf::before {
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.proof-leaf[data-branch="route"]::before,
+.proof-leaf[data-branch="service"]::before,
+.proof-leaf[data-branch="authority"]::before,
+.proof-leaf[data-branch="mission"]::before {
+  top: auto;
+  bottom: 4px;
+  transform-origin: top;
+}
+
+.proof-leaf.is-grown::before {
+  transform: scaleY(1);
+}
+
+.proof-leaf span {
+  display: grid;
+  gap: 2px;
+}
+
+.proof-leaf span b {
+  color: currentColor;
+  font: 700 .4rem var(--font-geist-mono), monospace;
+  letter-spacing: .08em;
+}
+
+.bud-branch {
+  position: absolute;
+  top: 50%;
+  left: 84%;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--fx-orchid);
+}
+
+.branch-one { transform: rotate(-38deg); }
+.branch-two { bottom: 115px; transform: rotate(12deg); }
+.branch-three { bottom: 78px; transform: rotate(42deg); }
+
+.verifier-instrument {
+  min-height: 430px;
+}
+
+.revelation-chamber {
+  position: relative;
+  display: grid;
+  height: 238px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--verifier-rule, #7b7f88);
+  border-radius: 50% 50% 18px 18px;
+  background: var(--verifier-field, #fffaf2);
+}
+
+.revelation-chamber > span {
+  position: absolute;
+  top: 13px;
+  color: #888a8d;
+  font: .5rem var(--font-geist-mono), monospace;
+  letter-spacing: .14em;
+}
+
+.chamber-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 154px;
+  height: 154px;
+  transform: translate(-50%, -50%);
+  border: 1px solid #4a4c53;
+  border-radius: 50%;
+}
+
+.ring-two { width: 202px; height: 202px; border-style: dashed; opacity: .5; }
+
+.verifier-instrument.is-revealing .revelation-chamber {
+  background: var(--verifier-field, #fffaf2);
+}
+
+.revealed-structure {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 280ms ease;
+}
+
+.revealed-structure.is-visible { opacity: 1; }
+.revealed-structure > i { position: absolute; top: 50%; left: 50%; width: 108px; border-top: 1px solid var(--fx-glacier); transform-origin: left; }
+.revealed-structure > i:nth-child(1) { top: calc(50% - 50px); width: 92px; transform: rotate(-24deg); }
+.revealed-structure > i:nth-child(2) { top: calc(50% - 25px); width: 100px; transform: rotate(-12deg); }
+.revealed-structure > i:nth-child(3) { width: 108px; transform: rotate(0deg); }
+.revealed-structure > i:nth-child(4) { top: calc(50% + 25px); width: 116px; transform: rotate(12deg); }
+.revealed-structure > i:nth-child(5) { top: calc(50% + 50px); width: 124px; transform: rotate(24deg); }
+.revealed-structure > i::after { content: ""; position: absolute; top: -4px; right: 0; width: 7px; height: 7px; transform: rotate(45deg); background: var(--fx-glacier); }
+.revealed-structure > i span { position: absolute; top: -13px; right: 8px; color: var(--fx-glacier); font: .4rem var(--font-geist-mono), monospace; letter-spacing: .06em; }
+
+@media (max-width: 760px) {
+  .travelling-receipt { width: 48px; height: 48px; }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smart-light > i,
+  .proof-leaf::before,
+  .revealed-structure {
+    transition: none !important;
+  }}
+
+/* Silent-viewer comprehension pass: one clock, explicit causality, less reading. */
+/* D-006E: was #2f9d68 - the "banking green" the palette rules exclude. */
+:root { --traffic-green: #00b65f; }
+.event-tone-green { color: var(--traffic-green); }
+
+.mission-intro {
+  padding-top: clamp(24px, 3vw, 42px);
+}
+
+.mission-intro h1 {
+  font-size: clamp(3rem, 5.7vw, 6rem);
+}
+
+.convergence-shell.is-running .convergence-header,
+.convergence-shell.is-running .mission-intro {
+  display: none;
+}
+
+.convergence-shell.is-running .master-instrument {
+  position: sticky;
+  z-index: 50;
+  top: 0;
+}
+
+.convergence-shell.is-running .reality-timeline { min-height: 230px; }
+.convergence-shell.is-running .reality-canvas { min-height: 190px; }
+.convergence-shell.is-running .proof-timeline { min-height: 275px; }
+.convergence-shell.is-running .proof-tree-canvas { min-height: 215px; }
+.convergence-shell.is-running .event-ribbon { min-height: 40px; }
+
+.shared-clock-cursor { transition: none; }
+
+.passenger-actor {
+  position: absolute;
+  z-index: 7;
+  bottom: var(--prop-bottom);
+  left: var(--prop-x);
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  color: var(--fx-ultramarine);
+  opacity: .34;
+}
+
+.passenger-actor > i {
+  position: relative;
+  width: 18px;
+  height: 31px;
+  border: 2px solid currentColor;
+  border-radius: 12px 12px 5px 5px;
+}
+
+.passenger-actor > i::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: var(--fx-paper);
+}
+
+.passenger-actor > span {
+  font: 700 .48rem var(--font-geist-mono), monospace;
+  letter-spacing: .08em;
+}
+
+.passenger-actor.is-requesting { opacity: 1; }
+.passenger-actor.is-requesting::after {
+  content: "";
+  position: absolute;
+  top: -25px;
+  width: 42px;
+  height: 42px;
+  border: 2px solid var(--fx-ultramarine);
+  border-radius: 50%;
+  opacity: calc(1 - min(1, var(--request-progress, 0)));
+}
+.passenger-actor.is-onboard { opacity: 0; }
+
+.autonomous-taxi {
+  transform: translateX(-50%) rotate(var(--taxi-pitch));
+  transition: none;
+}
+
+.convergence-shell[data-scene="braking"] .autonomous-taxi {
+  transform: translateX(-50%) rotate(var(--taxi-pitch));
+}
+
+.autonomous-taxi.is-acknowledging {
+  box-shadow: 0 0 0 7px rgba(64,87,255,.18), 7px 7px 0 rgba(23,24,28,.12);
+}
+
+.autonomous-taxi .acknowledgement-status {
+  position: absolute;
+  bottom: 45px;
+  left: 50%;
+  width: max-content;
+  padding: 4px 7px;
+  transform: translateX(-50%);
+  border: 1px solid var(--fx-ultramarine);
+  background: var(--fx-paper);
+  color: var(--fx-ultramarine);
+  font: 700 .5rem var(--font-geist-mono), monospace;
+  letter-spacing: .08em;
+}
+
+.autonomous-taxi .brake-light {
+  left: -6px;
+  width: 11px;
+  height: 9px;
+}
+
+/* Both ends scale together, or the vehicle grows a bigger tail than nose. */
+.autonomous-taxi .head-light {
+  right: -6px;
+  width: 11px;
+  height: 9px;
+}
+
+.autonomous-taxi.has-brake-lights .brake-light {
+  box-shadow: -15px 0 24px rgba(255,122,69,.92);
+}
+
+.city-road i:last-child {
+  left: 58%;
+}
+
+.smart-light {
+  width: 38px;
+  gap: 5px;
+  padding: 7px;
+  border-radius: 18px;
+}
+
+.smart-light::after { left: 17px; }
+.smart-light span { right: 48px; font-size: .56rem; }
+.smart-light > i { width: 20px; height: 20px; }
+.smart-light[data-signal="GREEN"] .signal-green {
+  background: var(--traffic-green) !important;
+  box-shadow: 0 0 0 6px rgba(47,157,104,.2) !important;
+}
+.smart-light > strong {
+  left: 43px;
+  min-width: 58px;
+  padding: 4px 6px;
+  border: 1px solid currentColor;
+  background: var(--fx-paper);
+  font-size: .62rem;
+  text-align: center;
+}
+
+.event-ribbon {
+  grid-template-columns: repeat(7, minmax(88px, 1fr));
+}
+
+.travelling-receipt {
+  width: 62px;
+  height: 62px;
+  transition: none;
+}
+
+.travelling-receipt > span { display: none; }
+.travelling-receipt > strong { font-size: .42rem; }
+
+.proof-spine {
+  height: 4px;
+  transition: none;
+}
+
+.proof-leaf,
+.proof-leaf.is-grown {
+  top: var(--branch-top);
+  left: var(--leaf-x);
+  width: 14px;
+  height: var(--branch-height);
+  opacity: var(--growth-progress);
+  transform: translateX(-50%);
+  transition: none;
+}
+
+.proof-leaf::before,
+.proof-leaf[data-side="above"]::before,
+.proof-leaf[data-side="below"]::before,
+.proof-leaf[data-branch="route"]::before,
+.proof-leaf[data-branch="service"]::before,
+.proof-leaf[data-branch="authority"]::before,
+.proof-leaf[data-branch="mission"]::before {
+  top: 0;
+  bottom: 0;
+  left: 6px;
+  width: 2px;
+  height: auto;
+  /* The stem's minimum length lives here rather than in the branch height.
+     Clamping the height moved the leaf itself, because the leaf's dot is
+     anchored to the far edge of that box — rows the layout had placed 17.4px
+     apart rendered 8px apart near the spine. A min-height on the stem keeps a
+     leaf sitting on the spine visible without displacing anything. */
+  min-height: 5px;
+  background: currentColor;
+  opacity: .76;
+  transform: scaleY(var(--stem-progress));
+  transition: none;
+}
+
+.proof-leaf[data-side="above"]::before { transform-origin: bottom; }
+.proof-leaf[data-side="below"]::before { transform-origin: top; }
+
+.proof-leaf i,
+.proof-leaf.is-grown i {
+  position: absolute;
+  top: auto;
+  bottom: auto;
+  left: 3px;
+  width: 7px;
+  height: 7px;
+  border: 0;
+  border-radius: 65% 35% 65% 35%;
+  background: currentColor;
+  opacity: var(--terminal-progress);
+  transform: rotate(45deg) scale(var(--terminal-progress));
+}
+
+.proof-leaf[data-side="above"] i { top: -3px; }
+.proof-leaf[data-side="below"] i { bottom: -3px; }
+
+/* C3-R1: the third causal beat — the nano-receipt LOCKS into the tree once
+   its branch has fully attached. One restrained settle ring, then stillness. */
+.proof-leaf.is-locked i {
+  animation: nr-lock-settle .5s ease-out 1;
+}
+@keyframes nr-lock-settle {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 42%, transparent); }
+  100% { box-shadow: 0 0 0 9px color-mix(in srgb, currentColor 0%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .proof-leaf.is-locked i { animation: none; }
+}
+
+/* Quarantine is closure truth, not hidden metadata. Its terminal is hollow
+   and the word remains beside the leaf even when ordinary captions collapse. */
+.proof-leaf > .proof-assurance-marker { display: none; }
+.proof-leaf.is-quarantined { color: #9f2f24; }
+.proof-leaf.is-quarantined > i {
+  box-sizing: border-box;
+  border: 2px solid currentColor;
+  background: var(--fx-paper);
+}
+
+/* ==== D-006-C2 · public experience ====================================== */
+
+.public-causal-layer {
+  position: absolute;
+  z-index: 14;
+  right: 18px;
+  bottom: 10px;
+  left: 18px;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.public-causal-layer li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 7px 10px;
+  border: 1px solid rgba(23, 24, 28, .32);
+  background: rgba(255, 253, 248, .94);
+  color: var(--fx-ink);
+  box-shadow: 0 5px 20px rgba(23, 24, 28, .08);
+}
+
+.public-causal-layer li + li::before {
+  content: "→";
+  position: absolute;
+  margin-left: -17px;
+  color: var(--fx-ultramarine);
+  font-weight: 900;
+}
+
+.public-causal-layer li > span {
+  color: var(--fx-ultramarine);
+  font: 800 .48rem var(--font-geist-mono), monospace;
+}
+
+.public-causal-layer li > strong {
+  font-size: clamp(.6rem, .85vw, .74rem);
+  line-height: 1.15;
+}
+
+.public-causal-layer li.is-current {
+  border-width: 2px;
+  border-color: var(--fx-ultramarine);
+  box-shadow: inset 0 -3px var(--fx-ultramarine), 0 5px 20px rgba(23, 24, 28, .08);
+  transform: translateY(-3px);
+}
+
+.network-test-cue {
+  position: absolute;
+  z-index: 72;
+  top: calc(var(--stage-label-row-h) + 12px);
+  left: 50%;
+  display: grid;
+  width: min(520px, calc(100% - 36px));
+  gap: 5px;
+  padding: 13px 16px;
+  border: 2px solid var(--fx-ultramarine);
+  background: var(--fx-paper);
+  color: var(--fx-ink);
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.network-test-cue span {
+  color: var(--fx-ultramarine);
+  font: 850 .55rem var(--font-geist-mono), monospace;
+  letter-spacing: .12em;
+}
+
+.network-test-cue strong { font-size: .82rem; line-height: 1.35; }
+
+.network-continuity-beat {
+  position: fixed;
+  z-index: 140;
+  top: 14px;
+  left: 50%;
+  display: flex;
+  width: min(780px, calc(100vw - 28px));
+  min-height: 76px;
+  align-items: stretch;
+  justify-content: center;
+  border: 2px solid #0f1116;
+  background: #0f1116;
+  color: #fffdf8;
+  box-shadow: 0 18px 60px rgba(15, 17, 22, .35);
+  transform: translateX(-50%);
+}
+
+.network-continuity-beat > div {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  place-content: center;
+  gap: 3px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.network-continuity-beat > div:first-child { background: var(--fx-tangerine); color: #17181c; }
+.network-continuity-beat > div:last-child { background: var(--fx-glacier); color: #17181c; }
+.network-continuity-beat span { font: 800 .46rem var(--font-geist-mono), monospace; letter-spacing: .1em; }
+.network-continuity-beat strong { font-size: clamp(.66rem, 1.2vw, .88rem); line-height: 1.15; }
+.network-continuity-beat > i { align-self: center; padding: 0 5px; font-style: normal; font-weight: 900; }
+
+.handoff-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.network-restored-event {
+  position: fixed;
+  z-index: 141;
+  top: 14px;
+  left: 50%;
+  padding: 13px 22px;
+  border: 2px solid var(--fx-teal);
+  background: var(--fx-paper);
+  color: var(--fx-ink);
+  transform: translateX(-50%);
+  font: 850 .65rem var(--font-geist-mono), monospace;
+  letter-spacing: .1em;
+}
+
+.routing-provenance-cue details { margin-top: 4px; color: var(--fx-ink-2); }
+.routing-provenance-cue summary { cursor: pointer; font-weight: 750; }
+.routing-provenance-cue code { display: block; margin-top: 5px; font-size: .46rem; }
+
+.authority-actor-group { display: contents; }
+
+.convergence-shell[data-authority-gate="true"] .authority-workspace {
+  grid-template-columns: minmax(260px, 1fr) minmax(220px, .7fr);
+  grid-template-areas: "heading actions" "values actions";
+  width: min(760px, calc(100% - 64px));
+}
+
+.authority-workspace .authority-actions button { min-height: 44px; }
+
+.handoff-intro {
+  max-width: 62ch;
+  margin: 14px 0 0;
+  color: var(--fx-ink-2);
+  font-size: clamp(.9rem, 1.35vw, 1.08rem);
+  line-height: 1.5;
+}
+
+/* C3-R1: light is the sole canonical verifier presentation. The variable
+   layer survives because two dozen rules read it; the values below are no
+   longer one theme among two — they are the verifier. */
+.verifier-instrument {
+  --verifier-bg: #fffdf8;
+  --verifier-surface: #f5f2ea;
+  --verifier-field: #fffaf2;
+  --verifier-text: #17181c;
+  --verifier-muted: #5d626d;
+  --verifier-rule: #7b7f88;
+  --verifier-accent: #5c3cc4;
+  --verifier-accent-ink: #fffdf8;
+  --verifier-glow: rgba(92, 60, 196, .16);
+  --verifier-valid-ink: #007c42;
+  --verifier-invalid-ink: #a3301f;
+  --verifier-indeterminate-ink: #216d93;
+  --verifier-revoked-ink: #765400;
+}
+
+.verifier-instrument {
+  border-color: var(--verifier-rule);
+  background: var(--verifier-bg);
+  color: var(--verifier-text);
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.verifier-instrument .instrument-heading { color: var(--verifier-muted); }
+.instrument-heading > div:first-child { display: grid; gap: 2px; }
+.instrument-heading small { color: var(--verifier-muted); font-size: .5rem; }
+
+.verifier-identity {
+  margin: 0 0 12px;
+  border: 1px solid var(--verifier-rule);
+  background: var(--verifier-surface);
+  color: var(--verifier-text);
+}
+.verifier-identity summary {
+  min-height: 40px;
+  padding: 11px 13px;
+  cursor: pointer;
+  color: var(--verifier-text);
+  font-size: .7rem;
+  font-weight: 750;
+}
+.verifier-identity > div { padding: 0 13px 13px; }
+.verifier-identity > div > strong { color: var(--verifier-accent); font: 800 .52rem var(--font-geist-mono), monospace; letter-spacing: .1em; }
+.verifier-identity dl { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 14px; margin: 10px 0 0; }
+.verifier-identity dl > div { min-width: 0; }
+.verifier-identity dt { color: var(--verifier-muted); font-size: .48rem; }
+.verifier-identity dd { margin: 2px 0 0; overflow-wrap: anywhere; color: var(--verifier-text); font-size: .54rem; }
+.verifier-identity code { color: inherit; font-size: .5rem; }
+
+.verifier-instrument .revelation-chamber,
+.verifier-instrument.is-awaiting-evidence .revelation-chamber,
+.verifier-instrument.has-bud .revelation-chamber,
+.verifier-instrument.has-bud.is-revealing .revelation-chamber {
+  border-color: var(--verifier-rule);
+  background: radial-gradient(circle at 50% 46%, var(--verifier-glow) 0 30%, var(--verifier-field) 64%, var(--verifier-surface) 100%);
+}
+.verifier-instrument .chamber-ring { border-color: var(--verifier-rule); }
+.verifier-instrument .inspection-family { color: var(--verifier-text); }
+.verifier-instrument .inspection-family span { color: var(--verifier-text); }
+.verifier-instrument .instrument-idle { color: var(--verifier-muted); }
+
+.artifact-target-anchor.insertion-control {
+  z-index: 3;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  cursor: default;
+}
+.artifact-target-anchor.insertion-control:disabled { opacity: 1; }
+.artifact-target-anchor.insertion-control:not(:disabled) { cursor: pointer; }
+.artifact-target-anchor.insertion-control:focus-visible { outline: 3px solid var(--verifier-accent); outline-offset: 9px; }
+.verifier-instrument .artifact-target-anchor.is-awaiting { outline-color: var(--verifier-accent); }
+.verifier-instrument .artifact-target-anchor.is-armed { background: var(--verifier-glow); }
+.verifier-instrument .insertion-hint { color: var(--verifier-accent); }
+
+.verifier-instrument .instrument-verdict {
+  border-color: var(--verifier-rule);
+  border-left-color: var(--verdict-color);
+  background: var(--verifier-surface);
+  color: var(--verifier-text);
+}
+.verifier-instrument .instrument-verdict span,
+.verifier-instrument .instrument-verdict small,
+.verifier-instrument .verdict-reading { color: var(--verifier-muted); }
+.verifier-instrument .instrument-verdict strong { color: var(--verdict-ink); }
+
+.transversality-reveal {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(180px, .55fr) minmax(260px, 1fr);
+  gap: 7px 28px;
+  padding: 24px clamp(18px, 4vw, 42px);
+  border: 1px solid var(--fx-rule-strong);
+  border-left: 5px solid var(--fx-orchid);
+  background: var(--fx-paper);
+}
+.transversality-reveal p { grid-column: 1; margin: 0; color: var(--fx-orchid); font: 800 .55rem var(--font-geist-mono), monospace; letter-spacing: .12em; }
+.transversality-reveal h3 { grid-column: 1; margin: 0; font-size: 1.45rem; }
+.transversality-reveal > strong { grid-column: 2; grid-row: 1 / 3; align-self: center; font-size: clamp(1rem, 2vw, 1.35rem); line-height: 1.25; }
+.transversality-reveal ul { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 7px; margin: 9px 0 0; padding: 0; list-style: none; }
+.transversality-reveal li { padding: 6px 9px; border: 1px solid var(--fx-rule-strong); color: var(--fx-ink-2); font-size: .65rem; }
+
+@media (max-width: 760px) {
+  .public-causal-layer { right: 8px; left: 8px; justify-content: flex-start; overflow: hidden; }
+  .public-causal-layer li { flex: 1; min-width: 0; padding-inline: 6px; }
+  .public-causal-layer li > span { font-size: .42rem; }
+  .routing-provenance-cue { top: 96px; right: 12px; max-width: 58%; }
+  .network-continuity-beat { top: 8px; }
+  .convergence-shell[data-authority-gate="true"] .authority-workspace {
+    top: 48px;
+    grid-template-columns: 1fr;
+    grid-template-areas: "heading" "values" "actions";
+    width: calc(100% - 24px);
+  }
+  .convergence-shell[data-authority-gate="true"] .reality-canvas { min-height: 430px; }
+  .instrument-heading { align-items: flex-start; }
+    .verifier-identity dl { grid-template-columns: 1fr; }
+  .transversality-reveal { grid-template-columns: 1fr; }
+  .transversality-reveal p,
+  .transversality-reveal h3,
+  .transversality-reveal > strong,
+  .transversality-reveal ul { grid-column: 1; grid-row: auto; }
+}
+
+@media (max-width: 480px) {
+  .convergence-shell { padding-inline: 12px; }
+  .mission-intro h1 { font-size: clamp(2.7rem, 14vw, 4.3rem); }
+  .master-instrument { grid-template-columns: 1fr auto; }
+  .clock-track { grid-column: 1 / -1; }
+  .public-causal-layer { display: grid; grid-template-columns: repeat(2, 1fr); bottom: 6px; }
+  .public-causal-layer li { min-height: 34px; }
+  .public-causal-layer li + li::before { content: none; }
+  .network-continuity-beat { display: grid; grid-template-columns: 1fr; width: calc(100vw - 16px); }
+  .network-continuity-beat > i { display: none; }
+  .network-continuity-beat > div { min-height: 44px; }
+  .verifier-instrument { padding-inline: 10px; }
+  .instrument-heading { right: 10px; left: 10px; }
+  .instrument-heading > div:first-child small { display: none; }
+    .revelation-chamber { height: 302px; }
+  .artifact-target-anchor,
+  .evidence-flower.is-compact { top: 50%; }
+  .inspection-family span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .verdict-checks,
+  .verdict-not-established { grid-template-columns: 1fr; }
+  .authority-workspace .authority-values { grid-template-columns: 1fr; }
+  .authority-workspace .authority-values > div + div { border-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .network-continuity-beat,
+  .network-restored-event,
+  .verifier-instrument,
+  .revealed-structure { animation: none !important; transition: none !important; }
+}
+
+@media (forced-colors: active) {
+  }
+.proof-leaf.is-quarantined > .proof-assurance-marker {
+  position: absolute;
+  right: 13px;
+  z-index: 14;
+  display: block;
+  width: 72px;
+  color: #7d211a;
+  font: 900 .42rem var(--font-geist-mono), monospace;
+  letter-spacing: .04em;
+  line-height: 1;
+  text-align: right;
+}
+.proof-leaf.is-quarantined[data-side="above"] > .proof-assurance-marker { top: -4px; }
+.proof-leaf.is-quarantined[data-side="below"] > .proof-assurance-marker { bottom: -4px; }
+
+.proof-leaf span { display: none; }
+.proof-leaf.is-active span {
+  display: grid;
+  top: auto;
+  bottom: auto;
+  left: 13px;
+  width: 112px;
+}
+.proof-leaf.is-active[data-side="above"] span { top: -8px; }
+.proof-leaf.is-active[data-side="below"] span { bottom: -8px; }
+
+.causal-chain {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+.causal-chain b {
+  color: currentColor;
+  font: 800 .47rem var(--font-geist-mono), monospace;
+  letter-spacing: .08em;
+}
+.causal-chain i { color: var(--fx-ink-2); font-style: normal; }
+
+.revealed-structure::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 27%;
+  width: 48%;
+  border-top: 3px solid var(--fx-orchid);
+}
+.revealed-structure > i {
+  left: var(--reveal-left);
+  width: 76px;
+}
+.revealed-structure > i:nth-child(1) { --reveal-left: 34%; top: calc(50% - 42px); width: 56px; transform: rotate(-54deg); }
+.revealed-structure > i:nth-child(2) { --reveal-left: 43%; top: calc(50% - 28px); width: 64px; transform: rotate(-36deg); }
+.revealed-structure > i:nth-child(3) { --reveal-left: 52%; top: 50%; width: 70px; transform: rotate(28deg); }
+.revealed-structure > i:nth-child(4) { --reveal-left: 60%; top: calc(50% + 18px); width: 62px; transform: rotate(42deg); }
+.revealed-structure > i:nth-child(5) { --reveal-left: 67%; top: calc(50% - 22px); width: 58px; transform: rotate(-38deg); }
+
+.instrument-verdict.verdict-indeterminate {
+  --verdict-color: var(--fx-indeterminate);
+  --verdict-ink: var(--verifier-indeterminate-ink, var(--fx-indeterminate));
+}
+.instrument-verdict.verdict-indeterminate strong { color: var(--verdict-ink); }
+.instrument-verdict small { line-height: 1.45; letter-spacing: .04em; }
+
+@media (max-width: 760px) {
+  .convergence-shell.is-running .timeline-band { min-height: 0; }
+  .convergence-shell.is-running .reality-canvas { min-height: 230px; }
+  .convergence-shell.is-running .proof-tree-canvas { min-height: 260px; }
+
+}
+
+/* ==========================================================================
+   D-006A — visual causality repair.
+   One coordinate space, one emitter per receipt, one readable tree.
+   ========================================================================== */
+
+.event-ribbon {
+  height: var(--stage-ribbon-h);
+  overflow-x: auto;
+}
+
+/* --- the shared receipt layer -------------------------------------------
+   Inset by the label column so a percentage here means the same thing it
+   means inside either canvas. The browser resolves the offset per breakpoint,
+   so no JavaScript constant is calibrated to a single viewport width. */
+.receipt-layer {
+  position: absolute;
+  z-index: 34;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: var(--stage-label-w);
+  pointer-events: none;
+  --reality-top: var(--stage-label-row-h);
+  --proof-top: calc(
+    var(--stage-label-row-h) * 2 + var(--stage-reality-h) + var(--stage-ribbon-h) + 1px
+  );
+}
+
+.receipt-layer .travelling-receipt {
+  left: calc(var(--src-x) * 1% + (var(--dst-x) - var(--src-x)) * var(--t) * 1%);
+  top: calc(
+    (var(--reality-top) + var(--src-y) * var(--stage-reality-h) / 100)
+    + (
+      (var(--proof-top) + var(--dst-y) * var(--stage-proof-h) / 100)
+      - (var(--reality-top) + var(--src-y) * var(--stage-reality-h) / 100)
+    ) * var(--t)
+  );
+  opacity: 1;
+}
+
+.receipt-layer .travelling-receipt > span { display: grid; }
+
+.receipt-source {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 50%;
+  width: max-content;
+  max-width: 132px;
+  padding: 2px 6px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: var(--fx-paper);
+  color: currentColor;
+  font: 800 .42rem var(--font-geist-mono), monospace;
+  font-style: normal;
+  letter-spacing: .05em;
+  opacity: 0;
+  transform: translateX(-50%);
+}
+
+.travelling-receipt.is-leaving .receipt-source { opacity: 1; }
+
+/* --- actors visibly emit ------------------------------------------------- */
+.actor-emission,
+.smart-light.is-emitting::before,
+.city-infrastructure.is-emitting::before,
+.garage-object.is-emitting::before,
+.base-object.is-emitting::before,
+.authority-actor.is-emitting::before,
+.bank-actor.is-emitting::before,
+.routing-provider-actor.is-emitting::before,
+.network-sentinel-actor.is-emitting::before,
+.exact-producer-actor.is-emitting::before,
+.passenger-actor.is-emitting::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  width: 74px;
+  height: 74px;
+  border: 2px solid var(--fx-ultramarine);
+  border-radius: 50%;
+  opacity: .55;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* --- vehicle: never reverses, always faces its direction of travel ------- */
+.autonomous-taxi {
+  transform:
+    translateX(-50%)
+    translateY(var(--taxi-lane, 0px))
+    scaleX(var(--taxi-facing, 1))
+    rotate(var(--taxi-pitch, 0deg));
+}
+
+.autonomous-taxi[data-motion="EMERGENCY_BRAKING"],
+.autonomous-taxi[data-motion="BRAKING_FOR_SIGNAL"] {
+  filter: drop-shadow(-9px 0 0 rgba(255, 122, 69, .22));
+}
+
+.autonomous-taxi[data-motion="REROUTING"],
+.autonomous-taxi[data-motion="RESTARTING_AFTER_REROUTE"],
+.autonomous-taxi[data-motion="MERGING"] {
+  filter: drop-shadow(0 6px 0 rgba(64, 87, 255, .16));
+}
+
+.autonomous-taxi[data-facing="left"] span { transform: scaleX(-1); }
+
+/* --- the city infrastructure acts before it emits ------------------------ */
+.infra-beam {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(270deg, var(--fx-orchid), transparent);
+  opacity: 0;
+}
+
+.city-infrastructure[data-infra-step="scanning"] .infra-beam { width: 300px; opacity: .9; }
+.city-infrastructure[data-infra-step="deciding"] .infra-beam { width: 120px; opacity: .5; }
+.city-infrastructure[data-infra-step="publishing"] .infra-beam { width: 210px; opacity: 1; }
+
+.city-infrastructure[data-infra-step="deciding"] i {
+  box-shadow: 0 0 0 6px rgba(166, 108, 255, .22);
+}
+
+.city-infrastructure[data-infra-step="publishing"] i {
+  box-shadow: 0 0 0 6px rgba(47, 157, 104, .26);
+}
+
+.city-infrastructure[data-infra-step="scanning"],
+.city-infrastructure[data-infra-step="deciding"],
+.city-infrastructure[data-infra-step="publishing"] { opacity: 1; }
+
+/* --- service actors are visible receipt origins, not off-screen abstractions --- */
+.authority-actor,
+.routing-provider-actor,
+.network-sentinel-actor,
+.exact-producer-actor {
+  position: absolute;
+  z-index: 5;
+  left: var(--prop-x);
+  bottom: var(--prop-bottom);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 9px;
+  border: 1px solid var(--fx-ultramarine);
+  border-radius: 8px;
+  background: var(--fx-paper);
+  color: var(--fx-ultramarine);
+  transform: translateX(-50%);
+}
+
+.authority-actor i,
+.routing-provider-actor i,
+.network-sentinel-actor i,
+.exact-producer-actor i {
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+}
+
+/* D-006G: the account-holding bank. Its own prop, its own hue — the locked
+   palette's system-exchange cyan — so a viewer can see that the payment
+   leaves the fleet's authority and enters a different institution. */
+.bank-actor {
+  position: absolute;
+  z-index: 5;
+  left: var(--prop-x);
+  bottom: var(--prop-bottom);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 9px;
+  border: 1px solid var(--fx-cyan);
+  border-radius: 8px;
+  background: var(--fx-paper);
+  color: #00707f;
+  transform: translateX(-50%);
+}
+
+.bank-actor i {
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+.authority-actor span,
+.routing-provider-actor span,
+.network-sentinel-actor span,
+.exact-producer-actor span {
+  font: 800 .46rem var(--font-geist-mono), monospace;
+  letter-spacing: .07em;
+  line-height: 1.15;
+}
+
+.routing-provider-actor { color: var(--fx-orchid); border-color: currentColor; }
+.network-sentinel-actor { color: #00707f; border-color: currentColor; }
+.exact-producer-actor {
+  color: var(--fx-ultramarine);
+  border-color: currentColor;
+  max-width: 150px;
+  white-space: normal;
+}
+
+/* --- proof tree: labels persist for the featured spine ------------------- */
+.proof-leaf[data-featured="true"] span {
+  display: grid;
+  left: 13px;
+  width: 104px;
+  opacity: calc(var(--terminal-progress) * .92);
+  font-size: .5rem;
+}
+
+/* `top: auto` is load-bearing. The base `.proof-leaf span` rule sets
+   `top: 16px`, so setting only `bottom` here left every below-spine caption
+   anchored 16px under the spine — measured: eleven featured captions, six of
+   them stacked on the identical row at y=181 while their leaves sat at 165,
+   182, 217, 234, 251 and 303. The captions were not tracking their leaves at
+   all, which is why separating the leaves vertically appeared to change
+   nothing. `.is-active` already resets both sides; this rule did not. */
+.proof-leaf[data-featured="true"][data-side="above"] span { top: -6px; bottom: auto; }
+.proof-leaf[data-featured="true"][data-side="below"] span { top: auto; bottom: -6px; }
+.proof-leaf[data-featured="true"] span b { display: block; color: currentColor; }
+
+/* --- denied approval explains itself ------------------------------------ */
+.authority-denied {
+  position: absolute;
+  z-index: 30;
+  top: 18px;
+  left: 50%;
+  display: grid;
+  gap: 7px;
+  justify-items: start;
+  padding: 14px 16px;
+  border: 2px solid var(--fx-tangerine);
+  border-radius: 10px;
+  background: var(--fx-paper);
+  transform: translateX(-50%);
+}
+
+.authority-denied span {
+  color: var(--fx-tangerine);
+  font: 800 .52rem var(--font-geist-mono), monospace;
+  letter-spacing: .1em;
+}
+
+.authority-denied strong { font-size: .88rem; }
+.authority-denied small { color: var(--fx-ink-2); font-size: .62rem; }
+
+.authority-denied button {
+  padding: 7px 13px;
+  border: 1px solid var(--fx-ink);
+  border-radius: 999px;
+  background: var(--fx-ink);
+  color: var(--fx-paper);
+  font: 700 .58rem var(--font-geist-mono), monospace;
+}
+
+/* --- the verdict reads as a reading, not an alarm ------------------------ */
+.instrument-verdict.verdict-indeterminate { border-left-color: var(--verdict-color); }
+.instrument-verdict.verdict-indeterminate strong { color: var(--verdict-ink); }
+
+.verdict-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px 12px;
+  margin: 9px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.verdict-checks li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--fx-valid);
+  font: 700 .48rem var(--font-geist-mono), monospace;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.verdict-checks li i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fx-valid);
+}
+
+.verifier-instrument .verdict-checks li { color: var(--verifier-valid-ink); }
+.verifier-instrument .verdict-checks li i { background: var(--verifier-valid-ink); }
+
+/*
+ * The counterpart to .verdict-checks: what the verification did NOT
+ * establish. Deliberately the same shape and weight as the checks list, in
+ * the pending/indeterminate colour rather than a warning red — this is not a
+ * failure, it is a boundary. Reading only the green list is how an integrity
+ * result gets mistaken for an authenticity result.
+ */
+.verdict-not-established {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px 12px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.verdict-not-established li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--fx-glacier);
+  font: 700 .48rem var(--font-geist-mono), monospace;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.verdict-not-established li i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--fx-glacier);
+}
+
+.verifier-instrument .verdict-not-established li { color: var(--verifier-indeterminate-ink); }
+.verifier-instrument .verdict-not-established li i { border-color: var(--verifier-indeterminate-ink); }
+
+/* P2R-2: names the operation that actually took place when no base comparison
+   was possible, in place of ticks that would assert one. */
+.reconciliation-scope {
+  display: block;
+  margin: 6px 0 0;
+  color: var(--fx-glacier);
+  font: 700 .46rem var(--font-geist-mono), monospace;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.verdict-reading {
+  margin: 9px 0 0;
+  color: #d8d5d0;
+  font-size: .58rem;
+  line-height: 1.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .actor-emission,
+  .smart-light.is-emitting::before,
+  .city-infrastructure.is-emitting::before,
+  .garage-object.is-emitting::before,
+  .base-object.is-emitting::before,
+  .authority-actor.is-emitting::before,
+  .bank-actor.is-emitting::before,
+  .exact-producer-actor.is-emitting::before,
+  .passenger-actor.is-emitting::before { animation: none; opacity: .4; }}
+
+/* The ribbon gained featured events and wrapped to a clipped second row. */
+.event-ribbon {
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(118px, 1fr);
+}
+
+/* --- states the D-006A contract test found unstyled ---------------------- */
+
+/* The two chamber rings rendered identically, so the chamber read as one flat
+   circle rather than an instrument the bud descends into. */
+.chamber-ring.ring-one {
+  inset: 12%;
+  opacity: .5;
+}
+
+.chamber-ring.ring-two {
+  inset: 26%;
+  opacity: .28;
+  border-style: dashed;
+}
+
+.verifier-instrument.is-revealing .chamber-ring.ring-one { opacity: .9; }
+.verifier-instrument.is-revealing .chamber-ring.ring-two { opacity: .6; }
+
+/* Arrival of the bud in the chamber had no visual state at all. */
+.verifier-instrument.has-bud {
+  border-color: var(--fx-orchid);
+  box-shadow: inset 0 0 0 1px rgba(166, 108, 255, .3);
+}
+
+.verifier-instrument.has-bud .revelation-chamber {
+  background: radial-gradient(circle at 50% 42%, rgba(166, 108, 255, .16), transparent 62%);
+}
+
+/* ==========================================================================
+   D-006B-1 — participatory verification.
+   The viewer holds a role, makes a decision that counts, and hands the proof
+   over themselves. Nothing here changes geometry, timing or evidence logic.
+   ========================================================================== */
+
+/* --- P2 · the viewer's role replaces the spoiler countdown --------------- */
+.role-cue {
+  display: grid;
+  gap: 3px;
+  padding: 9px 15px;
+  border-left: 1px solid var(--fx-rule);
+}
+
+.role-cue span {
+  color: var(--fx-ink-2);
+  font: 700 .5rem var(--font-geist-mono), monospace;
+  letter-spacing: .12em;
+}
+
+.role-cue strong {
+  color: var(--fx-ultramarine);
+  font-size: .82rem;
+  letter-spacing: -.01em;
+}
+
+/* --- P3 · the authority moment owns the screen -------------------------- */
+.convergence-shell[data-authority-gate="true"] .reality-canvas > *:not(.human-decision-instrument),
+.convergence-shell[data-authority-gate="true"] .proof-timeline,
+.convergence-shell[data-authority-gate="true"] .event-ribbon {
+  opacity: .18;
+  filter: saturate(.25);
+}
+
+.convergence-shell[data-authority-gate="true"] .master-instrument {
+  box-shadow: inset 0 0 0 2px var(--fx-pending-authority);
+}
+
+.convergence-shell[data-authority-gate="true"] .human-decision-instrument {
+  z-index: 40;
+  top: 50%;
+  left: 50%;
+  min-width: 430px;
+  padding: 22px 26px;
+  border: 2px solid var(--fx-pending-authority);
+  border-radius: 12px;
+  box-shadow: 0 26px 60px rgba(23, 24, 28, .22);
+  transform: translate(-50%, -50%);
+}
+
+.convergence-shell[data-authority-gate="true"] .human-decision-instrument > span {
+  color: var(--fx-pending-authority-ink);
+}
+
+.convergence-shell[data-authority-gate="true"] .human-decision-instrument > strong {
+  font-size: 1.22rem;
+  line-height: 1.15;
+}
+
+.human-decision-instrument > p {
+  margin: 0;
+  color: var(--fx-ink-2);
+  font-size: .66rem;
+}
+
+/* --- P4 · the Evidence Flower: a radial mechanism, not a plant ----------- */
+.evidence-flower {
+  position: relative;
+  width: 190px;
+  height: 190px;
+  opacity: calc(.25 + var(--flower-maturity) * .75);
+}
+
+.flower-ring {
+  position: absolute;
+  inset: 0;
+  border: 1px dashed var(--fx-rule-strong);
+  border-radius: 50%;
+  opacity: .5;
+}
+
+.flower-segment {
+  position: absolute;
+  inset: 0;
+  transform: rotate(calc(var(--segment-index) * 60deg));
+}
+
+.flower-segment > i {
+  position: absolute;
+  inset: 0;
+  background: var(--family-color, var(--fx-ultramarine));
+  clip-path: polygon(50% 50%, 51% 1%, 74% 7%, 91% 24%);
+  transform: scale(var(--segment-fill));
+  transform-origin: 50% 50%;
+}
+
+.flower-segment > em {
+  position: absolute;
+  top: 6%;
+  left: 62%;
+  display: none;
+  color: var(--family-color, var(--fx-ultramarine));
+  font: 800 .42rem var(--font-geist-mono), monospace;
+  font-style: normal;
+  letter-spacing: .08em;
+  transform: rotate(calc(var(--segment-index) * -60deg));
+}
+
+.family-mission > i, .family-mission > em { --family-color: var(--fx-ultramarine); }
+.family-vehicle > i, .family-vehicle > em { --family-color: var(--fx-glacier); }
+.family-infrastructure > i, .family-infrastructure > em { --family-color: var(--fx-orchid); }
+.family-service > i, .family-service > em { --family-color: var(--fx-solar); }
+.family-human > i, .family-human > em { --family-color: var(--fx-tangerine); }
+.family-financial > i, .family-financial > em { --family-color: var(--fx-magenta); }
+
+.flower-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 66px;
+  height: 66px;
+  place-content: center;
+  justify-items: center;
+  border: 2px solid var(--fx-ink);
+  border-radius: 50%;
+  background: var(--fx-paper);
+  opacity: calc(.35 + var(--flower-maturity) * .65);
+  transform: translate(-50%, -50%);
+}
+
+.flower-core span { color: var(--fx-ink-2); font: .4rem var(--font-geist-mono), monospace; letter-spacing: .1em; }
+.flower-core strong { font-size: .5rem; letter-spacing: .04em; }
+
+.evidence-flower.is-complete .flower-core {
+  border-color: var(--fx-ultramarine);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--fx-ultramarine) 22%, transparent);
+}
+
+.evidence-flower.is-attached::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 92%;
+  width: 42px;
+  border-top: 2px solid var(--fx-orchid);
+}
+
+.artifact-source-anchor {
+  position: absolute;
+  z-index: 8;
+  top: 50%;
+  right: 4px;
+  width: 128px;
+  height: 128px;
+  transform: translateY(-50%);
+}
+
+.artifact-target-anchor {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  width: 208px;
+  height: 208px;
+  transform: translate(-50%, -50%);
+}
+
+.artifact-transfer-object[data-transfer-stage="SOURCE"] .flower-core { width: 46px; height: 46px; }
+.artifact-transfer-object[data-transfer-stage="SOURCE"] .flower-core span { display: none; }
+
+.evidence-flower.is-compact {
+  position: absolute;
+  z-index: 5;
+  top: 46%;
+  left: 50%;
+  width: 208px;
+  height: 208px;
+  transform: translate(-50%, -50%);
+}
+
+.evidence-flower.is-open .flower-segment > em { display: block; }
+.evidence-flower.is-open .flower-segment > i { clip-path: polygon(50% 50%, 51% 4%, 72% 10%, 87% 26%); }
+
+/* --- P5 · one deliberate transfer --------------------------------------- */
+.artifact-transfer-layer {
+  position: absolute;
+  z-index: 60;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.artifact-transfer-object {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--artifact-w);
+  height: var(--artifact-h);
+  transform: translate(var(--artifact-x), var(--artifact-y));
+}
+
+.artifact-transfer-object.is-unmeasured { opacity: 0; }
+
+.artifact-transfer-object .artifact-transit-label {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  padding: 5px 8px;
+  border: 1px solid var(--fx-ultramarine);
+  border-radius: 999px;
+  background: var(--fx-paper);
+  color: var(--fx-ultramarine);
+  font: 800 .46rem var(--font-geist-mono, ui-monospace), monospace;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.artifact-transfer-object > .evidence-flower,
+.artifact-transfer-object > .evidence-flower.is-compact {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 100%;
+  height: 100%;
+  transform: none;
+}
+
+.handover-control {
+  position: absolute;
+  z-index: 14;
+  right: 18px;
+  bottom: 14px;
+  display: grid;
+  gap: 2px;
+  justify-items: end;
+  padding: 11px 17px;
+  border: 2px solid var(--fx-ultramarine);
+  border-radius: 10px;
+  background: var(--fx-paper);
+  cursor: pointer;
+  text-align: right;
+}
+
+.handover-control > span {
+  color: var(--fx-ink-2);
+  font: 700 .46rem var(--font-geist-mono), monospace;
+  letter-spacing: .1em;
+}
+
+.handover-control > strong { color: var(--fx-ultramarine); font-size: .86rem; }
+.handover-control:hover, .handover-control:focus-visible { background: var(--fx-ultramarine); }
+.handover-control:hover > strong, .handover-control:focus-visible > strong,
+.handover-control:hover > span, .handover-control:focus-visible > span { color: var(--fx-paper); }
+
+.handover-done {
+  position: absolute;
+  z-index: 12;
+  right: 18px;
+  bottom: 16px;
+  margin: 0;
+  color: var(--fx-ultramarine);
+  font: 700 .58rem var(--font-geist-mono), monospace;
+}
+
+/* --- P7 · the result, then the record ----------------------------------- */
+.instrument-verdict > strong { font-size: 1.6rem; letter-spacing: -.02em; }
+
+.verdict-token {
+  display: block;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--verifier-rule, #7b7f88);
+  color: var(--verifier-muted, #5d626d);
+  font: .46rem var(--font-geist-mono), monospace;
+  letter-spacing: .08em;
+}
+
+@media (max-width: 1050px) {
+  .role-cue { display: none; }
+  .convergence-shell[data-authority-gate="true"] .human-decision-instrument { min-width: 0; width: calc(100% - 36px); }}
+/* The flower's mechanism reads as open the moment the first family is fed. */
+.evidence-flower.is-open-mechanism .flower-ring { opacity: .8; }
+.evidence-flower.is-open-mechanism .flower-core { border-color: var(--fx-ultramarine); }
+
+/* --- D-006B-1 · the verification act is now a single instrument ---------- */
+
+/* The formation station is gone, so the workbench must stop reserving a
+   second column and stop stretching the verifier into an empty box. */
+.evidence-handoff > header { grid-template-columns: 1fr; }
+
+.handoff-workbench {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 660px;
+}
+
+/* The rings are positioned by inset, so the base rule's fixed size and its
+   centring transform must both stand down — without this they render off-axis
+   as a lopsided blob. top/left must NOT be reset: inset supplies them. */
+.chamber-ring.ring-one,
+.chamber-ring.ring-two {
+  width: auto;
+  height: auto;
+  transform: none;
+}
+
+/* ==== D-006C · inspectable proof spine ================================== */
+
+/* Normal playback stays calm; this whole layer exists only while the viewer
+   is inspecting a nano-receipt, via hover, tap or keyboard focus. */
+
+/* Anchored opposite the branch under inspection, so the panel never covers
+   the evidence it is describing. */
+.receipt-inspection {
+  position: absolute;
+  z-index: 16;
+  top: 12px;
+  left: 18px;
+  display: grid;
+  gap: 5px;
+  width: min(236px, calc(100% - 28px));
+  padding: 9px 12px 10px;
+  border: 1px solid var(--fx-ink);
+  border-radius: 10px;
+  background: var(--fx-paper);
+  box-shadow: 5px 5px 0 rgba(23,24,28,.1);
+}
+
+/* The mono stack is written out rather than folded into the `font` shorthand.
+   `--font-geist-mono` resolves to nothing in this environment, and a `font`
+   shorthand whose family segment comes from an unset custom property is
+   invalid as a whole, so the browser drops the entire declaration — size,
+   weight and all — and the panel silently rendered at 16px sans. Explicit
+   properties with a real fallback stack cannot fail that way. */
+.receipt-inspection-kind {
+  color: var(--fx-ultramarine);
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .56rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.receipt-inspection.is-right {
+  /* Clear of the Evidence Flower, which owns the rightmost 132px — but the
+     canvas is only ~338px at a 360px viewport, where a fixed 150px inset
+     pushed the panel off the left edge into `overflow: hidden`.
+     12% rather than 4%: min() takes the smaller operand, so a small
+     percentage wins at every realistic width and would have pulled the panel
+     back over the flower on desktop. At 12% the pixel value governs until the
+     canvas drops below ~1250px, which is the intent. */
+  right: min(150px, 12%);
+  left: auto;
+}
+
+.receipt-inspection > strong {
+  font-size: .92rem;
+  line-height: 1.25;
+}
+
+.receipt-inspection dl {
+  display: grid;
+  gap: 6px;
+  margin: 3px 0 0;
+}
+
+/* Label above value: the reading stays intact at any font size, which the
+   two-column form did not. */
+.receipt-inspection dl > div {
+  display: grid;
+  gap: 1px;
+}
+
+.receipt-inspection dt {
+  color: #6f6b66;
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .56rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.receipt-inspection dd {
+  margin: 0;
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .74rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* --- the chip under inspection --- */
+.event-ribbon button.is-inspected {
+  border-color: var(--fx-ultramarine);
+  box-shadow: inset 0 0 0 1px var(--fx-ultramarine);
+}
+
+/* --- its branch in the tree ---
+   Raised above the Evidence Flower (z-index 8) so the label being explained
+   is never read through the flower's wedges. */
+.proof-leaf.is-linked {
+  z-index: 12;
+}
+
+.proof-leaf.is-linked > i {
+  box-shadow: 0 0 0 4px rgba(64,87,255,.22);
+}
+
+.proof-leaf.is-linked > span {
+  opacity: 1;
+  border-radius: 5px;
+  background: var(--fx-paper);
+  box-shadow: 0 0 0 1px var(--fx-ultramarine);
+}
+
+/* --- its segment in the flower --- */
+.convergence-shell[data-linked-family="mission"] .flower-segment.family-mission > i,
+.convergence-shell[data-linked-family="vehicle"] .flower-segment.family-vehicle > i,
+.convergence-shell[data-linked-family="infrastructure"] .flower-segment.family-infrastructure > i,
+.convergence-shell[data-linked-family="service"] .flower-segment.family-service > i,
+.convergence-shell[data-linked-family="human"] .flower-segment.family-human > i,
+.convergence-shell[data-linked-family="financial"] .flower-segment.family-financial > i {
+  filter: brightness(1.06);
+  outline: 1px solid var(--fx-ultramarine);
+  outline-offset: -1px;
+}
+
+/* An actor summoned purely so the cross-highlight has something to point at
+   reads as a ghost of itself: present enough to answer the question, quiet
+   enough not to rewrite the scene. */
+.passenger-actor.is-summoned,
+.bank-actor.is-summoned,
+.authority-actor.is-summoned,
+.routing-provider-actor.is-summoned,
+.network-sentinel-actor.is-summoned,
+.exact-producer-actor.is-summoned {
+  opacity: .32;
+}
+
+.exact-producer-actor.is-summoned {
+  opacity: 1;
+  outline: 2px solid var(--fx-ultramarine);
+  outline-offset: 4px;
+}
+
+.exact-producer-actor.is-linked {
+  opacity: 1;
+  outline: 2px solid var(--fx-ultramarine);
+  outline-offset: 4px;
+}
+
+/* --- and the actor that emitted it, back in Mission Reality ---
+   An investigation aid: a quiet ring, immediate, no pulse. */
+.convergence-shell[data-linked-actor="Passenger service"] .passenger-actor,
+.convergence-shell[data-linked-actor="SMART_CITY_INFRASTRUCTURE"] .city-infrastructure,
+.convergence-shell[data-linked-actor="Garage"] .garage-object,
+.convergence-shell[data-linked-actor="FINANCIAL_INSTITUTION"] .bank-actor,
+.convergence-shell[data-linked-actor="Navigation Provider A"] .routing-provider-actor,
+.convergence-shell[data-linked-actor="Navigation Provider B"] .routing-provider-actor,
+.convergence-shell[data-linked-actor="ROUTING_ORCHESTRATOR"] .routing-provider-actor,
+.convergence-shell[data-linked-actor="NETWORK"] .network-sentinel-actor {
+  opacity: 1;
+  outline: 2px solid var(--fx-ultramarine);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* D-006G: the taxi's perception and its autonomy are its own faculties, so
+   inspecting either lights the vehicle itself — not the traffic signal it
+   happened to be looking at. Pointing these at the light would restate, in
+   the highlight layer, the coupling the causal model just removed. */
+.convergence-shell[data-linked-actor="Taxi autonomy"] .autonomous-taxi,
+.convergence-shell[data-linked-actor="AUTONOMOUS_VEHICLE"] .autonomous-taxi {
+  outline: 2px solid var(--fx-ultramarine);
+  outline-offset: 5px;
+  border-radius: 14px;
+}
+
+/* Braking is a claim about the lights specifically, so name them. */
+.convergence-shell[data-linked-actor="Taxi autonomy"] .autonomous-taxi .brake-light {
+  box-shadow: -15px 0 24px rgba(255,122,69,.92);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .receipt-inspection { box-shadow: none; }
+}
+
+/* ==== D-006C · Proof Tree label legibility ============================== */
+
+/* The nine persistent featured labels had no z-index and no background, so
+   they painted underneath the Evidence Flower (z-index 8) and read as text
+   smeared across its wedges. They are the tree's only permanent captions —
+   they have to survive. */
+.proof-leaf[data-featured="true"] {
+  z-index: 9;
+}
+
+.proof-leaf[data-featured="true"] span {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(255,253,248,.9);
+}
+
+/* Side selection comes from measured anchor, label, flower, canvas and peer
+   geometry. No timeline percentage or breakpoint decides correctness. */
+.proof-leaf[data-label-side="left"] > span {
+  right: 13px;
+  left: auto;
+  text-align: right;
+}
+
+/* ==== D-006C · the artifact is handed over, not copied ================== */
+
+/* One flower node is hoisted above both clipping sections and moves between
+   measured source and verifier anchors. Identity survives source, travel and
+   receipt; verification starts only after the travel transition completes. */
+@media (prefers-reduced-motion: reduce) {
+  .artifact-transfer-object[data-transfer-stage="FORMED"] { transition-duration: 1ms; }
+}
+
+/* Below the design width the nine featured captions no longer fit as two
+   lines: the canvas shrinks but the Evidence Flower stays 132px, so labels
+   that clear it at 1600px sit under it at 900px. Collapsing the kind prefix
+   inline halves each caption's height and narrows it, which is what the
+   crowding is actually made of. This compact form is presentation only; the
+   measured optimizer above supplies correctness. */
+@media (max-width: 1400px) {
+  .proof-leaf[data-featured="true"] span {
+    width: 84px;
+  }
+
+  .proof-leaf[data-featured="true"] span b {
+    display: inline;
+    margin-right: 3px;
+  }
+}
+
+/* ==== D-006C corrective pass · F5 — verification is a second act ========= */
+
+/* The verifier acknowledges the artifact and then waits. Nothing here starts
+   on a timer: the chain is gated on the viewer activating ANALYZE. */
+.instrument-ready {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  padding: 12px 14px 14px;
+}
+
+.instrument-received {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+}
+
+.instrument-received > span {
+  color: var(--fx-ultramarine);
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .52rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.instrument-received > strong {
+  font-size: .92rem;
+}
+
+.analyze-control {
+  padding: 9px 20px;
+  border: 2px solid var(--fx-ink);
+  border-radius: 999px;
+  background: var(--fx-ink);
+  color: var(--fx-paper);
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  cursor: pointer;
+}
+
+.analyze-control:hover,
+.analyze-control:focus-visible {
+  background: var(--fx-ultramarine);
+  border-color: var(--fx-ultramarine);
+}
+
+/* The Final Receipt exists offline and says so, without implying that
+   reconnection produced it. */
+.handover-local {
+  position: absolute;
+  right: 18px;
+  bottom: 74px;
+  z-index: 14;
+  margin: 0;
+  max-width: 260px;
+  color: var(--fx-ink);
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .56rem;
+  line-height: 1.5;
+  text-align: right;
+}
+
+/* ==== D-006C corrective pass · F3 — the evidence is carried, not sent ==== */
+
+/* One element throughout: the same node is lifted, carried and inserted, so
+   the artifact never disappears and is never replaced by a copy. */
+/* The base rule sets `pointer-events: none`, which was correct while the
+   artifact travelled by itself: it was scenery. Now the viewer has to be able
+   to grab it, so it becomes a real target the moment it is takeable, and stays
+   one while carried. */
+.artifact-transfer-object.is-takeable,
+.artifact-transfer-object.is-carried {
+  pointer-events: auto;
+}
+
+.artifact-transfer-object.is-takeable {
+  cursor: grab;
+  touch-action: none;
+}
+
+.artifact-transfer-object.is-carried {
+  cursor: grabbing;
+  touch-action: none;
+  /* Carried objects follow the pointer, so no easing here or the artifact
+     would lag behind the hand holding it. */
+  transition: none;
+  filter: drop-shadow(0 10px 18px rgba(23, 24, 28, .22));
+}
+
+.artifact-transfer-object.is-over-target {
+  filter: drop-shadow(0 0 0 rgba(64, 87, 255, .0)) drop-shadow(0 6px 22px rgba(64, 87, 255, .45));
+}
+
+/* The verifier shows where the evidence goes, but only while something is
+   actually being carried. */
+.artifact-target-anchor.is-awaiting {
+  outline: 2px dashed var(--fx-ultramarine);
+  outline-offset: 10px;
+  border-radius: 12px;
+}
+
+.artifact-target-anchor.is-armed {
+  outline-style: solid;
+  background: rgba(64, 87, 255, .1);
+}
+
+.insertion-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+  color: var(--fx-ultramarine);
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .54rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  white-space: nowrap;
+}
+
+.handover-control.is-carrying {
+  border-color: var(--fx-ultramarine);
+}
+
+/* ==== D-006C final convergence · physical truth in system chrome ========= */
+
+.system-network-status {
+  --system-link-color: var(--fx-cyan);
+  position: fixed;
+  z-index: 100;
+  top: 14px;
+  right: max(clamp(18px, 3vw, 46px), calc((100vw - 1520px) / 2 + 46px));
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  width: 204px;
+  min-height: 46px;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: var(--fx-paper);
+  color: var(--fx-ink);
+  pointer-events: none;
+}
+
+/* D-006E: the link rule. CONNECTED, LOST and RESTORED previously differed
+   only by a colour swap on this 2px edge and by the word in <strong>, so in
+   greyscale with the text blurred all three were identical. The rule now
+   carries the state as FORM:
+     CONNECTED - one continuous bar, unbroken end to end;
+     LOST      - the bar is severed, with a real gap you can see without
+                 reading anything, and the card silhouette is notched;
+     RESTORED  - the bar is whole again but still shows the seam where it
+                 was rejoined, so it does not read as settled CONNECTED.
+   Form is the carrier, not motion, so this survives the global
+   reduced-motion clamp. */
+.system-network-status::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--system-link-color);
+}
+
+/* Severed, with the gap off-centre so it cannot read as a design flourish. */
+.system-network-status[data-link-phase="LOST"]::after {
+  background: linear-gradient(
+    90deg,
+    var(--system-link-color) 0 38%,
+    transparent 38% 62%,
+    var(--system-link-color) 62% 100%
+  );
+}
+
+/* The torn corner: the silhouette itself changes, which is what peripheral
+   vision actually catches. */
+.system-network-status[data-link-phase="LOST"] {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 62% 100%, 58% calc(100% - 7px), 38% calc(100% - 7px), 34% 100%, 0 100%);
+}
+
+/* Rejoined, seam still visible: whole, but not yet settled. */
+.system-network-status[data-link-phase="RESTORED"]::after {
+  background: linear-gradient(
+    90deg,
+    var(--system-link-color) 0 49.2%,
+    var(--fx-paper) 49.2% 50.8%,
+    var(--system-link-color) 50.8% 100%
+  );
+}
+
+/* Not observed at all: a hairline, deliberately weaker than any real state. */
+.system-network-status[data-link-phase="UNKNOWN"]::after {
+  height: 1px;
+}
+
+.system-network-status[data-link-phase="LOST"] { --system-link-color: var(--fx-ink); }
+.system-network-status[data-link-phase="RESTORED"] { --system-link-color: var(--fx-cyan); }
+.system-network-status[data-link-phase="UNKNOWN"] { --system-link-color: var(--fx-ink-2); }
+
+.network-link-glyph {
+  position: relative;
+  display: block;
+  width: 28px;
+  height: 18px;
+}
+
+.network-link-glyph span {
+  position: absolute;
+  top: 4px;
+  width: 8px;
+  height: 10px;
+  border: 2px solid var(--system-link-color);
+  background: var(--fx-paper);
+}
+
+.network-link-glyph span:first-child { left: 0; }
+.network-link-glyph span:last-child { right: 0; }
+
+.network-link-glyph::after {
+  position: absolute;
+  top: 8px;
+  left: 9px;
+  width: 10px;
+  height: 2px;
+  background: var(--system-link-color);
+  content: "";
+}
+
+.network-link-glyph::before {
+  position: absolute;
+  z-index: 2;
+  top: 1px;
+  left: 12px;
+  width: 2px;
+  height: 16px;
+  background: transparent;
+  content: "";
+  transform: rotate(38deg);
+}
+
+.system-network-status[data-link-phase="LOST"] .network-link-glyph span:first-child { transform: translateX(-5px); }
+.system-network-status[data-link-phase="LOST"] .network-link-glyph span:last-child { transform: translateX(5px); }
+.system-network-status[data-link-phase="LOST"] .network-link-glyph::after { display: none; }
+.system-network-status[data-link-phase="LOST"] .network-link-glyph::before { background: var(--fx-orange); }
+
+/* Rejoined: the connector is present but drawn short of both boxes, so the
+   join is legible after the one-shot pulse has finished. */
+.system-network-status[data-link-phase="RESTORED"] .network-link-glyph::after {
+  left: 10px;
+  width: 6px;
+}
+
+.system-network-status[data-transition-flash="LOST"] { animation: network-loss-flash 700ms ease-out 1; }
+.system-network-status[data-transition-flash="RESTORED"] .network-link-glyph { animation: network-restored-pulse 700ms ease-out 1; }
+
+@keyframes network-loss-flash {
+  0%, 35% { box-shadow: inset 0 0 0 3px var(--fx-orange); }
+  100% { box-shadow: inset 0 0 0 0 transparent; }
+}
+
+@keyframes network-restored-pulse {
+  0% { transform: scale(.84); }
+  55% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.system-network-status > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.system-network-status strong {
+  color: var(--system-link-color);
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .56rem;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
+.system-network-status small {
+  overflow: hidden;
+  color: var(--fx-ink-2);
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .46rem;
+  letter-spacing: .04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.convergence-header { padding-right: 222px; }
+.master-instrument { padding-right: 226px; }
+
+/* The FortiX consequence is in the mission plane, separate from the cable. */
+.local-evidence-continuity {
+  position: absolute;
+  z-index: 20;
+  top: 18px;
+  right: 18px;
+  display: grid;
+  gap: 2px;
+  width: 230px;
+  padding: 7px 10px;
+  border-left: 3px solid var(--fx-teal);
+  background: rgba(255, 253, 248, .94);
+}
+
+.local-evidence-continuity span,
+.local-evidence-continuity small {
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  letter-spacing: .08em;
+}
+
+.local-evidence-continuity span { color: var(--fx-teal); font-size: .55rem; font-weight: 800; }.offline-analysis-required {
+  color: var(--fx-orange);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .5rem;
+  letter-spacing: .08em;
+}
+
+.analyze-control:disabled {
+  cursor: not-allowed;
+  opacity: .46;
+}
+
+.reconciliation-receipt {
+  display: grid;
+  gap: 7px;
+  padding: 16px 18px;
+  border-left: 4px solid var(--fx-cyan);
+  background: var(--fx-paper);
+  color: var(--fx-ink);
+}
+
+.reconciliation-receipt > span,
+.reconciliation-receipt > small,
+.reconciliation-receipt > em,
+.reconciliation-receipt code {
+  font-family: var(--font-geist-mono), monospace;
+  letter-spacing: .09em;
+}
+
+.reconciliation-receipt > span { color: var(--fx-cyan); font-size: .56rem; font-weight: 800; }
+.reconciliation-receipt > strong { font-size: 1rem; }
+.reconciliation-receipt > small { color: var(--fx-ink-2); font-size: .48rem; }
+.reconciliation-receipt > em { color: var(--fx-teal); font-size: .58rem; font-style: normal; font-weight: 800; }
+.reconciliation-pending { border-left-color: var(--fx-cyan); }
+.reconciliation-complete { border-left-color: var(--fx-cyan); }
+.reconciliation-failed { border-left-color: var(--fx-orange); }
+.reconciliation-failed > span { color: var(--fx-orange); }
+
+.reconciliation-receipt ul {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reconciliation-receipt li {
+  display: grid;
+  gap: 2px;
+  padding-top: 5px;
+  border-top: 1px solid var(--fx-ink);
+  font-size: .52rem;
+}
+
+.reconciliation-receipt li b { color: var(--fx-teal); font-size: .43rem; letter-spacing: .08em; }
+.reconciliation-receipt code { overflow-wrap: anywhere; color: var(--fx-orange); font-size: .48rem; }
+
+@media (max-width: 720px) {
+  .reconciliation-receipt ul { grid-template-columns: 1fr 1fr; }}
+.local-evidence-continuity strong { color: var(--fx-ink); font-size: .66rem; }
+.local-evidence-continuity small { color: var(--fx-ink-2); font-size: .43rem; }
+
+.base-completion-cue {
+  position: absolute;
+  z-index: 12;
+  top: 22px;
+  right: 24px;
+  display: grid;
+  gap: 3px;
+  max-width: 270px;
+  padding: 11px 14px;
+  border-right: 4px solid var(--fx-ultramarine);
+  background: rgba(255,253,248,.94);
+  text-align: right;
+}
+
+.base-completion-cue span,
+.base-completion-cue small {
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  letter-spacing: .08em;
+}
+
+.base-completion-cue span { color: var(--fx-ink); font-size: .5rem; font-weight: 800; }
+.base-completion-cue strong { color: var(--fx-ink); font-size: .76rem; }
+.base-completion-cue small { color: var(--fx-ink-2); font-size: .44rem; }
+.convergence-shell[data-link-phase="LOST"] .base-completion-cue { top: 104px; }
+
+/* ==== D-006C final convergence · authority is a plane, not a modal ======== */
+
+.convergence-shell[data-authority-gate="true"] .dual-timeline > .timeline-band,
+.convergence-shell[data-authority-gate="true"] .dual-timeline > .receipt-layer,
+.convergence-shell[data-authority-gate="true"] .dual-timeline > .shared-clock-cursor,
+.convergence-shell[data-authority-gate="true"] .local-evidence-continuity {
+  opacity: .16;
+  filter: saturate(.22);
+}
+
+.convergence-shell[data-authority-gate="true"] .artifact-transfer-layer {
+  opacity: .16;
+  filter: saturate(.22);
+  pointer-events: none;
+}
+
+.convergence-shell[data-authority-gate="true"] .authority-workspace {
+  position: absolute;
+  z-index: 80;
+  top: 64px;
+  left: 50%;
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(220px, .7fr);
+  grid-template-areas:
+    "heading actions"
+    "values actions";
+  width: min(760px, calc(100% - 64px));
+  min-width: 0;
+  gap: 16px 22px;
+  align-items: center;
+  padding: 22px 24px;
+  border: 0;
+  border-top: 3px solid var(--fx-pending-authority);
+  border-bottom: 1px solid var(--fx-ink);
+  border-radius: 0;
+  background: linear-gradient(100deg, rgba(255,253,248,.98), rgba(245,242,234,.96));
+  box-shadow: none;
+  color: var(--fx-ink);
+  transform: translateX(-50%);
+}
+
+.authority-workspace > header {
+  grid-area: heading;
+  display: grid;
+  gap: 5px;
+}
+
+.authority-workspace > header > span {
+  color: var(--fx-pending-authority-ink);
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .54rem;
+  font-weight: 800;
+  letter-spacing: .11em;
+}
+
+.authority-workspace > header > strong {
+  color: var(--fx-ink);
+  font-size: 1.32rem;
+  line-height: 1.05;
+}
+
+.authority-workspace > header > p {
+  margin: 0;
+  color: var(--fx-ink-2);
+  font-size: .68rem;
+}
+
+.authority-workspace .authority-values {
+  grid-area: values;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin: 0;
+}
+
+.authority-workspace .authority-values > div {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 0;
+  border-top: 1px solid var(--fx-rule-strong);
+  border-bottom: 1px solid var(--fx-rule-strong);
+}
+
+.authority-workspace .authority-values > div + div { border-left: 1px solid var(--fx-rule-strong); }
+.authority-workspace .authority-values dt { color: var(--fx-ink-2); font-size: .52rem; letter-spacing: .08em; }
+.authority-workspace .authority-values dd { margin: 0; color: var(--fx-pending-authority-ink); font-size: 1.18rem; }
+
+.authority-workspace .authority-actions {
+  grid-area: actions;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+}
+
+.authority-workspace .authority-actions > p {
+  margin: 0;
+  color: var(--fx-ink);
+  font-size: .65rem;
+  line-height: 1.4;
+}
+
+.authority-workspace .authority-actions > small {
+  color: var(--fx-ink-2);
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .47rem;
+  line-height: 1.35;
+}
+
+.authority-workspace .authority-actions > div { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.authority-workspace .authority-actions button { min-height: 40px; border-radius: 2px; }
+
+/* ==== D-006C final convergence · evidence under examination light ======== */
+
+.verifier-instrument.is-awaiting-evidence .revelation-chamber,
+.verifier-instrument.has-bud .revelation-chamber,
+.verifier-instrument.has-bud.is-revealing .revelation-chamber {
+  border-color: rgba(23, 24, 28, .38);
+  border-radius:
+    var(--inspection-top-radius, 32px)
+    var(--inspection-top-radius, 32px)
+    var(--inspection-bottom-radius, 18px)
+    var(--inspection-bottom-radius, 18px);
+  background:
+    radial-gradient(circle at 50% 46%, rgba(255,255,255,.98) 0 32%, rgba(255,253,248,.98) 58%, rgba(245,242,234,.96) 100%);
+}
+
+.verifier-instrument.has-bud .chamber-ring { border-color: rgba(23,24,28,.28); }
+.artifact-target-anchor,
+.evidence-flower.is-compact { top: 50%; }
+
+.artifact-transfer-object[data-transfer-stage="TRANSFERRED"] .flower-segment > i {
+  filter: drop-shadow(0 0 1px var(--fx-ink));
+}
+
+/* Inspection never changes the validated lobe silhouette. */
+.artifact-transfer-object[data-transfer-stage="TRANSFERRED"] .evidence-flower.is-open .flower-segment > i {
+  clip-path: polygon(50% 50%, 51% 1%, 74% 7%, 91% 24%);
+}
+
+/* Family names live on six measured rails outside the saturated petals. */
+.artifact-transfer-object[data-transfer-stage="TRANSFERRED"] .flower-segment > em { display: none; }
+
+.revealed-structure {
+  z-index: 70;
+  opacity: 0;
+}
+
+.revealed-structure::before { content: none; }
+
+.revealed-structure.is-visible { opacity: 1; }
+
+.revealed-structure > i.inspection-family {
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-bottom: 2px solid var(--inspection-family-color);
+  transform: none;
+}
+
+.revealed-structure > i.inspection-family::after { content: none; }
+
+.revealed-structure > i.inspection-family span {
+  position: static;
+  color: var(--fx-ink);
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .55rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.inspection-family.family-mission { --inspection-family-color: var(--fx-ultramarine); }
+.inspection-family.family-vehicle { --inspection-family-color: var(--fx-glacier); }
+.inspection-family.family-infrastructure { --inspection-family-color: var(--fx-orchid); }
+.inspection-family.family-service { --inspection-family-color: var(--fx-solar); }
+.inspection-family.family-human { --inspection-family-color: var(--fx-tangerine); }
+.inspection-family.family-financial { --inspection-family-color: var(--fx-magenta); }
+
+.insertion-control {
+  display: block;
+  min-width: 190px;
+  min-height: 42px;
+  margin: 14px auto 0;
+  border: 1px solid var(--fx-paper);
+  border-radius: 2px;
+  background: var(--fx-paper);
+  color: var(--fx-ink);
+  cursor: pointer;
+  font-family: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
+  font-size: .6rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+/* Role remains readable and present at every required review width. */
+.role-cue span { color: var(--fx-glacier); }
+.role-cue strong { color: var(--fx-porcelain); }
+
+@media (max-width: 1050px) {
+  .convergence-header { padding-right: 214px; }
+  .journey-language li { min-width: 42px; padding-inline: 8px; font-size: 0; }
+  .journey-language li span { font-size: .55rem; }
+  .master-instrument {
+    grid-template-columns: auto auto minmax(150px, 1fr);
+    padding-right: 218px;
+  }
+  .role-cue {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px 0;
+    border-top: 1px solid rgba(255,255,255,.18);
+    border-left: 0;
+  }
+  .convergence-shell[data-authority-gate="true"] .authority-workspace {
+    width: calc(100% - 48px);
+    grid-template-columns: minmax(230px, 1fr) minmax(190px, .7fr);
+    grid-template-areas: "heading actions" "values actions";
+    gap: 14px 18px;
+    padding: 18px 20px;
+  }
+}
+
+@media (max-width: 760px) {
+  .system-network-status { top: 10px; right: 10px; width: 182px; }
+  .convergence-header { min-height: 118px; padding-top: 62px; padding-right: 0; }
+  .convergence-shell.is-running .master-instrument { padding-top: 64px; padding-right: 12px; }
+  .local-evidence-continuity {
+    top: calc(var(--stage-label-row-h) + 104px);
+    right: auto;
+    left: 50%;
+    width: min(230px, calc(100% - 24px));
+    transform: translateX(-50%);
+  }
+  .convergence-shell[data-authority-gate="true"] .authority-workspace {
+    top: 58px;
+    grid-template-columns: 1fr;
+    grid-template-areas: "heading" "values" "actions";
+  }
+}
+
+/* D-006 C2 critical responsive contract. This block intentionally owns EOF:
+   older convergence layers above restate authority and insertion geometry. */
+.convergence-shell[data-authority-gate="true"] .authority-workspace {
+  grid-template-columns: minmax(260px, 1fr) minmax(220px, .7fr);
+  grid-template-areas: "heading actions" "values actions";
+  width: min(760px, calc(100% - 64px));
+}
+
+.artifact-target-anchor.insertion-control {
+  top: 50%;
+  left: 50%;
+  width: 208px;
+  height: 208px;
+  min-width: 208px;
+  min-height: 208px;
+  margin: 0;
+  transform: translate(-50%, -50%);
+}
+
+@media (max-width: 760px) {
+  .convergence-shell[data-authority-gate="true"] .reality-canvas {
+    height: 430px;
+    min-height: 430px;
+  }
+
+  .convergence-shell[data-authority-gate="true"] .authority-workspace {
+    top: 48px;
+    grid-template-columns: 1fr;
+    grid-template-areas: "heading" "values" "actions";
+    width: calc(100% - 24px);
+    padding: 18px;
+  }
+}
+
+@media (max-width: 500px) {
+  .convergence-shell[data-authority-gate="true"] .reality-canvas {
+    height: 500px;
+    min-height: 500px;
+  }
+
+  .convergence-shell[data-authority-gate="true"] .authority-workspace {
+    top: 24px;
+    width: calc(100% - 16px);
+    padding: 14px;
+  }
+
+  .authority-workspace .authority-values { grid-template-columns: 1fr; }
+  .authority-workspace .authority-values > div + div { border-left: 0; }
+  .verifier-instrument { padding-inline: 10px; }
+  .revelation-chamber { height: 302px; }
+  .verdict-checks,
+  .verdict-not-established { grid-template-columns: 1fr; }
+}
+
+/* ======================================================================
+   D-006 C3 — LIVE CAUSALITY ADDITIONS
+   Passenger as an observable participant; performed reconciliation;
+   factual mission record; verifier fact inspection; live-wait clarity.
+   ====================================================================== */
+
+/* The passenger figure is state-driven: it exists only while the physical
+   state machine says a person is on the street, so opacity tricks are no
+   longer how presence is expressed. */
+.passenger-actor { opacity: .92; transition: color .3s ease; }
+.passenger-actor.is-waiting,
+.passenger-actor.is-at-destination { opacity: .92; }
+.passenger-actor .passenger-figure { display: block; }
+/* Occupancy is reinforced on the vehicle itself: a subtly deepened cabin. */
+.autonomous-taxi.has-passenger::before {
+  background: color-mix(in srgb, var(--fx-glacier) 78%, var(--fx-ink) 22%);
+}
+.passenger-actor.is-walking-to-taxi > i,
+.passenger-actor.is-stepping-out > i {
+  animation: passenger-walk .42s ease-in-out infinite;
+  transform: scaleX(var(--passenger-facing, 1)) rotate(calc(-4deg * var(--passenger-facing, 1)));
+}
+.passenger-actor.is-at-destination { color: var(--fx-ink); }
+
+@keyframes passenger-walk {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -2.5px; }
+}
+
+/* §5: an unambiguous occupant while the passenger is aboard — drawn inside
+   the taxi cabin glass, the same ink as every human figure. Exactly one of
+   street figure / occupant renders at any moment. */
+.autonomous-taxi .cabin-occupant {
+  position: absolute;
+  top: -12px;
+  left: 34px;
+  width: 9px;
+  height: 13px;
+  border-radius: 5px 5px 2px 2px;
+  background: var(--fx-ink);
+  opacity: .85;
+}
+.autonomous-taxi .cabin-occupant::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 1.5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fx-ink);
+}
+
+/* §8: the live-wait cue carries its clock policy in copy, not implication. */
+.network-test-cue small {
+  display: block;
+  margin-top: 4px;
+  font: 500 .62rem/1.45 var(--font-geist-sans), sans-serif;
+  color: color-mix(in srgb, currentColor 72%, transparent);
+}
+
+/* §12: performed reconciliation — counts from the verified receipt and a
+   restrained alignment strip that fills exactly the transferred fraction. */
+.reconciliation-transfer { display: grid; gap: 6px; margin: 8px 0 2px; }
+.reconciliation-transfer dl {
+  display: flex;
+  gap: 14px;
+  margin: 0;
+}
+.reconciliation-transfer dl > div { display: grid; gap: 1px; }
+.reconciliation-transfer dt {
+  font: 600 .52rem var(--font-geist-mono), monospace;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  opacity: .62;
+}
+.reconciliation-transfer dd {
+  margin: 0;
+  font: 700 .78rem var(--font-geist-mono), monospace;
+}
+.reconciliation-transfer .transfer-align {
+  position: relative;
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  background: color-mix(in srgb, currentColor 16%, transparent);
+  overflow: hidden;
+}
+.reconciliation-transfer .transfer-align > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(100% * var(--transfer-fraction, 0));
+  border-radius: inherit;
+  background: currentColor;
+  animation: transfer-align-in .9s ease-out;
+  transform-origin: left center;
+}
+@keyframes transfer-align-in { from { scale: 0 1; } to { scale: 1 1; } }
+
+/* §16: the factual mission record. Reads like a record, not a console. */
+.mission-fact-record {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: 18px 20px;
+  border: 1.5px solid color-mix(in srgb, var(--fx-ink) 22%, transparent);
+  border-radius: 14px;
+  background: var(--fx-paper);
+}
+.mission-fact-record > header { display: grid; gap: 2px; }
+.mission-fact-record > header span {
+  font: 600 .55rem var(--font-geist-mono), monospace;
+  letter-spacing: .12em;
+  opacity: .6;
+}
+.mission-fact-record > header strong { font-size: .95rem; }
+.mission-fact-record section { display: grid; gap: 4px; }
+.mission-fact-record h4 {
+  margin: 0;
+  font: 700 .6rem var(--font-geist-mono), monospace;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  opacity: .58;
+}
+.mission-fact-record ul { display: grid; gap: 3px; margin: 0; padding: 0; list-style: none; }
+.mission-fact-record li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: .78rem;
+  line-height: 1.4;
+}
+.mission-fact-record li b {
+  flex-shrink: 0;
+  font: 700 .52rem var(--font-geist-mono), monospace;
+  letter-spacing: .06em;
+}
+.mission-fact-record li[data-fact-status="NOT_DEMONSTRATED"] b { opacity: .55; }
+
+/* §21: verifier fact inspection above the cryptography. */
+.verdict-facts { display: grid; gap: 4px; margin: 10px 0 0; padding: 0; list-style: none; }
+.verdict-facts li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: .76rem;
+  line-height: 1.4;
+}
+.verdict-facts li b {
+  flex-shrink: 0;
+  font: 700 .52rem var(--font-geist-mono), monospace;
+  letter-spacing: .06em;
+}
+.verdict-facts li[data-inspection-status="NOT_COVERED"] b,
+.verdict-facts li[data-inspection-status="NOT_DEMONSTRATED"] b { opacity: .6; }
+.verdict-facts li[data-inspection-status="NOT_VERIFIED"] b { opacity: .8; }
+
+/* §19: the cryptographic checklist becomes progressive disclosure. */
+.verdict-technical { margin-top: 10px; }
+.verdict-technical > summary {
+  cursor: pointer;
+  font: 600 .6rem var(--font-geist-mono), monospace;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  opacity: .62;
+}
+.verdict-technical[open] > summary { margin-bottom: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .passenger-actor.is-walking-to-taxi > i,
+  .passenger-actor.is-stepping-out > i { animation: none; }
+  .reconciliation-transfer .transfer-align > span { animation: none; }
+}
+
+/* ==========================================================================
+   NX1-R · human review of the public form (2026-09-03)
+   1. The evidence object is calm: one hairline ring, muted family segments,
+      a paper core with a dark rule. Colour is a quiet accent, not a fill.
+   2. The verdict is a light surface for every verdict; the tint lives in the
+      left rule only.
+   3. The handoff is composed across the viewport: the verifier on the left,
+      the mission record and the reconciliation on the right, the shared
+      question below. No single 660 px column, no stacking, no empty right.
+   4. The hero and the handoff title give back vertical space to the world.
+   ========================================================================== */
+
+.evidence-flower .flower-ring { border: 1px solid var(--fx-rule-strong); opacity: .7; }
+.evidence-flower .flower-segment > i {
+  background: color-mix(in srgb, var(--family-color, var(--fx-ultramarine)) 46%, var(--fx-paper));
+}
+.evidence-flower .flower-segment > em { color: var(--fx-ink-2); }
+.evidence-flower .flower-core {
+  border: 1.5px solid var(--fx-ink);
+  background: var(--fx-paper);
+  box-shadow: 0 1px 0 rgba(23, 24, 28, .06);
+}
+.evidence-flower.is-complete .flower-core,
+.evidence-flower.is-open-mechanism .flower-core {
+  border-color: var(--fx-ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fx-ink) 10%, transparent);
+}
+.evidence-flower.is-attached::before { border-top-color: var(--fx-rule-strong); }
+.artifact-transfer-object .artifact-transit-label { border-color: var(--fx-ink); color: var(--fx-ink); }
+.verifier-instrument.has-bud { border-color: var(--verifier-rule); box-shadow: none; }
+.verifier-instrument .revelation-chamber,
+.verifier-instrument.is-awaiting-evidence .revelation-chamber,
+.verifier-instrument.has-bud .revelation-chamber,
+.verifier-instrument.has-bud.is-revealing .revelation-chamber {
+  height: 196px;
+  background: radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--verifier-accent) 8%, transparent) 0 30%, var(--verifier-field) 64%, var(--verifier-surface) 100%);
+}
+.verifier-instrument { min-height: 0; padding-top: 54px; }
+.verifier-instrument .instrument-verdict,
+.verifier-instrument .instrument-verdict.verdict-indeterminate,
+.verifier-instrument .instrument-verdict.verdict-valid,
+.verifier-instrument .instrument-verdict.verdict-invalid,
+.verifier-instrument .instrument-verdict.verdict-revoked {
+  background: var(--verifier-surface);
+  border-color: var(--verifier-rule);
+  border-left-color: var(--verdict-color);
+}
+
+/* --- composition ------------------------------------------------------- */
+.mission-intro { padding: clamp(22px, 3.2vw, 44px) 0 20px; }
+.mission-intro h1 {
+  font-size: clamp(2.4rem, 4.8vw, 4.9rem);
+  line-height: .92;
+  letter-spacing: -.05em;
+}
+.evidence-handoff { padding: clamp(34px, 5vw, 64px) 0 40px; }
+.evidence-handoff h2 { font-size: clamp(1.9rem, 3.4vw, 3.3rem); line-height: 1; letter-spacing: -.04em; }
+.evidence-handoff > header { margin-bottom: 20px; }
+.handoff-intro { margin-top: 10px; }
+
+.handoff-workbench {
+  max-width: none;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+  grid-template-areas:
+    "verifier record"
+    "verifier reconciliation"
+    "transversality transversality";
+  grid-auto-rows: min-content;
+  align-items: start;
+  gap: 18px 22px;
+}
+.handoff-workbench > .verifier-instrument { grid-area: verifier; }
+.handoff-workbench > .mission-fact-record { grid-area: record; }
+.handoff-workbench > .reconciliation-receipt { grid-area: reconciliation; }
+.handoff-workbench > .transversality-reveal { grid-area: transversality; }
+.reconciliation-receipt {
+  border: 1.5px solid color-mix(in srgb, var(--fx-ink) 22%, transparent);
+  border-left: 4px solid var(--fx-cyan);
+  border-radius: 14px;
+}
+.reconciliation-receipt ul { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.mission-fact-record { max-height: none; }
+
+@media (max-width: 1050px) {
+  .handoff-workbench {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "verifier" "record" "reconciliation" "transversality";
+  }
+}

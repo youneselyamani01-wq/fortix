@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FortiX — Independent Verifier</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg:     #f5f7f8;
+      --panel:  #ffffff;
+      --panel2: #f9fbfc;
+      --line:   #d4dde4;
+      --text:   #17212b;
+      --muted:  #61717e;
+      --orange: #a96514;
+      --green:  #16784f;
+      --blue:   #245f9f;
+      --red:    #b43d3d;
+      --soft:   #eef3f5;
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg:     #0c1117;
+      --panel:  #121923;
+      --panel2: #0f151d;
+      --line:   #283746;
+      --text:   #edf4f8;
+      --muted:  #98a8b4;
+      --orange: #f2a23a;
+      --green:  #46d18d;
+      --blue:   #72b7ff;
+      --red:    #f27272;
+      --soft:   #101821;
+    }
+    * { box-sizing: border-box; }
+    html, body, .panel, button, .badge, .pill, textarea, pre, .step-row, .meta-row, .scope-col, .doctrine {
+      transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; padding: 34px 0 48px; }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+    }
+    .header-left { display: flex; align-items: baseline; gap: 12px; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    h1 { margin: 0; font-size: 20px; letter-spacing: 0; }
+    .badge {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      background: rgba(16,32,39,.05);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 2px 8px;
+      letter-spacing: .06em;
+    }
+    html[data-theme="dark"] .badge { background: rgba(255,255,255,.04); }
+    .toggle-group {
+      display: inline-flex;
+      gap: 4px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(16,32,39,.05);
+    }
+    html[data-theme="dark"] .toggle-group { background: rgba(255,255,255,.04); }
+    .toggle-btn, .theme-toggle {
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 0 10px;
+      font-size: 12px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .toggle-btn.active { color: var(--text); background: rgba(16,32,39,.08); }
+    html[data-theme="dark"] .toggle-btn.active { background: rgba(255,255,255,.08); }
+    .theme-toggle { min-width: 62px; border: 1px solid var(--line); }
+    .back {
+      color: var(--muted);
+      font-size: 12px;
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(16,32,39,.04);
+      padding: 7px 11px;
+      transition: color .15s, border-color .15s, background .15s;
+    }
+    html[data-theme="dark"] .back { background: rgba(255,255,255,.04); }
+    .back:hover { color: var(--text); border-color: #9db2b0; }
+
+    /* Intro */
+    .intro {
+      margin-top: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .intro h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      text-transform: none;
+    }
+    .intro-lead {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text);
+      margin: 0 0 14px;
+      max-width: 820px;
+    }
+    .intro-doctrine {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+      font-style: italic;
+      max-width: 820px;
+    }
+
+    /* Journey strip */
+    .journey {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .07em;
+    }
+    .journey .step {
+      display: inline-block;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel2);
+      color: var(--text);
+    }
+    .journey .step.active {
+      border-color: rgba(70,209,141,.5);
+      background: rgba(70,209,141,.08);
+      color: var(--green);
+    }
+    .journey .arrow { color: var(--muted); }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .panel {
+      grid-column: span 12;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      padding: 20px;
+      min-width: 0;
+      box-shadow: 0 18px 44px rgba(18,40,45,.10);
+    }
+    html[data-theme="dark"] .panel { box-shadow: 0 18px 46px rgba(0,0,0,.32); }
+    .panel.half { grid-column: span 6; }
+    .head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 16px; }
+    h3 { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+
+    /* Pills */
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+    .pill-green  { color: var(--green);  background: rgba(70,209,141,.12);  border-color: rgba(70,209,141,.35); }
+    .pill-red    { color: var(--red);    background: rgba(242,114,114,.12); border-color: rgba(242,114,114,.35); }
+    .pill-blue   { color: var(--blue);   background: rgba(114,183,255,.10); border-color: rgba(114,183,255,.30); }
+    .pill-muted  { color: var(--muted);  background: transparent; }
+
+    /* Input panel */
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      padding: 12px;
+      background: #f8fbfa;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font: 12px/1.55 Consolas, monospace;
+      color: var(--text);
+      resize: vertical;
+      overflow-wrap: anywhere;
+    }
+    html[data-theme="dark"] textarea { background: #080d13; color: #b8cad4; }
+    textarea:focus { outline: 2px solid rgba(36,95,159,.35); outline-offset: 1px; }
+    .input-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    button {
+      min-height: 34px;
+      border: 1px solid #b7c9c6;
+      border-radius: 6px;
+      background: #edf4f2;
+      color: var(--text);
+      padding: 0 14px;
+      font: 13px/1 inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .16s, transform .16s;
+    }
+    button:hover { background: #e2ece9; transform: translateY(-1px); }
+    html[data-theme="dark"] button { background: #16222d; color: var(--text); border-color: #3a5266; }
+    html[data-theme="dark"] button:hover { background: #1c2b38; }
+    button.primary {
+      background: var(--green);
+      color: #ffffff;
+      border-color: var(--green);
+    }
+    button.primary:hover { background: #14694b; }
+    html[data-theme="dark"] button.primary { background: var(--green); color: #0c1117; border-color: var(--green); }
+    .demo-note {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    .input-error {
+      color: var(--red);
+      font-size: 12px;
+      margin-top: 8px;
+      font-family: Consolas, monospace;
+    }
+    .input-error:empty { display: none; }
+
+    /* Result panel */
+    .result-empty {
+      color: var(--muted);
+      font-size: 13px;
+      font-style: italic;
+    }
+    .result-summary {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 8px 14px;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+    .result-summary .key { color: var(--muted); }
+    .step-list { display: grid; gap: 6px; }
+    .step-row {
+      display: grid;
+      grid-template-columns: 28px 28px 1fr auto;
+      gap: 10px;
+      align-items: baseline;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      font-size: 13px;
+    }
+    .step-row .step-num {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      text-align: right;
+    }
+    .step-row .step-icon {
+      font: 14px/1 monospace;
+      text-align: center;
+      font-weight: 800;
+    }
+    .step-row.pass .step-icon { color: var(--green); }
+    .step-row.fail .step-icon { color: var(--red); }
+    .step-row.demo .step-icon { color: var(--blue); }
+    .step-label { color: var(--text); }
+    .step-detail { font: 11px Consolas, monospace; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+
+    /* Scope panels */
+    .scope-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text);
+    }
+    .scope-list li {
+      padding: 5px 0;
+      border-top: 1px solid var(--line);
+    }
+    .scope-list li:first-child { border-top: 0; padding-top: 0; }
+    .panel.confirms { border-left: 3px solid var(--green); }
+    .panel.notconfirms { border-left: 3px solid var(--red); }
+
+    /* Metadata panel */
+    .metadata-grid {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 6px 14px;
+      font-size: 13px;
+    }
+    .metadata-grid .key { color: var(--muted); }
+    .metadata-grid code {
+      font: 11px Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+    .metadata-grid .val-decision {
+      font-weight: 760;
+    }
+    .metadata-grid .val-decision.allow  { color: var(--green); }
+    .metadata-grid .val-decision.review { color: var(--orange); }
+    .metadata-grid .val-decision.block  { color: var(--red); }
+
+    /* Doctrine block */
+    .doctrine {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border: 1px solid rgba(70,209,141,.2);
+      border-radius: 8px;
+      background: rgba(70,209,141,.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .doctrine-main { font-size: 14px; line-height: 1.6; }
+    .doctrine-main strong { color: var(--green); }
+    .doctrine-sub { font-size: 12px; color: var(--muted); font-style: italic; }
+    html[data-theme="dark"] .doctrine { background: rgba(70,209,141,.06); border-color: rgba(70,209,141,.25); }
+
+    footer {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    footer code { font: 11px Consolas, monospace; }
+
+    @media (max-width: 860px) {
+      header { flex-direction: column; align-items: flex-start; }
+      .header-actions { justify-content: flex-start; }
+      .panel.half { grid-column: span 12; }
+      .result-summary, .metadata-grid { grid-template-columns: 1fr; }
+      .step-row { grid-template-columns: 28px 28px 1fr; }
+      .step-detail { display: none; }
+      .doctrine { flex-direction: column; align-items: flex-start; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+
+    <header>
+      <div class="header-left">
+        <h1>FortiX</h1>
+        <span class="badge" data-i18n="header.badge">Independent Verifier</span>
+      </div>
+      <div class="header-actions">
+        <div class="toggle-group" aria-label="Language">
+          <button class="toggle-btn active" type="button" data-lang="en" onclick="setLanguage('en')">EN</button>
+          <button class="toggle-btn" type="button" data-lang="fr" onclick="setLanguage('fr')">FR</button>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme">🌙 / ☀</button>
+        <a href="index.html" class="back" data-i18n="nav.back">← Back to Demo Index</a>
+      </div>
+    </header>
+
+    <section class="intro">
+      <h2 data-i18n="intro.title">Independent receipt verification</h2>
+      <p class="intro-lead" data-i18n="intro.lead">The receipt is portable evidence. It can be carried outside the originating system and verified independently.</p>
+      <p class="intro-doctrine" data-i18n="intro.doctrine">Verification does not require access to the originating system.</p>
+      <div class="journey">
+        <span class="step" data-i18n="journey.issue">Issue receipt</span>
+        <span class="arrow">→</span>
+        <span class="step" data-i18n="journey.export">Export receipt</span>
+        <span class="arrow">→</span>
+        <span class="step active" data-i18n="journey.verify">Verify independently</span>
+      </div>
+    </section>
+
+    <section class="grid">
+
+      <article class="panel">
+        <div class="head">
+          <h3 data-i18n="panel.input">Receipt input</h3>
+          <span class="pill pill-blue" data-i18n="panel.input.pill">Paste or load a receipt</span>
+        </div>
+        <textarea id="receipt-input" spellcheck="false" data-i18n-placeholder="input.placeholder" placeholder="Paste an ADR receipt JSON here, or click Load Banking sample."></textarea>
+        <div class="input-actions">
+          <button id="btn-verify" class="primary" type="button" data-i18n="button.verify">Verify receipt</button>
+          <button id="btn-load-banking" type="button" data-i18n="button.loadBanking">Load Banking sample</button>
+          <button id="btn-load-tampered" type="button" data-i18n="button.loadTampered">Load tampered example</button>
+          <button id="btn-clear" type="button" data-i18n="button.clear">Clear</button>
+        </div>
+        <p class="demo-note" data-i18n="input.demoNote">Demo receipt sample — verifier UX demonstration only. Cryptographic verification (BLAKE3 hash recomputation, Ed25519 signature check) requires the production verifier in <code>app/core/</code>; the steps below labelled “demo check” reflect that boundary.</p>
+        <p class="input-error" id="input-error"></p>
+      </article>
+
+      <article class="panel">
+        <div class="head">
+          <h3 data-i18n="panel.result">Verification result</h3>
+          <span class="pill pill-muted" id="result-pill" data-i18n="result.pending">Pending</span>
+        </div>
+        <div id="result-area">
+          <p class="result-empty" data-i18n="result.empty">No receipt verified yet. Paste or load a receipt and click Verify receipt.</p>
+        </div>
+      </article>
+
+      <article class="panel half confirms">
+        <div class="head">
+          <h3 data-i18n="panel.confirms">Verification confirms</h3>
+          <span class="pill pill-green" data-i18n="panel.confirms.pill">In scope</span>
+        </div>
+        <ul class="scope-list">
+          <li data-i18n="confirms.l1">Authenticity</li>
+          <li data-i18n="confirms.l2">Integrity</li>
+          <li data-i18n="confirms.l3">Signature validity</li>
+          <li data-i18n="confirms.l4">Payload consistency</li>
+        </ul>
+      </article>
+
+      <article class="panel half notconfirms">
+        <div class="head">
+          <h3 data-i18n="panel.notconfirms">Verification does NOT confirm</h3>
+          <span class="pill pill-red" data-i18n="panel.notconfirms.pill">Out of scope</span>
+        </div>
+        <ul class="scope-list">
+          <li data-i18n="notconfirms.l1">Business correctness</li>
+          <li data-i18n="notconfirms.l2">Legal validity</li>
+          <li data-i18n="notconfirms.l3">External execution</li>
+          <li data-i18n="notconfirms.l4">Regulatory approval</li>
+        </ul>
+      </article>
+
+      <article class="panel" id="metadata-panel" hidden>
+        <div class="head">
+          <h3 data-i18n="panel.metadata">Receipt metadata</h3>
+          <span class="pill pill-blue" id="metadata-pill">ADR v1.0</span>
+        </div>
+        <div class="metadata-grid" id="metadata-grid"></div>
+      </article>
+
+    </section>
+
+    <div class="doctrine">
+      <div class="doctrine-main">
+        <strong data-i18n="doctrine.headline">Verification confirms authenticity and integrity.</strong>
+        <span data-i18n="doctrine.sub">&ensp;It does not prove business correctness, legal validity, or external execution.</span>
+      </div>
+      <div class="doctrine-sub" data-i18n="doctrine.tagline">
+        Any party with the public key can verify an ADR receipt — no access to the originating system required.
+      </div>
+    </div>
+
+    <footer>
+      <span data-i18n="footer.copy">FortiX · Independent verifier · Static demo · No backend connection required</span>
+      <code id="key-id-display"></code>
+    </footer>
+
+  </main>
+
+  <script>
+    /* ---------- i18n ---------- */
+    const i18n = {
+      en: {
+        'header.badge': 'Independent Verifier',
+        'nav.back': '← Back to Demo Index',
+        'intro.title': 'Independent receipt verification',
+        'intro.lead': 'The receipt is portable evidence. It can be carried outside the originating system and verified independently.',
+        'intro.doctrine': 'Verification does not require access to the originating system.',
+        'journey.issue': 'Issue receipt',
+        'journey.export': 'Export receipt',
+        'journey.verify': 'Verify independently',
+        'panel.input': 'Receipt input',
+        'panel.input.pill': 'Paste or load a receipt',
+        'input.placeholder': 'Paste an ADR receipt JSON here, or click Load Banking sample.',
+        'input.demoNote': 'Demo receipt sample — verifier UX demonstration only. Cryptographic verification (BLAKE3 hash recomputation, Ed25519 signature check) requires the production verifier in app/core/; the steps below labelled “demo check” reflect that boundary.',
+        'button.verify': 'Verify receipt',
+        'button.loadBanking': 'Load Banking sample',
+        'button.loadTampered': 'Load tampered example',
+        'button.clear': 'Clear',
+        'panel.result': 'Verification result',
+        'result.pending': 'Pending',
+        'result.empty': 'No receipt verified yet. Paste or load a receipt and click Verify receipt.',
+        'result.valid': 'VALID',
+        'result.invalid': 'INVALID',
+        'result.demoLabel': 'Demo verification',
+        'result.summary.outcome': 'Outcome',
+        'result.summary.steps': 'Steps',
+        'result.summary.keyId': 'key_id',
+        'result.summary.algorithm': 'Algorithm',
+        'panel.confirms': 'Verification confirms',
+        'panel.confirms.pill': 'In scope',
+        'confirms.l1': 'Authenticity',
+        'confirms.l2': 'Integrity',
+        'confirms.l3': 'Signature validity',
+        'confirms.l4': 'Payload consistency',
+        'panel.notconfirms': 'Verification does NOT confirm',
+        'panel.notconfirms.pill': 'Out of scope',
+        'notconfirms.l1': 'Business correctness',
+        'notconfirms.l2': 'Legal validity',
+        'notconfirms.l3': 'External execution',
+        'notconfirms.l4': 'Regulatory approval',
+        'panel.metadata': 'Receipt metadata',
+        'meta.version': 'version',
+        'meta.keyId': 'key_id',
+        'meta.algorithm': 'algorithm',
+        'meta.hash': 'hash',
+        'meta.signature': 'signature',
+        'meta.actionId': 'action_id',
+        'meta.actorId': 'actor_id',
+        'meta.action': 'action',
+        'meta.target': 'target',
+        'meta.timestamp': 'timestamp',
+        'meta.decision': 'governance_decision',
+        'doctrine.headline': 'Verification confirms authenticity and integrity.',
+        'doctrine.sub': ' It does not prove business correctness, legal validity, or external execution.',
+        'doctrine.tagline': 'Any party with the public key can verify an ADR receipt — no access to the originating system required.',
+        'footer.copy': 'FortiX · Independent verifier · Static demo · No backend connection required',
+        'footer.keyId': 'demo public key',
+        'theme.toggle': 'Toggle theme',
+        'error.invalidJson': 'Invalid JSON. Please paste a well-formed ADR receipt.',
+        'error.emptyInput': 'Receipt input is empty. Paste a receipt or click Load Banking sample.',
+        'step.dict': 'Receipt is a JSON object',
+        'step.required': 'Required fields present',
+        'step.algSubfields': 'Algorithm subfields valid',
+        'step.versionAlg': 'Version and algorithm values',
+        'step.payloadKey': 'Payload type and key_id',
+        'step.canonicalize': 'Canonicalize payload',
+        'step.hashFormat': 'Hash format (BLAKE3-256)',
+        'step.signingInput': 'Signing input reconstruction',
+        'step.signatureFormat': 'Signature format (Ed25519)',
+        'step.demoNote': 'demo check',
+      },
+      fr: {
+        'header.badge': 'Vérificateur indépendant',
+        'nav.back': '← Retour à l’index des démos',
+        'intro.title': 'Vérification indépendante du reçu',
+        'intro.lead': 'Le reçu est une preuve portable. Il peut être transmis hors du système d’origine et vérifié indépendamment.',
+        'intro.doctrine': 'La vérification ne nécessite pas l’accès au système d’origine.',
+        'journey.issue': 'Émettre le reçu',
+        'journey.export': 'Exporter le reçu',
+        'journey.verify': 'Vérifier indépendamment',
+        'panel.input': 'Entrée du reçu',
+        'panel.input.pill': 'Coller ou charger un reçu',
+        'input.placeholder': 'Collez un JSON de reçu ADR ici, ou cliquez sur Charger l’exemple bancaire.',
+        'input.demoNote': 'Exemple de reçu démo — démonstration UX du vérificateur uniquement. La vérification cryptographique (recalcul de hash BLAKE3, contrôle de signature Ed25519) nécessite le vérificateur de production dans app/core/ ; les étapes ci-dessous étiquetées « contrôle démo » reflètent cette limite.',
+        'button.verify': 'Vérifier le reçu',
+        'button.loadBanking': 'Charger l’exemple bancaire',
+        'button.loadTampered': 'Charger l’exemple altéré',
+        'button.clear': 'Effacer',
+        'panel.result': 'Résultat de vérification',
+        'result.pending': 'En attente',
+        'result.empty': 'Aucun reçu vérifié pour l’instant. Collez ou chargez un reçu puis cliquez sur Vérifier le reçu.',
+        'result.valid': 'VALID',
+        'result.invalid': 'INVALID',
+        'result.demoLabel': 'Vérification démo',
+        'result.summary.outcome': 'Résultat',
+        'result.summary.steps': 'Étapes',
+        'result.summary.keyId': 'key_id',
+        'result.summary.algorithm': 'Algorithme',
+        'panel.confirms': 'La vérification confirme',
+        'panel.confirms.pill': 'Dans la portée',
+        'confirms.l1': 'Authenticité',
+        'confirms.l2': 'Intégrité',
+        'confirms.l3': 'Validité de la signature',
+        'confirms.l4': 'Cohérence de la charge utile',
+        'panel.notconfirms': 'La vérification NE confirme PAS',
+        'panel.notconfirms.pill': 'Hors portée',
+        'notconfirms.l1': 'Justesse métier',
+        'notconfirms.l2': 'Validité juridique',
+        'notconfirms.l3': 'Exécution externe',
+        'notconfirms.l4': 'Approbation réglementaire',
+        'panel.metadata': 'Métadonnées du reçu',
+        'meta.version': 'version',
+        'meta.keyId': 'key_id',
+        'meta.algorithm': 'algorithme',
+        'meta.hash': 'hash',
+        'meta.signature': 'signature',
+        'meta.actionId': 'action_id',
+        'meta.actorId': 'actor_id',
+        'meta.action': 'action',
+        'meta.target': 'cible',
+        'meta.timestamp': 'horodatage',
+        'meta.decision': 'décision_de_gouvernance',
+        'doctrine.headline': 'La vérification confirme l’authenticité et l’intégrité.',
+        'doctrine.sub': ' Elle ne prouve ni la justesse métier, ni la validité juridique, ni l’exécution externe.',
+        'doctrine.tagline': 'Toute partie disposant de la clé publique peut vérifier un reçu ADR — sans accès au système d’origine.',
+        'footer.copy': 'FortiX · Vérificateur indépendant · Démo statique · Aucune connexion backend requise',
+        'footer.keyId': 'clé publique démo',
+        'theme.toggle': 'Changer de thème',
+        'error.invalidJson': 'JSON invalide. Veuillez coller un reçu ADR bien formé.',
+        'error.emptyInput': 'L’entrée du reçu est vide. Collez un reçu ou cliquez sur Charger l’exemple bancaire.',
+        'step.dict': 'Le reçu est un objet JSON',
+        'step.required': 'Champs requis présents',
+        'step.algSubfields': 'Sous-champs d’algorithme valides',
+        'step.versionAlg': 'Version et valeurs d’algorithme',
+        'step.payloadKey': 'Type de charge utile et key_id',
+        'step.canonicalize': 'Canonicalisation de la charge utile',
+        'step.hashFormat': 'Format de hash (BLAKE3-256)',
+        'step.signingInput': 'Reconstruction de l’entrée de signature',
+        'step.signatureFormat': 'Format de signature (Ed25519)',
+        'step.demoNote': 'contrôle démo',
+      },
+    };
+
+    const STORAGE_KEYS = {
+      lang: 'fortix-verify-console-lang',
+      theme: 'fortix-verify-console-theme',
+    };
+
+    let currentLang = 'en';
+    let currentTheme = 'light';
+    let lastResult = null;
+
+    function storageGet(key, fallback) {
+      try { return localStorage.getItem(key) || fallback; } catch { return fallback; }
+    }
+    function storageSet(key, value) {
+      try { localStorage.setItem(key, value); } catch { /* restricted */ }
+    }
+    function t(key) {
+      return (i18n[currentLang] && i18n[currentLang][key]) || i18n.en[key] || key;
+    }
+    function escapeHtml(value) {
+      if (value === null || value === undefined) return '';
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function setLanguage(lang) {
+      currentLang = i18n[lang] ? lang : 'en';
+      document.documentElement.lang = currentLang;
+      storageSet(STORAGE_KEYS.lang, currentLang);
+      document.querySelectorAll('[data-lang]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+      });
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = t(el.dataset.i18n);
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        el.placeholder = t(el.dataset.i18nPlaceholder);
+      });
+      updateThemeButton();
+      // Re-render last result so localized step labels refresh
+      if (lastResult) {
+        renderResult(lastResult);
+      }
+    }
+
+    function setTheme(theme) {
+      currentTheme = theme === 'dark' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      storageSet(STORAGE_KEYS.theme, currentTheme);
+      updateThemeButton();
+    }
+    function toggleTheme() {
+      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    }
+    function updateThemeButton() {
+      const btn = document.getElementById('theme-toggle');
+      btn.textContent = currentTheme === 'dark' ? '🌙 / ☀' : '☀ / 🌙';
+      btn.setAttribute('aria-label', t('theme.toggle'));
+      btn.title = t('theme.toggle');
+    }
+
+    /* ---------- Sample receipts (lifted verbatim from demo/fortix-control-console.html banking context) ---------- */
+    const SAMPLE_BANKING = {
+      version: '1.0',
+      payload: {
+        action_id: 'txn-pay-002',
+        actor_id: 'agent-payops-01',
+        action: 'payment.submit',
+        target: 'payment_rail',
+        timestamp: '2026-05-02T09:14:22.000Z',
+        payload: {
+          amount: 180000,
+          currency: 'EUR',
+          corridor: 'FR to AE',
+          compliance_context: 'AML threshold monitoring',
+        },
+        governance: {
+          aggregate_decision: 'require_review',
+          aggregate_risk_score: 65,
+          containment_state: 'pending_human_review',
+        },
+      },
+      hash: '5386a51a91dfa1e3b4c746f5d3c978368d27216e7583b2edbe40855b9964e4be',
+      signature: '306543a820fe647b9f4c7d4b77d7c96e1f1bd5a63047e0bb95ef48fe1ee9fcac8fbce7d57e8aaede8a7bd3ad6a4e5e601f38ebb57bbdd79675a36370aa974b0b',
+      algorithm: { hash: 'BLAKE3', signature: 'Ed25519' },
+      key_id: 'demo-key-001',
+    };
+
+    // Tampered: signature shortened — same banking receipt with an obvious format error
+    const SAMPLE_TAMPERED = (() => {
+      const t = JSON.parse(JSON.stringify(SAMPLE_BANKING));
+      t.signature = '306543a820fe647b9f4c7d4b77d7c96e1f1bd5a63047e0bb95ef48fe1ee9fc'; // shortened
+      return t;
+    })();
+
+    document.getElementById('key-id-display').textContent = t('footer.keyId') + ': ' + SAMPLE_BANKING.key_id;
+
+    /* ---------- Verifier (static structural verification) ---------- */
+    function verifyReceipt(text) {
+      const trimmed = (text || '').trim();
+      if (!trimmed) return { ok: false, error: t('error.emptyInput') };
+
+      let receipt;
+      try {
+        receipt = JSON.parse(trimmed);
+      } catch (e) {
+        return { ok: false, error: t('error.invalidJson') };
+      }
+
+      const steps = [];
+      const isObj = receipt !== null && typeof receipt === 'object' && !Array.isArray(receipt);
+      steps.push({ n: 1, key: 'step.dict', pass: isObj, kind: 'real' });
+
+      const required = ['version', 'payload', 'hash', 'signature', 'algorithm', 'key_id'];
+      const missing = isObj ? required.filter(f => !(f in receipt)) : required;
+      steps.push({ n: 2, key: 'step.required', pass: missing.length === 0, kind: 'real',
+        detail: missing.length ? 'missing: ' + missing.join(', ') : null });
+
+      const algorithm = (isObj && receipt.algorithm) || {};
+      const algValid = typeof algorithm.hash === 'string' && typeof algorithm.signature === 'string';
+      steps.push({ n: 3, key: 'step.algSubfields', pass: algValid, kind: 'real' });
+
+      const versionAlgValid = receipt.version === '1.0' && algorithm.hash === 'BLAKE3' && algorithm.signature === 'Ed25519';
+      steps.push({ n: 4, key: 'step.versionAlg', pass: versionAlgValid, kind: 'real' });
+
+      const payloadObj = isObj && receipt.payload && typeof receipt.payload === 'object';
+      const keyIdValid = typeof receipt.key_id === 'string' && receipt.key_id.length > 0;
+      steps.push({ n: 5, key: 'step.payloadKey', pass: payloadObj && keyIdValid, kind: 'real' });
+
+      // Demo checks: full canonicalization + hash recomputation requires the production verifier.
+      steps.push({ n: 6, key: 'step.canonicalize', pass: payloadObj, kind: 'demo' });
+
+      const hashFormatValid = typeof receipt.hash === 'string' && /^[0-9a-f]{64}$/i.test(receipt.hash);
+      steps.push({ n: 7, key: 'step.hashFormat', pass: hashFormatValid, kind: 'real',
+        detail: '64 hex chars · BLAKE3-256' });
+
+      steps.push({ n: 8, key: 'step.signingInput', pass: hashFormatValid, kind: 'demo' });
+
+      const sigFormatValid = typeof receipt.signature === 'string' && /^[0-9a-f]{128}$/i.test(receipt.signature);
+      steps.push({ n: 9, key: 'step.signatureFormat', pass: sigFormatValid, kind: 'real',
+        detail: '128 hex chars · Ed25519' });
+
+      const allPass = steps.every(s => s.pass);
+      return { ok: allPass, steps, receipt };
+    }
+
+    /* ---------- Render ---------- */
+    function renderResult(result) {
+      lastResult = result;
+      const pill = document.getElementById('result-pill');
+      const area = document.getElementById('result-area');
+      const metaPanel = document.getElementById('metadata-panel');
+      const errEl = document.getElementById('input-error');
+      errEl.textContent = '';
+
+      if (result.error) {
+        errEl.textContent = result.error;
+        pill.textContent = t('result.pending');
+        pill.className = 'pill pill-muted';
+        area.innerHTML = '<p class="result-empty">' + escapeHtml(t('result.empty')) + '</p>';
+        metaPanel.setAttribute('hidden', '');
+        return;
+      }
+
+      pill.textContent = result.ok ? t('result.valid') : t('result.invalid');
+      pill.className = 'pill ' + (result.ok ? 'pill-green' : 'pill-red');
+
+      const passCount = result.steps.filter(s => s.pass).length;
+      const summaryRows = [
+        { key: t('result.summary.outcome'), val: '<code>' + escapeHtml(result.ok ? 'VALID' : 'INVALID') + '</code> · ' + escapeHtml(t('result.demoLabel')) },
+        { key: t('result.summary.steps'), val: passCount + ' / ' + result.steps.length },
+        { key: t('result.summary.keyId'), val: '<code>' + escapeHtml(result.receipt.key_id || '') + '</code>' },
+        { key: t('result.summary.algorithm'),
+          val: '<code>' + escapeHtml((result.receipt.algorithm && result.receipt.algorithm.hash) || '?') + ' · ' + escapeHtml((result.receipt.algorithm && result.receipt.algorithm.signature) || '?') + '</code>' },
+      ];
+
+      const summaryHtml = '<div class="result-summary">' +
+        summaryRows.map(r => '<div class="key">' + escapeHtml(r.key) + '</div><div>' + r.val + '</div>').join('') +
+        '</div>';
+
+      const stepsHtml = '<div class="step-list">' + result.steps.map(s => {
+        const cls = s.pass ? (s.kind === 'demo' ? 'demo' : 'pass') : 'fail';
+        const icon = s.pass ? (s.kind === 'demo' ? '◐' : '✓') : '✗';
+        const labelText = escapeHtml(t(s.key)) + (s.kind === 'demo' ? ' <span class="step-detail">(' + escapeHtml(t('step.demoNote')) + ')</span>' : '');
+        const detail = s.detail ? '<span class="step-detail">' + escapeHtml(s.detail) + '</span>' : '<span></span>';
+        return '<div class="step-row ' + cls + '">' +
+          '<span class="step-num">' + s.n + '</span>' +
+          '<span class="step-icon">' + icon + '</span>' +
+          '<span class="step-label">' + labelText + '</span>' +
+          detail +
+        '</div>';
+      }).join('') + '</div>';
+
+      area.innerHTML = summaryHtml + stepsHtml;
+
+      // Metadata panel
+      const r = result.receipt || {};
+      const p = (r.payload && typeof r.payload === 'object') ? r.payload : {};
+      const decision = (p.governance && p.governance.aggregate_decision) || '';
+      const decisionUpper = decision ? decision.toUpperCase() : '';
+      const decisionClass = decisionUpper === 'ALLOW' ? 'allow' : decisionUpper === 'BLOCK' ? 'block' : decisionUpper === 'REQUIRE_REVIEW' ? 'review' : '';
+
+      const metaRows = [
+        { k: t('meta.version'),    v: '<code>' + escapeHtml(r.version || '') + '</code>' },
+        { k: t('meta.keyId'),      v: '<code>' + escapeHtml(r.key_id || '') + '</code>' },
+        { k: t('meta.algorithm'),  v: '<code>' + escapeHtml((r.algorithm && r.algorithm.hash) || '?') + ' · ' + escapeHtml((r.algorithm && r.algorithm.signature) || '?') + '</code>' },
+        { k: t('meta.hash'),       v: '<code>' + escapeHtml(r.hash || '') + '</code>' },
+        { k: t('meta.signature'),  v: '<code>' + escapeHtml(r.signature || '') + '</code>' },
+        { k: t('meta.actionId'),   v: '<code>' + escapeHtml(p.action_id || '') + '</code>' },
+        { k: t('meta.actorId'),    v: '<code>' + escapeHtml(p.actor_id || '') + '</code>' },
+        { k: t('meta.action'),     v: '<code>' + escapeHtml(p.action || '') + '</code>' },
+        { k: t('meta.target'),     v: '<code>' + escapeHtml(p.target || '') + '</code>' },
+        { k: t('meta.timestamp'),  v: '<code>' + escapeHtml(p.timestamp || '') + '</code>' },
+      ];
+      if (decisionUpper) {
+        metaRows.push({ k: t('meta.decision'), v: '<span class="val-decision ' + decisionClass + '">' + escapeHtml(decisionUpper) + '</span>' });
+      }
+
+      document.getElementById('metadata-grid').innerHTML = metaRows
+        .map(row => '<div class="key">' + escapeHtml(row.k) + '</div><div>' + row.v + '</div>')
+        .join('');
+      metaPanel.removeAttribute('hidden');
+    }
+
+    /* ---------- Wire UI ---------- */
+    document.getElementById('btn-verify').addEventListener('click', () => {
+      const text = document.getElementById('receipt-input').value;
+      renderResult(verifyReceipt(text));
+    });
+    document.getElementById('btn-load-banking').addEventListener('click', () => {
+      document.getElementById('receipt-input').value = JSON.stringify(SAMPLE_BANKING, null, 2);
+      document.getElementById('input-error').textContent = '';
+    });
+    document.getElementById('btn-load-tampered').addEventListener('click', () => {
+      document.getElementById('receipt-input').value = JSON.stringify(SAMPLE_TAMPERED, null, 2);
+      document.getElementById('input-error').textContent = '';
+    });
+    document.getElementById('btn-clear').addEventListener('click', () => {
+      document.getElementById('receipt-input').value = '';
+      document.getElementById('input-error').textContent = '';
+      lastResult = null;
+      const area = document.getElementById('result-area');
+      area.innerHTML = '<p class="result-empty">' + escapeHtml(t('result.empty')) + '</p>';
+      const pill = document.getElementById('result-pill');
+      pill.textContent = t('result.pending');
+      pill.className = 'pill pill-muted';
+      document.getElementById('metadata-panel').setAttribute('hidden', '');
+    });
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+    // Auto-load if URL hash carries `?receipt=...` from the Control Console (encoded JSON via base64)
+    function tryLoadFromHash() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const b64 = params.get('receipt');
+        if (b64) {
+          const decoded = atob(b64);
+          document.getElementById('receipt-input').value = decoded;
+          renderResult(verifyReceipt(decoded));
+        }
+      } catch { /* ignore */ }
+    }
+
+    // Boot
+    setTheme(storageGet(STORAGE_KEYS.theme, 'light'));
+    setLanguage(storageGet(STORAGE_KEYS.lang, 'en'));
+    tryLoadFromHash();
+  </script>
+</body>
+</html>

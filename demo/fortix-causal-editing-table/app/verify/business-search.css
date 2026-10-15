@@ -1,0 +1,10 @@
+.verifier-business-search { margin: 1rem 0; padding: 1rem; border: 1px solid var(--nx-border, #d6dddc); border-radius: .5rem; }
+.verifier-business-search > label { display: block; font-weight: 700; margin-bottom: .5rem; }
+.verifier-business-search__field { display: flex; gap: .5rem; }
+.verifier-business-search__field input { flex: 1; min-width: 0; padding: .6rem; border: 1px solid currentColor; border-radius: .25rem; background: #fff; }
+.verifier-business-search__field button { min-height: 2.75rem; padding: .5rem; }
+.verifier-business-search__results section { margin-top: 1rem; }
+.verifier-business-search__results h2 { font-size: 1rem; }
+.verifier-business-search__results ul { list-style: none; padding: 0; }
+.verifier-business-search__results li a { display: flex; flex-direction: column; gap: .25rem; padding: .6rem; min-height: 2.75rem; border-bottom: 1px solid var(--nx-border, #d6dddc); }
+.verifier-business-search__results li a span { font-size: .8rem; }

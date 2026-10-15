@@ -1,0 +1,9 @@
+.evidence-object { color: #c2bccd; width: 100%; }
+.evidence-object > svg { display: block; width: 100%; height: auto; max-width: 100%; overflow: visible; font-family: Inter, system-ui, sans-serif; filter: drop-shadow(0 2px 1px #12212924) drop-shadow(5px 15px 12px #2431342b) drop-shadow(12px 35px 24px #3447441c); }
+.evidence-object__machine { font-family: "JetBrains Mono", ui-monospace, monospace; }
+.evidence-object__caption { text-align: center; font-size: 11px; line-height: 1.5; margin: 8px 0 0; color: inherit; }
+.evidence-object[data-empty="true"] > svg { opacity: .72; filter: none; }
+.evidence-object--compact { width: 46px; flex: 0 0 46px; }
+.evidence-object--compact text, .evidence-object--compact path:last-child { display: none; }
+.evidence-object--compact > svg { filter: none; }
+@media (prefers-reduced-motion: reduce) { .evidence-object { animation: none; transition: none; } }

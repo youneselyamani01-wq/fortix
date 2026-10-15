@@ -1,0 +1,10 @@
+.inspection-relation-explanation { min-width: 0; overflow-wrap: anywhere; }
+.inspection-relation-explanation > h4 { margin: .5rem 0; font-size: 1.2rem; }
+.inspection-relation-endpoints { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.inspection-relation-endpoints > div { min-width: 0; }
+.inspection-relation-endpoints small { display: block; margin-bottom: .4rem; }
+.inspection-relation-endpoints button { min-height: 44px; width: 100%; padding: .6rem; font: inherit; font-weight: 700; text-align: left; overflow-wrap: anywhere; }
+.inspection-relation-explanation ol { padding-left: 1.25rem; }
+.inspection-relation-explanation li { margin: .75rem 0; }
+.inspection-panel .inspection-human-fact > p:first-of-type { font-size: 1.2rem; font-weight: 700; line-height: 1.35; }
+@media (max-width: 480px) { .inspection-relation-endpoints { grid-template-columns: minmax(0, 1fr); } }

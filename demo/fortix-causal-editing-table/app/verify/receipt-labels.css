@@ -1,0 +1,12 @@
+.received-inspection .received-nr-label, .inspection-workspace .received-nr-label { display: block; color: #76508e; font: 10px/1.45 var(--nx-font-mono, monospace); margin-top: 7px; overflow-wrap: anywhere; }
+.received-inspection .received-segment-receipts .received-nr-label { margin: 0 0 4px; }
+.received-inspection .received-identity-proof { border-block: 1px solid var(--brand-rule); padding-block: 12px; margin-block: 12px; }
+.received-inspection .received-identity-proof h5 { margin: 0; font-size: 11px; text-transform: uppercase; }
+.received-inspection .received-identity-proof code, .received-inspection .received-identity-proof small { display: block; font-size: 10px; overflow-wrap: anywhere; line-height: 1.6; }
+.inspection-workspace .inspection-receipt-proof dt { font-size: 10px; color: var(--nx-ink-2); }
+.inspection-workspace .inspection-receipt-proof dd { margin: 4px 0 12px; }
+.inspection-workspace .inspection-receipt-proof code, .inspection-workspace .inspection-receipt-proof small { display: block; font: 10px/1.6 var(--nx-font-mono, monospace); overflow-wrap: anywhere; }
+.inspection-workspace .inspection-receipt-proof small { color: var(--nx-ink-2); margin-top: 5px; }
+.inspection-workspace .received-path-overview .received-outline-segment > summary { padding-block: 5px; line-height: 1.25; top: calc(50% + 21px); }
+.inspection-workspace .received-path-overview .received-outline-segment > summary .received-segment-nr-count { display: block; color: #76508e; font-size: 10px; }
+.inspection-workspace .received-path-overview .received-outline-segment > summary small { display: block; margin-top: 2px; color: #82708e; font-size: 9px; }

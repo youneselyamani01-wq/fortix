@@ -1,0 +1,464 @@
+/*
+ * D-006/NX3 — THE INDEPENDENT VERIFIER SURFACE.
+ *
+ * WHAT THIS IS. The chrome of one instrument that opens over the mission: a
+ * scrim that dims the page, a panel that never exceeds the viewport and
+ * scrolls inside itself, a receiving surface for the PEB, a three-line ledger
+ * of what the verifier holds, and the verdict as the one loud object.
+ *
+ * WHY IT IS ITS OWN FILE. `nx.css` is the page's; this is the instrument's.
+ * The surface reads the page's tokens (porcelain, paper, ink, rule, the
+ * verdict colours) and the design-token contract's names with their
+ * fallbacks, so it renders the same whether or not the page has realigned
+ * them yet. Nothing here redefines a page token.
+ *
+ * COLOUR ENCODES. Accent = interaction (the armed receiving surface, the
+ * selected inspection tab, the selected row). Verdict colours = the verdict,
+ * and nothing else. The two never meet on one element.
+ */
+
+.nx-vs-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 29;
+  background: color-mix(in srgb, var(--nx-ink, #16171b) 34%, transparent);
+  animation: nx-vs-scrim-in var(--nx-motion-medium, 260ms) var(--nx-ease, cubic-bezier(0.2, 0, 0, 1));
+}
+
+/* The instrument: centred, bounded by the viewport on both axes, and made of
+   two rows — a head that stays, a body that scrolls. */
+.nx-verifier-surface {
+  position: fixed;
+  z-index: 30;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(100vw - 2 * clamp(12px, 3vw, 40px), 1160px);
+  max-height: calc(100vh - 2 * clamp(12px, 3vh, 36px));
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  border: 1px solid color-mix(in srgb, var(--nx-ink, #16171b) 32%, transparent);
+  border-radius: var(--nx-radius-lg, 10px);
+  background: var(--nx-paper, #fffdf9);
+  color: var(--nx-ink, #16171b);
+  box-shadow: 0 24px 64px rgba(22, 23, 27, 0.22), 0 2px 8px rgba(22, 23, 27, 0.1);
+  animation: nx-vs-in var(--nx-motion-medium, 260ms) var(--nx-ease, cubic-bezier(0.2, 0, 0, 1));
+}
+/* `display: grid` above would defeat the attribute: closed means gone. */
+.nx-verifier-surface[hidden] { display: none; }
+
+/* --- head --------------------------------------------------------------- */
+.nx-vs-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.5rem 1.2rem;
+  padding: 0.65rem 0.9rem 0.6rem 1.25rem;
+  border-bottom: 1px solid var(--nx-rule, rgba(22, 23, 27, 0.14));
+  border-radius: var(--nx-radius-lg, 10px) var(--nx-radius-lg, 10px) 0 0;
+  background: var(--nx-porcelain, #f6f3ec);
+}
+/* The instrument's name is a label, so it speaks in the passive mono voice. */
+.nx-vs-brand {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-geist-mono), Consolas, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nx-ink, #16171b);
+  white-space: nowrap;
+}
+.nx-vs-brand strong { font-weight: 600; }
+.nx-vs-brand span { font-weight: 500; }
+.nx-vs-brand i { width: 5px; height: 5px; border-radius: 50%; background: var(--nx-accent, #3552c9); }
+.nx-vs-relation {
+  margin: 0;
+  min-width: 0;
+  font-size: 0.8rem;
+  color: var(--nx-ink-2, #5b5c62);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nx-vs-link { margin: 0; display: inline-flex; align-items: center; gap: 0.55rem; }
+.nx-vs-link em {
+  font-style: normal;
+  font-family: var(--font-geist-mono), Consolas, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2, #5b5c62);
+}
+.nx-vs-link em[data-link="LOST"] { color: var(--nx-pulse-coral, #ff5a4e); }
+.nx-vs-link em[data-link="CONNECTED"] { color: var(--nx-ink, #16171b); }
+/* Close: a boundary that answers the pointer; the mark is drawn, not typed. */
+.nx-vs-close {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  transition: border-color var(--nx-motion-fast, 140ms), background var(--nx-motion-fast, 140ms);
+}
+.nx-vs-close i::before, .nx-vs-close i::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 1.5px;
+  background: var(--nx-ink, #16171b);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.nx-vs-close i::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.nx-vs-close:hover, .nx-vs-close:focus-visible { border-color: var(--nx-ink, #16171b); background: var(--nx-paper, #fffdf9); }
+
+/* --- body: intake left, reading right, inspection beneath ---------------- */
+.nx-vs-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  outline: none;
+  padding: 1rem 1.25rem 1.2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 1rem 1.6rem;
+  align-content: start;
+}
+/* Focus enters the body programmatically when the instrument opens; the
+   instrument's own boundary says where focus is, so the page's accent ring
+   (`.nx :focus-visible`, which outranks the class alone) is not drawn around
+   the whole body. Every act inside keeps its ring. */
+.nx .nx-vs-body:focus-visible { outline: none; }
+.nx-vs-intake, .nx-vs-reading { display: grid; gap: 0.85rem; align-content: start; min-width: 0; }
+
+/* THE RECEIVING SURFACE. The PEB's own folder corner, enlarged: a place shaped
+   for the object, not an upload box. Solid at rest, accent when the object is
+   in hand, lifted while the pointer is above it. */
+.nx-vs-dropzone {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  padding: 1.35rem 1rem 1.15rem;
+  border: 1.5px solid var(--nx-mineral, #d8d3c8);
+  border-radius: var(--nx-radius-md, 6px) 26px var(--nx-radius-md, 6px) var(--nx-radius-md, 6px);
+  background: color-mix(in srgb, var(--nx-paper, #fffdf9) 55%, var(--nx-porcelain, #f6f3ec));
+  transition: border-color var(--nx-motion-fast, 140ms), background var(--nx-motion-fast, 140ms), box-shadow var(--nx-motion-fast, 140ms), transform var(--nx-motion-fast, 140ms);
+}
+.nx-vs-dropzone-mark {
+  position: relative;
+  display: block;
+  width: 34px;
+  height: 42px;
+  border: 1.5px solid var(--nx-ink-2, #5b5c62);
+  border-radius: 2px 12px 2px 2px;
+  color: var(--nx-ink-2, #5b5c62);
+  transition: border-color var(--nx-motion-fast, 140ms), color var(--nx-motion-fast, 140ms);
+}
+.nx-vs-dropzone-mark b {
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  top: 13px;
+  height: 1.5px;
+  background: currentColor;
+  box-shadow: 0 6px 0 currentColor, 0 12px 0 currentColor;
+  opacity: 0.4;
+}
+.nx-vs-dropzone-word { margin: 0; font-size: 0.92rem; font-weight: 500; text-align: center; color: var(--nx-ink, #16171b); }
+.nx-vs-dropzone[data-stage="NOT_READY"] .nx-vs-dropzone-word { color: var(--nx-ink-2, #5b5c62); font-weight: 400; }
+.nx-vs-dropzone[data-drop="armed"] {
+  border-color: var(--nx-accent, #3552c9);
+  background: var(--nx-accent-soft, rgba(53, 82, 201, 0.08));
+}
+.nx-vs-dropzone[data-drop="armed"] .nx-vs-dropzone-mark { border-color: var(--nx-accent, #3552c9); color: var(--nx-accent, #3552c9); }
+.nx-vs-dropzone[data-drop="over"] {
+  border-color: var(--nx-accent, #3552c9);
+  background: color-mix(in srgb, var(--nx-accent, #3552c9) 14%, var(--nx-paper, #fffdf9));
+  box-shadow: 0 0 0 4px var(--nx-accent-line, rgba(53, 82, 201, 0.3));
+  transform: scale(1.01);
+}
+.nx-vs-dropzone[data-drop="over"] .nx-vs-dropzone-mark { border-color: var(--nx-accent, #3552c9); color: var(--nx-accent, #3552c9); border-style: solid; }
+.nx-vs-dropzone-acts { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; justify-content: center; }
+
+/* RECEIVED: the page's recorded-result costume, with the facts beneath. The
+   costume's check mark is a pseudo-element; in this grid it would become a
+   row of its own above the kicker, so the kicker carries the mark instead. */
+.nx-vs-received { display: grid; gap: 0.35rem; padding: 0.7rem 0.9rem 0.8rem 0.85rem; }
+.nx-vs-received::before { display: none; }
+.nx-vs-received .nx-kicker::before { content: "✓ "; }
+.nx-vs-received dl { margin: 0.2rem 0 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.3rem 0.9rem; align-items: baseline; }
+.nx-vs-received dl div { display: contents; }
+.nx-vs-received dt {
+  font-family: var(--font-geist-mono), Consolas, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2, #5b5c62);
+}
+.nx-vs-received dd { margin: 0; font-size: 0.86rem; overflow-wrap: anywhere; }
+.nx-vs-received > b {
+  font-weight: 500;
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2, #5b5c62);
+}
+
+/* ANALYZE: the one act the instrument expects once it holds the PEB — at the
+   consequential size the authority pair wears (nx.css .nx-consequential). */
+.nx-vs-analyze { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
+.nx-vs-analyze .nx-primary { min-height: 38px; padding: 0.5rem 1.6rem; font-size: 0.95rem; }
+.nx-vs-analyze .nx-panel-note { margin: 0; }
+
+/* THE LEDGER: three facts in the passive voice, each lit only by its act. */
+.nx-vs-ledger { list-style: none; margin: 0; padding: 0; display: grid; }
+.nx-vs-ledger li {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.6rem 0.2rem;
+  border-top: 1px solid var(--nx-rule, rgba(22, 23, 27, 0.14));
+  font-family: var(--font-geist-mono), Consolas, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2, #5b5c62);
+  transition: color var(--nx-motion-medium, 260ms);
+}
+.nx-vs-ledger li:last-child { border-bottom: 1px solid var(--nx-rule, rgba(22, 23, 27, 0.14)); }
+.nx-vs-ledger li span { min-width: 0; overflow-wrap: anywhere; }
+.nx-vs-ledger li code { font-size: 0.7rem; letter-spacing: 0.12em; }
+.nx-vs-ledger i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.2px solid var(--nx-mineral-2, #b8b3a7);
+  background: transparent;
+  transition: background var(--nx-motion-medium, 260ms), border-color var(--nx-motion-medium, 260ms);
+}
+.nx-vs-ledger li[data-status="carried"] i { border-color: var(--nx-accent, #3552c9); border-style: dashed; }
+.nx-vs-ledger li[data-status="carried"] { color: var(--nx-ink, #16171b); }
+.nx-vs-ledger li[data-status="active"] i { border-color: var(--nx-accent, #3552c9); animation: nx-vs-working 1.2s ease-in-out infinite; }
+.nx-vs-ledger li[data-status="active"] { color: var(--nx-ink, #16171b); }
+.nx-vs-ledger li[data-status="done"] { color: var(--nx-ink, #16171b); }
+.nx-vs-ledger li[data-status="done"] i { background: var(--nx-ink, #16171b); border-color: var(--nx-ink, #16171b); }
+.nx-vs-ledger li[data-station="verdict"][data-status="done"] i { background: var(--nx-vs-verdict); border-color: var(--nx-vs-verdict); }
+.nx-vs-ledger li[data-station="verdict"][data-status="done"] code { color: var(--nx-vs-verdict); font-weight: 600; }
+/* During the hold the ledger's word and dot are in the document and not yet
+   painted, exactly as the verdict record; the line reads as its label. */
+.nx-vs-ledger li[data-station="verdict"][data-revealed="false"] code { opacity: 0; transition: opacity var(--nx-motion-slow, 480ms) var(--nx-ease, cubic-bezier(0.2, 0, 0, 1)); }
+.nx-vs-ledger li[data-station="verdict"][data-revealed="false"] i { background: transparent; border-color: var(--nx-mineral-2, #b8b3a7); }
+.nx-vs-ledger li[data-station="verdict"][data-revealed="true"] code { opacity: 1; transition: opacity var(--nx-motion-slow, 480ms) var(--nx-ease, cubic-bezier(0.2, 0, 0, 1)); }
+
+/* THE VERDICT. One decisive colour, from the verdict and from nothing else;
+   the same weight whatever the word. */
+/* The site's own verdict map (scenePalette.ts light, global.css .verdict-word):
+   VALID the valid green, INVALID the invalid red, INDETERMINATE and REVOKED
+   the warning amber — a withdrawn authority is a state to weigh, not a
+   failure of the evidence. The demo mapped REVOKED to red before NX3. */
+.nx-verifier-surface[data-verdict="VALID"] { --nx-vs-verdict: var(--nx-verdict-valid, #1f7a52); }
+.nx-verifier-surface[data-verdict="INDETERMINATE"], .nx-verifier-surface[data-verdict="REVOKED"] { --nx-vs-verdict: var(--nx-verdict-open, #8a5a10); }
+.nx-verifier-surface[data-verdict="INVALID"] { --nx-vs-verdict: var(--nx-verdict-fail, #b0273f); }
+.nx-vs-verdict {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem 1.2rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--nx-vs-verdict, var(--nx-ink-2, #5b5c62)) 40%, transparent);
+  border-left: 6px solid var(--nx-vs-verdict, var(--nx-ink-2, #5b5c62));
+  border-radius: var(--nx-radius-lg, 10px);
+  background: color-mix(in srgb, var(--nx-vs-verdict, var(--nx-ink-2, #5b5c62)) 6%, var(--nx-paper, #fffdf9));
+  animation: nx-vs-verdict-in var(--nx-motion-slow, 480ms) var(--nx-ease, cubic-bezier(0.2, 0, 0, 1));
+}
+.nx-vs-verdict-word { margin: 0; }
+.nx-vs-verdict-word code {
+  font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: var(--nx-vs-verdict, var(--nx-ink, #16171b));
+}
+.nx-vs-verdict h3 { margin: 0.1rem 0 0; font-size: clamp(1.15rem, 2vw, 1.5rem); font-weight: 500; letter-spacing: -0.015em; text-wrap: balance; }
+.nx-vs-verdict-reading { margin: 0; font-size: 0.9rem; line-height: 1.45; color: var(--nx-ink-2, #5b5c62); }
+.nx-vs-verdict-facts { margin: 0.2rem 0 0; display: flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; }
+.nx-vs-verdict-facts b {
+  font-weight: 500;
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2, #5b5c62);
+}
+.nx-vs-verdict .nx-established { margin-top: 0.75rem; }
+.nx-vs-verdict .nx-limits { margin-top: 0.6rem; }
+.nx-vs-inspect-act { justify-self: start; margin-top: 0.75rem; }
+
+/* --- INSPECT: tabs, then one section ------------------------------------- */
+.nx-vs-inspect {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--nx-rule, rgba(22, 23, 27, 0.14));
+}
+.nx-vs-tabs { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+/* Selectable pills: the neutral pill, and the one selected idiom (NX4 §5). */
+.nx-vs-tabs [role="tab"] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border: 1px solid var(--nx-mineral-2, #b8b3a7);
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.22rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--nx-ink-2, #5b5c62);
+  transition: border-color var(--nx-motion-fast, 140ms), color var(--nx-motion-fast, 140ms), background-color var(--nx-motion-fast, 140ms);
+}
+.nx-vs-tabs [role="tab"]:hover { border-color: var(--nx-ink, #16171b); color: var(--nx-ink, #16171b); background: var(--nx-porcelain, #f6f3ec); }
+.nx-vs-tabs [role="tab"][aria-selected="true"] {
+  border-color: var(--nx-accent, #3552c9);
+  color: var(--nx-accent, #3552c9);
+  background: var(--nx-accent-soft, rgba(53, 82, 201, 0.08));
+}
+.nx-vs-section { min-width: 0; }
+/* An interpretation limit stands above the drawing it limits, in the voice of a fact. */
+.nx-vs-caveat {
+  margin: 0 0 0.6rem;
+  padding-left: 0.65rem;
+  border-left: 3px solid var(--nx-accent, #3552c9);
+  font-size: 0.82rem;
+  color: var(--nx-ink, #16171b);
+}
+.nx-vs-canvas {
+  border: 1px solid var(--nx-rule, rgba(22, 23, 27, 0.14));
+  border-radius: var(--nx-radius-md, 6px);
+  overflow: hidden;
+  background: var(--nx-porcelain, #f6f3ec);
+}
+/* The Gate 2 renderer's own text classes, sized as on the bench. */
+.nx-vs-canvas .g2-canvas { display: block; width: 100%; height: auto; }
+.nx-vs-canvas .g2-ordinal { font-size: 6.4px; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.nx-vs-canvas .g2-lane-label { font-size: 8px; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 500; }
+.nx-vs-canvas .g2-axis-label { font-size: 7.4px; letter-spacing: 0.11em; text-transform: uppercase; }
+
+/* Rows: READING NUMBER · IDENTIFIER, a button that re-roots the path. */
+.nx-vs-path ol, .nx-vs-receipts ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.nx-vs-path-line { margin: 0 0 0.5rem; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.6rem; font-size: 0.84rem; }
+.nx-vs-path-line span { color: var(--nx-ink-2, #5b5c62); }
+.nx-vs-row {
+  display: grid;
+  grid-template-columns: 4.6rem minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: baseline;
+  width: 100%;
+  border: 0;
+  border-radius: var(--nx-radius-sm, 3px);
+  background: transparent;
+  padding: 0.3rem 0.45rem;
+  text-align: left;
+  transition: background var(--nx-motion-fast, 140ms);
+}
+.nx-vs-row:hover, .nx-vs-row:focus-visible { background: var(--nx-porcelain, #f6f3ec); }
+.nx-vs-row[aria-current="true"] { background: var(--nx-accent-soft, rgba(53, 82, 201, 0.08)); }
+.nx-vs-row .nx-ordinal {
+  font-family: var(--font-geist-mono), Consolas, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+.nx-vs-row[aria-current="true"] .nx-ordinal { color: var(--nx-accent, #3552c9); }
+.nx-vs-row code { font-size: 0.74rem; }
+.nx-vs-row small {
+  font-family: var(--font-geist-mono), Consolas, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2, #5b5c62);
+  white-space: nowrap;
+}
+.nx-vs-row[data-assurance="QUARANTINED"] .nx-ordinal { text-decoration: underline dotted; text-underline-offset: 3px; }
+.nx-vs-receipts-head {
+  margin: 0 0 0.3rem;
+  display: grid;
+  grid-template-columns: 4.6rem minmax(0, 1fr);
+  gap: 0.8rem;
+  padding: 0 0.45rem;
+  font-family: var(--font-geist-mono), Consolas, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2, #5b5c62);
+}
+.nx-vs-trust { margin: 0; }
+.nx-vs-trust dl div[data-category] { padding: 0.2rem 0; }
+
+/* THE SEQUENCE (§16–§17): the completed checks by category, each lit in
+   cadence once the result is in; then the hold; then the verdict. A group
+   before its turn is present and quiet, never absent. It stands in the
+   intake column under the received record, ruled like the ledger. */
+.nx-vs-sequence { list-style: none; margin: 0; padding: 0.2rem 0 0; display: grid; gap: 0.15rem; border-top: 1px solid var(--nx-rule, rgba(22, 23, 27, 0.14)); }
+.nx-vs-sequence li {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.35rem 0.2rem;
+  font-family: var(--font-geist-mono), Consolas, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2, #5b5c62);
+  opacity: 0.38;
+  transition: opacity var(--nx-motion-medium, 260ms) var(--nx-ease, cubic-bezier(0.2, 0, 0, 1)), color var(--nx-motion-medium, 260ms) var(--nx-ease, cubic-bezier(0.2, 0, 0, 1));
+}
+.nx-vs-sequence i { width: 10px; height: 10px; border-radius: 50%; border: 1.2px solid var(--nx-mineral-2, #b8b3a7); transition: background var(--nx-motion-medium, 260ms), border-color var(--nx-motion-medium, 260ms); }
+.nx-vs-sequence b { font-weight: 500; font-variant-numeric: tabular-nums; }
+.nx-vs-sequence li[data-revealed="true"] { opacity: 1; color: var(--nx-ink, #16171b); }
+.nx-vs-sequence li[data-revealed="true"] i { background: var(--nx-accent, #3552c9); border-color: var(--nx-accent, #3552c9); }
+/* During the hold the verdict is in the document and not yet painted; the
+   reveal is one decisive transition, no bounce. */
+.nx-vs-verdict[data-revealed="false"] { opacity: 0; transform: translateY(6px); animation: none; }
+.nx-vs-verdict[data-revealed="true"] { opacity: 1; transform: none; transition: opacity var(--nx-motion-slow, 480ms) var(--nx-ease, cubic-bezier(0.2, 0, 0, 1)), transform var(--nx-motion-slow, 480ms) var(--nx-ease, cubic-bezier(0.2, 0, 0, 1)); }
+
+/* --- motion ---------------------------------------------------------------- */
+@keyframes nx-vs-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes nx-vs-in {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 10px)); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+@keyframes nx-vs-verdict-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes nx-vs-working { from { opacity: 0.3; } 50% { opacity: 1; } to { opacity: 0.3; } }
+
+/* REDUCED MOTION: every transition collapses to an instant change of opacity,
+   the hold is zero (choreography.ts), and every state stays fully readable. */
+@media (prefers-reduced-motion: reduce) {
+  .nx-vs-scrim, .nx-verifier-surface, .nx-vs-verdict, .nx-vs-verdict[data-revealed="false"], .nx-vs-verdict[data-revealed="true"] { animation: none; transition: none; transform: none; }
+  /* This transform positions the dialog; it is not motion. */
+  .nx-verifier-surface { transform: translate(-50%, -50%); }
+  .nx-vs-verdict[data-revealed="false"] { opacity: 1; }
+  .nx-vs-ledger li[data-station="verdict"][data-revealed="false"] code { opacity: 1; transition: none; }
+  .nx-vs-ledger li[data-station="verdict"][data-revealed="false"] i { background: var(--nx-vs-verdict); border-color: var(--nx-vs-verdict); }
+  .nx-vs-sequence li, .nx-vs-sequence i, .nx-vs-ledger li, .nx-vs-ledger i, .nx-vs-dropzone, .nx-vs-dropzone-mark, .nx-vs-tabs [role="tab"], .nx-vs-row, .nx-vs-close { transition: none; }
+  .nx-vs-ledger li[data-status="active"] i { animation: none; }
+  .nx-vs-dropzone[data-drop="over"] { transform: none; }
+}
+
+/* --- responsive ------------------------------------------------------------ */
+@media (max-width: 860px) {
+  .nx-vs-body { grid-template-columns: 1fr; }
+  .nx-vs-head { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .nx-vs-relation { display: none; }
+}
+@media (max-height: 640px) {
+  .nx-vs-body { padding: 0.7rem 1rem 0.9rem; gap: 0.7rem 1.2rem; }
+  .nx-vs-dropzone { padding: 0.9rem 0.8rem 0.8rem; }
+  .nx-vs-verdict { padding: 0.75rem 1rem 0.85rem; }
+}

@@ -1,0 +1,72 @@
+/* UX cleanup, workspace part: panel hierarchy and graph type. Imported after the workspace
+ * sheets it refines (same bundle), so production order matches development order. */
+.verifier-route-page[data-view=graph] .received-path-panel { margin-top: 0; }
+.verifier-route-page[data-view=graph] .verifier-package-inspect { margin: 0; padding: 0; border: 0; background: transparent; }
+.verifier-route-page[data-view=graph] .received-inspection { margin: 0; padding: 0; }
+.verifier-route-page[data-view=graph] .evidence-timeline { margin-block: 6px; padding: 8px 12px; }
+.verifier-route-page[data-view=graph] .evidence-timeline > header { margin-bottom: 4px; }
+.verifier-route-page[data-view=graph] .evidence-timeline > header h2 { font-size: 13px; margin: 0; }
+.verifier-route-page[data-view=graph] .evidence-timeline > header > p { margin: 0; }
+.verifier-route-page[data-view=graph] .evidence-timeline-scroll > ol { padding-block: 4px; }
+.verifier-route-page[data-view=graph] .inspection-workspace { margin-top: 4px; padding: 0 0 12px; }
+.verifier-route-page[data-view=graph] .inspection-options > summary,
+.verifier-route-page[data-view=graph] .inspection-families > summary { margin: 0; padding-block: 4px; min-height: 28px; }
+.verifier-route-page[data-view=graph] .inspection-desk { margin-top: 4px; }
+.verifier-route-page[data-view=graph] .inspection-presets { margin-bottom: 4px; }
+.verifier-route-page[data-view=graph] .inspection-summary { margin-bottom: 0; padding-bottom: 0; border: 0; }
+.verifier-route-page[data-view=graph] .inspection-options { padding: 4px 8px; margin-bottom: 4px; }
+.verifier-route-page[data-view=graph] .inspection-options summary { min-height: 32px; }
+.verifier-route-page[data-view=graph] .inspection-display-controls { padding: 4px 8px; gap: 4px; margin-bottom: 4px; }
+.verifier-route-page[data-view=graph] .inspection-presets button { min-height: 36px; padding-block: 5px; }
+.verifier-route-page[data-view=graph] .inspection-display-controls > p { margin: 3px 0; font-size: 11px; line-height: 1.4; }
+.verifier-route-page[data-view=graph] .inspection-families { margin-bottom: 4px; padding: 4px 8px; }
+.verifier-route-page[data-view=graph] .inspection-selection-hint { margin: 4px 0; font-size: 12px; }
+.verifier-route-page[data-view=graph] .inspection-canvas { padding: 10px; min-height: 0; }
+.verifier-route-page[data-view=graph] .inspection-workspace[data-expanded=true][data-layout=full] .inspection-canvas { height: max(560px, calc(100svh - 180px)); }
+.verifier-route-page[data-view=graph] .inspection-full-graph { flex: 1; height: auto; min-height: 0; }
+.verifier-route-page[data-view=graph] .inspection-panel { top: 100px; max-height: calc(100svh - 112px); padding: 12px 16px; }
+.verifier-route-page[data-view=graph] .inspection-panel-top { top: -12px; padding-block: 4px; gap: 8px; }
+.inspection-panel .inspection-human-fact > h4 { display: none; }
+.inspection-panel .inspection-human-fact > p:first-of-type { font-size: 15px; font-weight: 400; }
+.inspection-panel > details { padding-block: 10px; border-top: 1px solid var(--brand-rule); }
+.inspection-panel > details > summary { margin: 0; min-height: 32px; font-weight: 650; font-size: 14px; cursor: pointer; }
+.inspection-panel > details section { padding-block: 8px; }
+.inspection-panel .guided-boundary-inspector { position: static; max-height: none; padding: 0; border: 0; background: transparent; overflow: visible; }
+.inspection-panel .boundary-domain-transition { margin-top: 0; }
+.inspection-boundary-index > summary { min-height: 36px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.inspection-boundary-index > summary small { font-weight: 400; color: var(--nx-ink-2); }
+.inspection-workspace .inspection-full-graph .received-graph-node .inspection-node-event { font-size: 13px; font-weight: 650; }
+.inspection-workspace .inspection-full-graph .received-graph-node .inspection-node-nr { font-size: 9px; }
+.verifier-route-page[data-view=graph] .evidence-timeline[data-compact=true] { position: static; box-shadow: none; }
+.verifier-route-page[data-view=graph] .evidence-timeline[data-compact=true] .evidence-timeline-scroll { display: block; padding-bottom: 4px; }
+.verifier-route-page[data-view=graph] .evidence-timeline-scroll li { width: 172px; }
+.verifier-route-page[data-view=graph] .evidence-timeline-scroll button { min-height: 96px; padding: 8px; gap: 3px; }
+.verifier-route-page[data-view=graph] .evidence-timeline-scroll button .evidence-timeline-provenance { font-size: 9px; }
+.verifier-route-page[data-view=graph] .evidence-timeline-scroll button > small { display: none; }
+.inspection-summary-neighbors { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.inspection-summary-neighbors h4 { font-size: 11px; }
+.inspection-panel-top .inspection-context-return { flex: 1; min-height: 36px; padding: 5px 6px; margin: 0; font: inherit; font-size: 12px; }
+.inspection-panel-top button { min-width: 36px; min-height: 36px; }
+.verifier-route-page[data-view=graph] .inspection-workspace .inspection-panel h3 { font-size: 18px; margin: 6px 0 10px; }
+.verifier-route-page[data-view=graph] .inspection-panel > .inspection-view-crossings { margin: 0 0 6px; padding-block: 5px; min-height: 32px; }
+.verifier-route-page[data-view=graph] .inspection-panel .boundary-domain-transition { margin: 4px 0; }
+.verifier-route-page[data-view=graph] .inspection-panel .boundary-domain-transition > div { padding: 5px 8px; gap: 2px; }
+.verifier-route-page[data-view=graph] .inspection-panel .boundary-domain-transition strong { font-size: 13px; }
+.verifier-route-page[data-view=graph] .inspection-panel .boundary-human-change { margin: 5px 0; }
+.verifier-route-page[data-view=graph] .inspection-panel .boundary-crossing-reading { padding-block: 5px; }
+.verifier-route-page[data-view=graph] .inspection-panel .boundary-event-pair { grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap: 4px; }
+.verifier-route-page[data-view=graph] .inspection-panel .boundary-event-pair > button { padding: 6px; min-height: 44px; gap: 2px; font-size: 12px; }
+.verifier-route-page[data-view=graph] .inspection-panel .boundary-depth details > summary { margin: 0; min-height: 32px; padding-block: 4px; }
+@media (max-width: 780px) {
+  .verifier-route-page[data-view=graph] .inspection-panel { top: auto; bottom: 0; max-height: 62svh; padding: 10px 12px; }
+  .verifier-route-page[data-view=graph] .inspection-panel-top { top: -12px; }
+  .verifier-route-page[data-view=graph] .inspection-workspace[data-expanded=true][data-layout=full] .inspection-canvas { height: max(560px, 75svh); }
+}
+@media (max-width: 480px) {
+  .verifier-route-page[data-view=graph] .inspection-panel { bottom: 60px; }
+  .verifier-route-page[data-view=graph] .inspection-panel-top button { min-height: 44px; }
+}
+/* Legibility only: the global dark journey heading left dark text on a dark ground in route pages. */
+.verifier-route-page .journey-heading { background: #fff; color: #172033; border-bottom-color: #dfe5ee; }
+.verifier-route-page .journey-heading p, .verifier-route-page .journey-heading dt, .verifier-route-page .journey-heading dd small { color: #526170; }
+.verifier-route-page .journey-heading dd { color: #2146b6; }

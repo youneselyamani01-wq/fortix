@@ -1,0 +1,121 @@
+/*
+ * D-006/NX3 — THE PROOF BAND, TRANSPOSED (B2 in production).
+ *
+ * `nx.css` styles the proof as it has been since B R2: lanes as columns, the
+ * reading order running down. The production geometry is now B2 — causal
+ * depth running RIGHT, provenance as horizontal bands — so every rule here is
+ * scoped to `.nx-proof[data-axis="depth"]` and re-aims the same parts: the
+ * field scrolls sideways, the lane names stand in a column that stays put,
+ * the chapters are spans in a strip above the bands, the depth axis runs
+ * along the bottom, the Final Receipt sits to the right, and the cues point
+ * to the start and the end.
+ *
+ * The band tints are the Gate 2 lane inks (gate2/VariantCanvas.tsx laneInk),
+ * restated here as CSS because a rect cannot call a function: one palette,
+ * two places, the values byte-equal. A band is scenery at 5 % — never a
+ * relation and never a family.
+ */
+
+/* --- head: the axis, named ---------------------------------------------- */
+.nx-proof[data-axis="depth"] .nx-proof-head { grid-template-columns: var(--gutter, 100px) minmax(0, 1fr); }
+.nx-proof[data-axis="depth"] .nx-axis-head {
+  justify-self: end;
+  padding: 0 10px 3px 0;
+  font-family: var(--font-geist-mono), Consolas, monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.1em;
+  color: var(--nx-ink-2);
+  white-space: nowrap;
+}
+
+/* --- the field scrolls sideways, never the page ----------------------------- */
+.nx-proof[data-axis="depth"] .nx-proof-field { overflow: hidden; }
+.nx-proof[data-axis="depth"] .nx-proof-field[data-fit="scroll"] { overflow-x: auto; overflow-y: hidden; scrollbar-gutter: stable; }
+.nx-proof[data-axis="depth"] .nx-proof-scroll { position: relative; height: 100%; min-width: 100%; }
+.nx-proof[data-axis="depth"] .nx-proof-edges { position: absolute; top: 0; left: 0; width: auto; }
+
+/* --- provenance bands: scenery ------------------------------------------------ */
+.nx-band { fill: var(--band-ink, var(--nx-mineral)); fill-opacity: 0.05; }
+.nx-band:nth-child(even) { fill-opacity: 0.07; }
+.nx-band[data-branch="city"] { --band-ink: #0e9aa6; }
+.nx-band[data-branch="vehicle"] { --band-ink: #2f4bff; }
+.nx-band[data-branch="mission"] { --band-ink: #7a4dff; }
+.nx-band[data-branch="route"] { --band-ink: #1f8b84; }
+.nx-band[data-branch="service"] { --band-ink: #ff7a1a; }
+.nx-band[data-branch="authority"] { --band-ink: #ff5a4e; }
+.nx-band[data-branch="bank"] { --band-ink: #c1962e; }
+.nx-band[data-branch="network"] { --band-ink: #6c7d8c; }
+.nx-band[data-branch="safety"] { --band-ink: #d0342c; }
+.nx-band[data-branch="unresolved"] { --band-ink: #b8b3a7; }
+
+/* --- lane names: a column that stays while the field scrolls ---------------- */
+.nx-proof[data-axis="depth"] .nx-branch-labels {
+  position: sticky;
+  left: 0;
+  top: 0;
+  display: block;
+  width: var(--gutter, 100px);
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(to right, var(--nx-porcelain) 74%, transparent);
+}
+.nx-proof[data-axis="depth"] .nx-branch-labels li {
+  position: absolute;
+  left: 0;
+  top: var(--y);
+  width: 100%;
+  padding-left: 10px;
+  transform: translateY(-50%);
+  text-align: left;
+  pointer-events: auto;
+}
+.nx-proof[data-axis="depth"] .nx-branch-label { max-width: calc(var(--gutter, 100px) - 14px); }
+
+/* --- chapters: spans in a strip above the bands ------------------------------ */
+.nx-proof[data-axis="depth"] .nx-chapters { position: absolute; top: 0; left: 0; right: 0; width: auto; height: var(--strip, 0px); overflow: hidden; }
+.nx-proof[data-axis="depth"] .nx-chapters li {
+  position: absolute;
+  left: var(--x);
+  top: calc(var(--chapter-pad, 2px) + var(--row, 0) * var(--chapter-row, 14px));
+  width: var(--w);
+  height: var(--chapter-row, 14px);
+  line-height: calc(var(--chapter-row, 14px) - 2px);
+  padding: 0 0 0 4px;
+  border-bottom: 1px solid var(--nx-rule);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* --- the depth axis ------------------------------------------------------------ */
+.nx-axis-number {
+  font-family: var(--font-geist-mono), Consolas, monospace;
+  font-size: 7.5px;
+  fill: var(--nx-ink-2);
+  fill-opacity: 0.85;
+}
+
+/* --- the post-seal zone: a dotted rule to the right of the Final Receipt ------- */
+.nx-post-seal-rule { fill: none; stroke: var(--nx-mineral-2); stroke-width: 1; stroke-dasharray: 2 4; }
+.nx-proof[data-axis="depth"] .nx-post-seal { left: calc(var(--x) + 8px); right: auto; top: calc(var(--y) + 2px); width: max-content; }
+.nx-proof[data-axis="depth"] .nx-post-seal::before, .nx-proof[data-axis="depth"] .nx-post-seal::after { display: none; }
+
+/* --- the Final Receipt: right of the sealed field, on the bands' centre line --- */
+.nx-proof[data-axis="depth"] .nx-compilation { left: var(--x); right: auto; top: var(--y); justify-items: start; transform: translateY(-50%); }
+
+/* --- cues toward the start and the end ---------------------------------------- */
+.nx-proof[data-axis="depth"] .nx-scroll-cue { top: 50%; bottom: auto; transform: translateY(-50%); }
+.nx-proof[data-axis="depth"] .nx-scroll-cue.is-start { left: calc(var(--gutter, 100px) + 4px); }
+.nx-proof[data-axis="depth"] .nx-scroll-cue.is-end { left: auto; right: 4px; }
+.nx-scroll-cue.is-start i { border-top: 3px solid transparent; border-bottom: 3px solid transparent; border-right: 4px solid var(--nx-ink-2); border-left: 0; }
+.nx-scroll-cue.is-end i { border-top: 3px solid transparent; border-bottom: 3px solid transparent; border-left: 4px solid var(--nx-ink-2); border-right: 0; }
+
+/* --- the reading number: beside the bead when the pitch has room, under it otherwise --- */
+.nx-proof[data-ordinal-place="below"] .nx-bead-ordinal {
+  left: 50%;
+  top: 100%;
+  margin-left: 0;
+  transform: translate(-50%, calc(var(--bead, 8px) / -2 + 1px));
+  font-size: 8px;
+}

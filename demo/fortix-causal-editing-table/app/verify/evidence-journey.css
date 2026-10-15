@@ -1,0 +1,142 @@
+/* The inspection journey is a presentation of receivedPathOutline's exact segments.
+   Scope keeps the older standalone Evidence Path surface independent. */
+.inspection-workspace .received-path-overview {
+  --journey-line: #76508e;
+  --journey-gap: 78px;
+  --journey-row-gap: 66px;
+  --journey-node-height: 130px;
+  position: relative;
+}
+.inspection-workspace .inspection-canvas .received-path-overview .received-outline-heading {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  margin: 0 0 8px; padding: 0; border: 0;
+}
+.inspection-workspace .inspection-canvas .received-path-overview .received-outline-heading h3 {
+  margin: 0; font-size: 21px; line-height: 1.3; font-weight: 560; letter-spacing: -.035em; color: #2b2c32;
+}
+.inspection-workspace .received-path-overview .received-outline-heading > span {
+  font-size: 11px; color: #7a7880; letter-spacing: .015em; white-space: nowrap;
+}
+.inspection-workspace .inspection-canvas .received-path-overview .received-outline-route {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--journey-row-gap) var(--journey-gap); list-style: none;
+  margin: 27px 0 20px; padding: 0; align-items: stretch;
+}
+.inspection-workspace .received-path-overview .received-outline-route > li {
+  position: relative; min-width: 0; margin: 0; padding: 0;
+}
+.inspection-workspace .received-path-overview .received-outline-route > li:nth-child(4) { grid-column: 3; grid-row: 2; }
+.inspection-workspace .received-path-overview .received-outline-route > li:nth-child(5) { grid-column: 2; grid-row: 2; }
+.inspection-workspace .received-path-overview .received-outline-route > li:nth-child(6) { grid-column: 1; grid-row: 2; }
+.inspection-workspace .inspection-canvas .received-path-overview .received-outline-receipt {
+  width: 100%; min-height: var(--journey-node-height); height: 100%;
+  display: flex; align-items: flex-start; gap: 14px; text-align: left;
+  margin: 0; padding: 24px 18px; position: relative; z-index: 1;
+  color: #282b31; background: #ffffff; border: 1px solid #dedee3; border-radius: 12px;
+  box-shadow: 0 3px 12px #35334405; transition: border-color 140ms ease, box-shadow 140ms ease, opacity 140ms ease;
+}
+.inspection-workspace .inspection-canvas .received-path-overview .received-outline-receipt:hover {
+  background: #fff; border-color: #9d8daa; box-shadow: 0 5px 18px #3b2b4d0b;
+}
+.inspection-workspace .inspection-canvas .received-path-overview .received-outline-receipt[aria-pressed=true] {
+  background: #fff; border-color: #76508e; box-shadow: 0 0 0 2px #76508e18, 0 5px 18px #3b2b4d0b;
+}
+.inspection-workspace .inspection-canvas .received-path-overview .received-outline-receipt[data-quarantined=true] { border-style: dashed; }
+.inspection-workspace .received-path-overview .received-journey-number {
+  display: grid; place-items: center; flex: 0 0 28px; height: 28px; border: 1px solid #b4a1c1; border-radius: 50%;
+  background: #fff; color: #76508e; font: 10px var(--nx-font-mono, monospace); line-height: 1; margin-top: 1px;
+}
+.inspection-workspace .received-path-overview .received-journey-fact { display: block; min-width: 0; }
+.inspection-workspace .inspection-canvas .received-path-overview .received-outline-receipt small {
+  display: block; margin: 0 0 9px; color: #85828b; font-size: 10px; line-height: 1.35; font-weight: 450; letter-spacing: .02em;
+}
+.inspection-workspace .inspection-canvas .received-path-overview .received-outline-receipt strong {
+  display: block; color: #2e2e35; font-size: clamp(15px, 1.12vw, 18px); font-weight: 560; letter-spacing: -.025em; line-height: 1.32; overflow-wrap: anywhere;
+}
+.inspection-workspace .received-path-overview .received-outline-receipt em { display: block; margin-top: 8px; font-size: 10px; color: #8a5a10; }
+.inspection-workspace .received-path-overview .received-journey-connector {
+  position: absolute; z-index: 2; width: var(--journey-gap); height: 28px;
+  left: calc(-1 * var(--journey-gap)); top: 50%; transform: translateY(-50%); color: var(--journey-line);
+}
+.inspection-workspace .received-path-overview .received-journey-line {
+  position: absolute; top: 50%; left: 0; width: 100%; border-top: 1.5px solid currentColor; opacity: .85;
+}
+.inspection-workspace .received-path-overview .received-journey-line > span {
+  position: absolute; right: 1px; top: -4px; width: 7px; height: 7px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: rotate(45deg);
+}
+.inspection-workspace .received-path-overview .received-journey-connector[data-direction=back] { left: auto; right: calc(-1 * var(--journey-gap)); }
+.inspection-workspace .received-path-overview .received-journey-connector[data-direction=back] .received-journey-line > span { right: auto; left: 1px; transform: rotate(-135deg); }
+.inspection-workspace .received-path-overview .received-journey-connector[data-direction=down] {
+  width: 28px; height: var(--journey-row-gap); top: calc(-1 * var(--journey-row-gap)); left: 50%; right: auto; transform: translateX(-50%);
+}
+.inspection-workspace .received-path-overview .received-journey-connector[data-direction=down] .received-journey-line {
+  top: 0; left: 50%; height: 100%; width: 0; border-top: 0; border-left: 1.5px solid currentColor;
+}
+.inspection-workspace .received-path-overview .received-journey-connector[data-direction=down] .received-journey-line > span {
+  top: auto; bottom: 1px; right: auto; left: -4px; transform: rotate(135deg);
+}
+.inspection-workspace .received-path-overview .received-outline-segment { position: absolute; inset: 0; margin: 0; padding: 0; }
+.inspection-workspace .received-path-overview .received-outline-segment > summary {
+  display: block; position: absolute; left: 50%; top: calc(50% + 17px); transform: translate(-50%, -50%);
+  width: 65px; min-height: 0; padding: 4px 3px; margin: 0; border: 1px solid #e3dde8; border-radius: 12px;
+  color: #8a7798; background: #fdfcfe; font-size: 10px; line-height: 1.2; text-align: center; list-style: none; cursor: pointer;
+}
+.inspection-workspace .received-path-overview .received-outline-segment > summary::-webkit-details-marker { display: none; }
+.inspection-workspace .received-path-overview .received-outline-segment > summary > span { font-weight: 650; color: #76508e; }
+.inspection-workspace .received-path-overview .received-journey-connector[data-direction=down] .received-outline-segment > summary { top: 50%; left: calc(50% + 42px); }
+.inspection-workspace .received-path-overview .received-outline-segment > summary:hover { border-color: #9c83ae; background: #fff; }
+.inspection-workspace .received-path-overview .received-outline-segment[open] { z-index: 5; }
+.inspection-workspace .received-path-overview .received-segment-receipts {
+  position: absolute; z-index: 5; top: calc(50% + 38px); left: 50%; transform: translateX(-50%);
+  width: 290px; max-width: 70vw; max-height: 300px; overflow: auto; padding: 15px; border: 1px solid #d9d1e0; border-radius: 10px;
+  color: #39363e; background: #fff; box-shadow: 0 12px 35px #32213f1c;
+}
+.inspection-workspace .received-path-overview .received-segment-receipts > p { font-size: 11px; margin: 0 0 10px; color: #766a80; }
+.inspection-workspace .received-path-overview .received-segment-receipts > ol { list-style: decimal; margin: 0; padding-left: 20px; font-size: 10px; }
+.inspection-workspace .received-path-overview .received-segment-receipts li { margin: 3px 0; }
+.inspection-workspace .received-path-overview .received-segment-receipts button { width: 100%; text-align: left; padding: 6px 8px; min-height: 32px; background: #fff; border-color: #ebe7ef; font-size: 11px; }
+.inspection-workspace .inspection-canvas .received-path-overview .received-outline-note {
+  margin: 0 0 22px; color: #929098; font-size: 10px; line-height: 1.5; max-width: 110ch;
+}
+.inspection-workspace .received-path-overview .received-boundary-overview { margin: 0; padding: 17px 0 0; border-top: 1px solid #e9e6e2; }
+.inspection-workspace .received-path-overview .received-boundary-overview > h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; color: #8a5e2d; font-size: 11px; font-weight: 550; letter-spacing: .015em; }
+.inspection-workspace .received-path-overview .received-boundary-overview > h4 > span { font-size: 17px; }
+.inspection-workspace .inspection-canvas .received-path-overview .received-boundary-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+.inspection-workspace .inspection-canvas .received-path-overview .received-crossing-card {
+  display: flex; align-items: center; gap: 12px; min-height: 75px; padding: 13px 15px; background: #fff2df; border: 1px solid #d2ac77; border-left: 4px double #ae7330; border-radius: 8px; box-shadow: none; text-align: left;
+}
+.inspection-workspace .received-path-overview .received-crossing-card > span:first-child { font-size: 24px; color: #9b6028; flex: 0 0 17px; }
+.inspection-workspace .received-path-overview .received-crossing-card > span:last-child { min-width: 0; }
+.inspection-workspace .received-path-overview .received-crossing-card small { display: block; font-size: 9px; line-height: 1.4; margin-bottom: 5px; color: #915d2b; }
+.inspection-workspace .inspection-canvas .received-path-overview .received-crossing-card strong { display: block; font-size: 12px; line-height: 1.4; font-weight: 500; color: #6d5030; overflow-wrap: anywhere; }
+.inspection-workspace .received-path-overview .received-crossing-card:hover { border-color: #985e20; background: #fff2df; }
+.inspection-workspace[data-inspection-level="1"] .received-path-overview [data-tone] { opacity: 1; }
+.inspection-workspace .received-path-overview .received-outline-receipt[data-tone=dim], .inspection-workspace .received-path-overview .received-crossing-card[data-tone=dim] { opacity: .72; }
+.inspection-workspace .received-path-overview .received-outline-receipt[data-tone=context], .inspection-workspace .received-path-overview .received-crossing-card[data-tone=context] { opacity: .92; }
+.inspection-workspace[data-inspection-level="1"] .received-path-overview .received-outline-receipt[data-tone], .inspection-workspace[data-inspection-level="1"] .received-path-overview .received-crossing-card[data-tone] { opacity: 1; }
+.inspection-workspace .received-path-overview .received-journey-connector[data-tone=strong] .received-journey-line { opacity: 1; }
+@media (max-width: 1100px) and (min-width: 761px) {
+  .inspection-workspace .received-path-overview { --journey-gap: 60px; --journey-node-height: 134px; }
+  .inspection-workspace .inspection-canvas .received-path-overview .received-outline-receipt { gap: 9px; padding: 21px 13px; }
+  .inspection-workspace .received-path-overview .received-journey-number { flex-basis: 24px; height: 24px; font-size: 9px; }
+  .inspection-workspace .received-path-overview .received-outline-segment > summary { width: 54px; font-size: 9px; }
+}
+@media (max-width: 760px) {
+  .inspection-workspace .received-path-overview { --journey-row-gap: 44px; --journey-node-height: 96px; }
+  .inspection-workspace .inspection-canvas .received-path-overview .received-outline-heading { display: block; margin-bottom: 24px; }
+  .inspection-workspace .inspection-canvas .received-path-overview .received-outline-heading h3 { font-size: 21px; margin-bottom: 7px; }
+  .inspection-workspace .inspection-canvas .received-path-overview .received-outline-route { grid-template-columns: minmax(0, 1fr); gap: var(--journey-row-gap); margin-top: 0; }
+  .inspection-workspace .received-path-overview .received-outline-route > li:nth-child(n) { grid-column: 1; grid-row: auto; padding: 0; }
+  .inspection-workspace .inspection-canvas .received-path-overview .received-outline-receipt { padding: 20px; align-items: center; min-height: var(--journey-node-height); }
+  .inspection-workspace .inspection-canvas .received-path-overview .received-outline-receipt strong { font-size: 17px; }
+  .inspection-workspace .inspection-canvas .received-path-overview .received-outline-receipt small { margin-bottom: 6px; font-size: 10px; }
+  .inspection-workspace .received-path-overview .received-journey-connector[data-direction] { width: 28px; height: var(--journey-row-gap); top: calc(-1 * var(--journey-row-gap)); left: 50%; right: auto; transform: translateX(-50%); }
+  .inspection-workspace .received-path-overview .received-journey-connector[data-direction] .received-journey-line { top: 0; left: 50%; height: 100%; width: 0; border-top: 0; border-left: 1.5px solid currentColor; }
+  .inspection-workspace .received-path-overview .received-journey-connector[data-direction] .received-journey-line > span { top: auto; bottom: 1px; right: auto; left: -4px; transform: rotate(135deg); }
+  .inspection-workspace .received-path-overview .received-outline-segment > summary { width: 100px; padding: 5px; font-size: 9px; }
+  .inspection-workspace .received-path-overview .received-journey-connector[data-direction] .received-outline-segment > summary { top: 50%; left: calc(50% + 62px); }
+  .inspection-workspace .inspection-canvas .received-path-overview .received-boundary-cards { grid-template-columns: 1fr; gap: 9px; }
+  .inspection-workspace .inspection-canvas .received-path-overview .received-crossing-card { min-height: 69px; padding: 12px 15px; }
+  .inspection-workspace .inspection-canvas .received-path-overview .received-crossing-card strong { font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) { .inspection-workspace .received-path-overview .received-outline-receipt { transition: none; } }

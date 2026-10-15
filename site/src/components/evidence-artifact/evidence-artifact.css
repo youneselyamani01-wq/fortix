@@ -1,0 +1,7 @@
+/* Same rounded glass artwork in every editorial placement. Never reshape
+   it with a second CSS perspective, clipping path, or nonuniform scaling. */
+.evidence-artifact { width:100%; margin:0; font-family:var(--font-sans); color:var(--site-text-primary); }
+.evidence-artifact__object { width:100%; aspect-ratio:4/3; border-radius:18px; overflow:hidden; }
+.evidence-artifact__object img { display:block; width:100%; height:100%; object-fit:contain; }
+.evidence-artifact figcaption { max-width:44ch; margin:10px auto 0; padding-inline:8px; color:var(--site-text-secondary); text-align:center; font:11px/1.6 var(--font-sans); }
+@media(max-width:600px) { .evidence-artifact__object { border-radius:14px; } }

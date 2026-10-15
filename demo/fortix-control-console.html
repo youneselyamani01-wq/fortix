@@ -1,0 +1,2682 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FortiX - Agent Governance Console</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg:     #f5f7f8;
+      --panel:  #ffffff;
+      --panel2: #f9fbfc;
+      --line:   #d4dde4;
+      --text:   #17212b;
+      --muted:  #61717e;
+      --orange: #a96514;
+      --green:  #16784f;
+      --blue:   #245f9f;
+      --red:    #b43d3d;
+      --soft:   #eef3f5;
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg:     #0c1117;
+      --panel:  #121923;
+      --panel2: #0f151d;
+      --line:   #283746;
+      --text:   #edf4f8;
+      --muted:  #98a8b4;
+      --orange: #f2a23a;
+      --green:  #46d18d;
+      --blue:   #72b7ff;
+      --red:    #f27272;
+      --soft:   #101821;
+    }
+    * { box-sizing: border-box; }
+    html, body, .panel, button, .ctx-btn, .badge, .pill, .hash-block, .sig-block, pre, .trace-event, .gov-row, .gov-aggregate, .runtime-step, .summary-tile, .review-item, .chain-row, .audit-row, .doctrine {
+      transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; padding: 34px 0 48px; }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+    }
+    .header-left { display: flex; align-items: baseline; gap: 12px; }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .toggle-group {
+      display: inline-flex;
+      gap: 4px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+    }
+    .toggle-btn, .theme-toggle {
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+    .toggle-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+    }
+    .toggle-btn.active {
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+    }
+    .theme-toggle { min-width: 62px; }
+    h1 { margin: 0; font-size: 20px; letter-spacing: 0; }
+    .badge {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 2px 8px;
+      letter-spacing: .06em;
+    }
+    .back {
+      color: var(--muted);
+      font-size: 12px;
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      padding: 7px 11px;
+      transition: color .15s, border-color .15s, background .15s;
+    }
+    .back:hover { color: var(--text); border-color: #2f4c3f; background: rgba(255,255,255,.07); }
+    html[data-theme="light"] .toggle-group,
+    html[data-theme="light"] .badge,
+    html[data-theme="light"] .ctx-btn.active { background: rgba(16,32,39,.05); }
+    html[data-theme="light"] .toggle-btn.active { background: rgba(16,32,39,.08); }
+
+    /* ── Context switcher ── */
+    .switcher {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .switcher-label {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .ctx-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .ctx-btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font: 13px/1 inherit;
+      font-weight: 600;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      transition: all .15s ease;
+      min-height: auto;
+    }
+    .ctx-btn:hover { color: var(--text); border-color: #3b556c; transform: none; }
+    .ctx-btn.active { color: var(--text); background: rgba(255,255,255,.06); border-color: #4a6880; }
+    .switcher-tagline { margin-left: auto; color: var(--muted); font-size: 12px; font-style: italic; }
+    html[data-theme="light"] .ctx-btn:hover,
+    html[data-theme="light"] .ctx-btn.active { border-color: #8aa09e; }
+
+    /* ── Flow strip ── */
+    .flow-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 0 6px;
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .07em;
+    }
+    .flow-strip { flex-wrap: wrap; }
+    .flow-strip .step { color: var(--muted); }
+
+    /* -- Operational summary -- */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .summary-tile {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 14px 16px;
+      min-width: 0;
+      box-shadow: 0 10px 28px rgba(18,40,45,.08);
+    }
+    .summary-label {
+      color: var(--muted);
+      font: 11px Consolas, monospace;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .summary-value {
+      font-size: 23px;
+      line-height: 1.05;
+      font-weight: 780;
+      overflow-wrap: anywhere;
+    }
+    .summary-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 7px;
+    }
+
+    /* ── Grid ── */
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; margin-top: 8px; }
+    .panel {
+      grid-column: span 6;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      padding: 20px;
+      min-width: 0;
+      box-shadow: 0 18px 46px rgba(0,0,0,.32);
+      transition: transform .18s ease, border-color .18s ease;
+    }
+    .panel:hover { transform: translateY(-2px); border-color: #3b556c; }
+    html[data-theme="light"] .panel { box-shadow: 0 18px 44px rgba(18,40,45,.10); }
+    html[data-theme="light"] .panel:hover { border-color: #9db2b0; }
+    .panel.full { grid-column: 1 / -1; }
+    .head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 18px; }
+    h2 { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+
+    /* ── Pills ── */
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+    .pill-orange { color: var(--orange); background: rgba(242,162,58,.13); border-color: rgba(242,162,58,.38); }
+    .pill-green  { color: var(--green);  background: rgba(70,209,141,.12);  border-color: rgba(70,209,141,.35); }
+    .pill-red    { color: var(--red);    background: rgba(242,114,114,.12); border-color: rgba(242,114,114,.35); }
+    .pill-blue   { color: var(--blue);   background: rgba(114,183,255,.10); border-color: rgba(114,183,255,.30); }
+
+    /* ── Action panel ── */
+    .action-primary {
+      font-size: 30px;
+      line-height: 1.1;
+      font-weight: 760;
+      margin: 2px 0 18px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .action-sub { font-size: 16px; color: var(--blue); font-weight: 500; }
+    .kv { display: grid; grid-template-columns: 140px 1fr; gap: 8px 14px; font-size: 13px; }
+    .key { color: var(--muted); }
+    code { font-family: "SFMono-Regular", Consolas, monospace; letter-spacing: 0; overflow-wrap: anywhere; }
+
+    /* ── Policy panel ── */
+    .decision-big { font-size: 38px; line-height: 1; font-weight: 780; margin: 2px 0 4px; }
+    .d-allow  { color: var(--green); }
+    .d-review { color: var(--orange); }
+    .d-deny   { color: var(--red); }
+    .decision-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      font-style: normal;
+    }
+    .reason-code {
+      font: 12px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .04em;
+      margin-bottom: 14px;
+    }
+    .policy-meta { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+    .policy-state {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 6px 14px;
+      font-size: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .policy-state .key { color: var(--muted); }
+    .policy-state code { font-size: 12px; }
+
+    /* ── Governance panel ── */
+    .gov-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+    .gov-copy {
+      margin: -4px 0 14px;
+      color: #c8d7de;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .gov-rows { display: grid; gap: 8px; }
+    .gov-row {
+      display: grid;
+      grid-template-columns: 92px minmax(120px, auto) 78px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 12px;
+      background: #090f15;
+      font-size: 13px;
+    }
+    .gov-name { font-weight: 760; }
+    .gov-risk {
+      color: var(--muted);
+      font: 12px Consolas, monospace;
+      text-transform: lowercase;
+    }
+    .gov-reason {
+      color: #b8cad4;
+      font: 12px Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+    .gov-aggregate {
+      border: 1px solid rgba(114,183,255,.18);
+      border-radius: 8px;
+      background: rgba(114,183,255,.045);
+      padding: 16px;
+      min-width: 0;
+    }
+    .gov-aggregate-label {
+      color: var(--muted);
+      font: 11px Consolas, monospace;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .gov-aggregate-main {
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 780;
+      margin-bottom: 12px;
+      overflow-wrap: anywhere;
+    }
+    .gov-meta { display: grid; gap: 8px; font-size: 13px; color: var(--muted); }
+    .gov-meta-line { display: flex; justify-content: space-between; gap: 12px; }
+    .gov-reasons {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      color: #b8cad4;
+      font: 12px/1.55 Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+
+    /* -- Runtime governance -- */
+    .runtime-flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .runtime-step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel2);
+      padding: 13px;
+      min-width: 0;
+    }
+    .runtime-stage {
+      color: var(--muted);
+      font: 11px Consolas, monospace;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .runtime-title {
+      font-size: 14px;
+      font-weight: 760;
+      line-height: 1.35;
+      min-height: 38px;
+    }
+    .runtime-detail {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      margin-top: 8px;
+    }
+    .runtime-state {
+      display: inline-flex;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: var(--blue);
+      font: 11px Consolas, monospace;
+      background: rgba(36,95,159,.08);
+    }
+
+    /* -- Review, responsibility, audit -- */
+    .review-list, .chain-list, .audit-grid { display: grid; gap: 8px; }
+    .review-item, .chain-row, .audit-row {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel2);
+      padding: 11px 12px;
+      min-width: 0;
+    }
+    .review-top, .chain-top, .audit-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .review-title, .chain-title, .audit-title { font-size: 13px; font-weight: 760; }
+    .review-meta, .chain-meta, .audit-meta {
+      color: var(--muted);
+      font: 11px Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+    .review-note, .chain-note, .audit-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* ── Receipt panel ── */
+    .hash-block, .sig-block {
+      display: block;
+      background: #080d13;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+      font: 11px/1.55 Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+    .hash-block { color: var(--text); }
+    .sig-block  { color: #b1c2cb; margin-top: 8px; }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    button {
+      min-height: 34px;
+      border: 1px solid #3a5266;
+      border-radius: 6px;
+      background: #16222d;
+      color: var(--text);
+      padding: 0 14px;
+      font: 13px/1 inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .16s, transform .16s;
+    }
+    button:hover { background: #1c2b38; transform: translateY(-1px); }
+    html[data-theme="light"] button { background: #edf4f2; color: var(--text); border-color: #b7c9c6; }
+    html[data-theme="light"] button:hover { background: #e2ece9; }
+    .adr { display: none; margin-top: 12px; }
+    .adr.open { display: block; animation: rise .2s ease both; }
+    pre {
+      max-height: 320px;
+      overflow: auto;
+      margin: 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #070b10;
+      color: #b8cad4;
+      font: 11px/1.55 Consolas, monospace;
+    }
+    html[data-theme="light"] .hash-block,
+    html[data-theme="light"] .sig-block,
+    html[data-theme="light"] pre,
+    html[data-theme="light"] .trace-event,
+    html[data-theme="light"] .gov-row {
+      background: #f8fbfa;
+      color: #19313a;
+    }
+    html[data-theme="light"] .gov-aggregate { background: rgba(30,102,149,.06); }
+    html[data-theme="light"] .doctrine { background: rgba(21,117,75,.06); }
+
+    /* ── Verify panel ── */
+    .verify-context { color: var(--muted); font-size: 13px; line-height: 1.65; margin-bottom: 14px; }
+    .verify-headline {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 600;
+      margin: 8px 0 14px;
+    }
+    .verify-out { display: none; margin-top: 14px; }
+    .verify-out.open { display: block; animation: rise .2s ease both; }
+    .explain { margin: 12px 0 14px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .verify-scope {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .verify-scope-col {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+      background: var(--panel2);
+    }
+    .verify-scope-title {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .verify-scope-col.confirms .verify-scope-title { color: var(--green); }
+    .verify-scope-col.not-confirms .verify-scope-title { color: var(--red); }
+    .verify-scope-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text);
+    }
+    .verify-scope-list li {
+      padding: 3px 0;
+      border-top: 1px solid var(--line);
+    }
+    .verify-scope-list li:first-child { border-top: 0; padding-top: 0; }
+
+    /* ── Receipt note + review doctrine ── */
+    .receipt-note {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-left: 2px solid var(--blue);
+      background: rgba(36,95,159,.05);
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.55;
+      font-style: italic;
+    }
+    html[data-theme="dark"] .receipt-note { background: rgba(114,183,255,.06); color: #c8d7de; }
+    .review-doctrine {
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-style: italic;
+    }
+    .review-doctrine + .review-doctrine { margin-bottom: 10px; }
+
+    /* ── Automation paused banner ── */
+    .automation-paused {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(242,162,58,.42);
+      border-left: 3px solid var(--orange);
+      border-radius: 6px;
+      background: rgba(242,162,58,.08);
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .automation-paused[hidden] { display: none; }
+    .ap-badge {
+      font: 11px Consolas, monospace;
+      font-weight: 750;
+      color: var(--orange);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .ap-text { font-size: 13px; color: var(--text); line-height: 1.45; }
+
+    /* ── Review item structured fields ── */
+    .review-fields {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 4px 12px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .review-fields .key { color: var(--muted); }
+    .review-fields code { font-size: 11px; overflow-wrap: anywhere; }
+    .review-fields .placeholder { color: var(--muted); font-style: italic; }
+
+    /* ── Review event chain ── */
+    .review-chain {
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel2);
+    }
+    .review-chain[hidden] { display: none; }
+    .review-chain-title {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .review-chain-rows { display: grid; gap: 8px; }
+    .rc-row {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 12px;
+      padding: 9px 11px;
+      border-radius: 6px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+    .rc-original { border-left: 3px solid var(--green); }
+    .rc-pending  { border-left: 3px solid var(--orange); }
+    .rc-future {
+      border-left: 3px solid var(--blue);
+      border-style: dashed;
+      background: transparent;
+    }
+    .rc-label {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      align-self: center;
+    }
+    .rc-detail { font-size: 12px; line-height: 1.5; }
+    .rc-detail code { font-size: 11px; overflow-wrap: anywhere; }
+    .rc-detail .placeholder { color: var(--muted); font-style: italic; }
+    .review-chain-doctrine {
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      line-height: 1.55;
+    }
+    .review-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .demo-action {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .demo-action:hover { transform: none; }
+    .demo-action-reject { border-color: rgba(180,61,61,.5); }
+    .demo-action-note {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── Scenario briefing panel ── */
+    .briefing-panel[hidden] { display: none; }
+    .briefing-lead {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text);
+      margin: 0 0 14px;
+    }
+    .briefing-disclaimer {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 10px 14px;
+      align-items: baseline;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--blue);
+      border-radius: 6px;
+      background: var(--panel2);
+      margin-bottom: 16px;
+    }
+    .briefing-disclaimer-label {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .briefing-disclaimer-text {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .comprehension-title {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .comprehension-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .comprehension-item {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 11px 12px;
+      background: var(--panel2);
+    }
+    .comprehension-q {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .04em;
+      margin-bottom: 6px;
+    }
+    .comprehension-a {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    /* ── Receipt export affordance ── */
+    .receipt-export-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .receipt-portability {
+      margin-top: 12px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .copy-confirm {
+      font: 11px Consolas, monospace;
+      color: var(--green);
+      letter-spacing: .04em;
+      opacity: 0;
+      transition: opacity .18s ease;
+    }
+    .copy-confirm.show { opacity: 1; }
+
+    /* ── Portable proof journey strip (receipt panel) ── */
+    .proof-journey {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--green);
+      border-radius: 6px;
+      background: rgba(70,209,141,.04);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .proof-journey-label {
+      font: 11px Consolas, monospace;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .proof-journey-steps {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font: 11px Consolas, monospace;
+      color: var(--text);
+      letter-spacing: .04em;
+    }
+    .proof-journey-steps .pj-step {
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+    }
+    .proof-journey-steps .pj-step.done {
+      color: var(--green);
+      border-color: rgba(70,209,141,.4);
+      background: rgba(70,209,141,.06);
+    }
+    .proof-journey-steps .pj-arrow { color: var(--muted); }
+    .pj-verify-link {
+      color: var(--blue);
+      text-decoration: none;
+      padding: 4px 10px;
+      border: 1px dashed rgba(36,95,159,.45);
+      border-radius: 6px;
+      background: transparent;
+      transition: background .15s, border-color .15s;
+    }
+    .pj-verify-link:hover {
+      background: rgba(36,95,159,.06);
+      border-style: solid;
+    }
+    html[data-theme="dark"] .proof-journey { background: rgba(70,209,141,.06); }
+
+    /* ── Trace panel ── */
+    .trace { display: grid; gap: 8px; }
+    .trace-event {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px 14px;
+      background: #090f15;
+      font-size: 13px;
+    }
+    .trace-step { font-family: Consolas, monospace; }
+    .trace-sub  { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+    /* ── Doctrine ── */
+    .doctrine {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border: 1px solid rgba(70,209,141,.2);
+      border-radius: 8px;
+      background: rgba(70,209,141,.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .doctrine-main { font-size: 14px; line-height: 1.6; }
+    .doctrine-main strong { color: var(--green); }
+    .doctrine-sub { font-size: 12px; color: var(--muted); font-style: italic; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; } }
+
+    @media (max-width: 860px) {
+      header { flex-direction: column; align-items: flex-start; }
+      .header-actions { justify-content: flex-start; }
+      .switcher { flex-wrap: wrap; }
+      .switcher-tagline { margin-left: 0; }
+      .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .panel { grid-column: 1 / -1; }
+      .kv { grid-template-columns: 1fr; gap: 4px; }
+      .action-primary { font-size: 22px; }
+      .decision-big { font-size: 28px; }
+      .gov-wrap { grid-template-columns: 1fr; }
+      .gov-row { grid-template-columns: 1fr; gap: 6px; }
+      .gov-aggregate-main { font-size: 24px; }
+      .runtime-flow { grid-template-columns: 1fr; }
+      .trace-event { grid-template-columns: 1fr; }
+      .doctrine { flex-direction: column; gap: 10px; }
+      .verify-scope { grid-template-columns: 1fr; }
+      .policy-state { grid-template-columns: 1fr; }
+      .review-fields { grid-template-columns: 1fr; }
+      .rc-row { grid-template-columns: 1fr; }
+      .briefing-disclaimer { grid-template-columns: 1fr; }
+      .comprehension-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .summary { grid-template-columns: 1fr; }
+      main { width: min(100vw - 20px, 1180px); padding-top: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+
+    <!-- Header -->
+    <header>
+      <div class="header-left">
+        <h1>FortiX</h1>
+        <span class="badge" data-i18n="header.console">Agent Governance Console</span>
+      </div>
+      <div class="header-actions">
+        <div class="toggle-group" aria-label="Language">
+          <button class="toggle-btn active" type="button" data-lang="en" onclick="setLanguage('en')">EN</button>
+          <button class="toggle-btn" type="button" data-lang="fr" onclick="setLanguage('fr')">FR</button>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme">🌙 / ☀</button>
+        <a href="index.html" class="back" data-i18n="nav.back">← Back to Demo Index</a>
+      </div>
+    </header>
+
+    <!-- Context switcher -->
+    <div class="switcher">
+      <span class="switcher-label" data-i18n="context.label">Context</span>
+      <div class="ctx-btns">
+        <button class="ctx-btn active" data-context="banking" data-i18n="context.banking" onclick="switchCtx('banking')">Banking</button>
+        <button class="ctx-btn" data-context="healthcare" data-i18n="context.healthcare" onclick="switchCtx('healthcare')">Healthcare</button>
+        <button class="ctx-btn" data-context="industry" data-i18n="context.industry" onclick="switchCtx('industry')">Industry</button>
+        <button class="ctx-btn" data-context="supply_chain" data-i18n="context.supply_chain" onclick="switchCtx('supply_chain')">Supply Chain</button>
+        <button class="ctx-btn" data-context="public_sector" data-i18n="context.public_sector" onclick="switchCtx('public_sector')">Public Sector</button>
+      </div>
+      <span class="switcher-tagline" data-i18n="context.tagline">Different contexts. Same proof model.</span>
+    </div>
+
+    <!-- Flow label -->
+    <div class="flow-strip">
+      <span class="step" data-i18n="flow.agent">Agent</span>
+      <span>→</span>
+      <span class="step" data-i18n="flow.tool">Tool</span>
+      <span>→</span>
+      <span class="step" data-i18n="flow.policy">Policy</span>
+      <span>→</span>
+      <span class="step" data-i18n="flow.execution">Execution</span>
+      <span>→</span>
+      <span class="step" data-i18n="flow.adr">ADR Receipt</span>
+      <span>→</span>
+      <span class="step" data-i18n="flow.verify">Independent Verification</span>
+    </div>
+
+    <section class="summary" id="dashboard" aria-label="Operational summary"></section>
+
+    <!-- Panels -->
+    <section class="grid">
+
+      <!-- Scenario briefing (sector-specific, hidden when no briefing data) -->
+      <article class="panel full briefing-panel" id="briefing-panel" hidden>
+        <div class="head">
+          <h2 data-i18n="briefing.title">Scenario Briefing</h2>
+          <span class="pill pill-blue" id="briefing-sector"></span>
+        </div>
+        <p class="briefing-lead" id="briefing-lead"></p>
+        <div class="briefing-disclaimer">
+          <div class="briefing-disclaimer-label" data-i18n="briefing.disclaimer.label">FortiX positioning</div>
+          <div class="briefing-disclaimer-text" id="briefing-disclaimer"></div>
+        </div>
+        <div id="briefing-comprehension-block" hidden>
+          <div class="comprehension-title" data-i18n="briefing.comprehension.title">30-second comprehension</div>
+          <div class="comprehension-grid" id="briefing-comprehension"></div>
+        </div>
+      </article>
+
+      <!-- Action -->
+      <article class="panel">
+        <div class="head">
+          <h2 data-i18n="panel.action">Action</h2>
+          <span class="pill pill-blue" id="action-pill"></span>
+        </div>
+        <div class="action-primary">
+          <span id="action-primary"></span>
+          <span class="action-sub" id="action-sub"></span>
+        </div>
+        <div class="kv" id="action-kv"></div>
+      </article>
+
+      <!-- Policy Decision -->
+      <article class="panel">
+        <div class="head">
+          <h2 data-i18n="panel.policy">Policy Decision</h2>
+          <span class="pill pill-orange" id="policy-pill">REQUIRE_REVIEW</span>
+        </div>
+        <div class="decision-big d-review" id="decision-big"></div>
+        <div class="decision-sub" id="decision-sub"></div>
+        <div class="reason-code" id="reason-code"></div>
+        <div class="policy-meta" id="policy-meta"></div>
+        <div class="policy-state">
+          <div class="key" data-i18n="policy.executionState">execution_state</div>
+          <code id="policy-execution-state"></code>
+          <div class="key" data-i18n="policy.reviewRequired">review_required</div>
+          <code id="policy-review-required"></code>
+        </div>
+      </article>
+
+      <!-- Governance Layers -->
+      <article class="panel full">
+        <div class="head">
+          <h2 data-i18n="panel.governance">Governance Layers</h2>
+          <span class="pill" id="governance-pill"></span>
+        </div>
+        <p class="gov-copy" data-i18n="doctrine.governance">Runtime governance qualifies risk before execution. ADR attests the governed action. Independent verification validates the receipt.</p>
+        <div class="gov-wrap">
+          <div class="gov-rows" id="governance-layers"></div>
+          <div class="gov-aggregate">
+            <div class="gov-aggregate-label" data-i18n="gov.aggregate">Aggregate Decision</div>
+            <div class="gov-aggregate-main" id="gov-aggregate-decision"></div>
+            <div class="gov-meta">
+              <div class="gov-meta-line">
+                <span data-i18n="gov.riskLevel">Risk level</span>
+                <code id="gov-aggregate-risk"></code>
+              </div>
+              <div class="gov-meta-line">
+                <span data-i18n="gov.riskScore">Risk score</span>
+                <code id="gov-aggregate-score"></code>
+              </div>
+            </div>
+            <div class="gov-reasons" id="gov-aggregate-reasons"></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Governed Runtime -->
+      <article class="panel full">
+        <div class="head">
+          <h2 data-i18n="panel.runtime">Governed Runtime</h2>
+          <span class="pill pill-blue" id="runtime-state"></span>
+        </div>
+        <div class="runtime-flow" id="runtime-flow"></div>
+      </article>
+
+      <!-- ADR Receipt -->
+      <article class="panel">
+        <div class="head">
+          <h2 data-i18n="panel.adr">ADR Receipt</h2>
+          <span class="pill">ADR v1.0</span>
+        </div>
+        <code class="hash-block" id="receipt-hash"></code>
+        <code class="sig-block"  id="receipt-sig"></code>
+        <div class="row">
+          <span class="key" style="font-size:12px" data-i18n="receipt.algorithm">BLAKE3 hash · Ed25519 signature</span>
+          <button id="toggle-adr" data-i18n="button.viewAdr">View full ADR</button>
+        </div>
+        <div class="receipt-export-row">
+          <button id="receipt-copy" type="button" data-i18n="receipt.copy">Copy receipt JSON</button>
+          <button id="receipt-download" type="button" data-i18n="receipt.download">Download receipt</button>
+          <a id="receipt-open-verifier" href="fortix-verify-console.html" target="_blank" rel="noopener" class="pj-verify-link" data-i18n="receipt.openVerifier" style="text-decoration:none">Open independent verifier</a>
+          <span class="copy-confirm" id="receipt-copy-confirm" data-i18n="receipt.copy.confirm">Copied</span>
+        </div>
+        <p class="receipt-portability" data-i18n="receipt.portability">The receipt can be carried outside the originating system for independent verification.</p>
+        <p class="receipt-note" data-i18n="receipt.note">The receipt attests the governed decision, not necessarily the external completion of the action.</p>
+        <div class="proof-journey">
+          <div class="proof-journey-label" data-i18n="journey.title">Portable proof journey</div>
+          <div class="proof-journey-steps">
+            <span class="pj-step done" data-i18n="journey.issue">Issue receipt</span>
+            <span class="pj-arrow">→</span>
+            <span class="pj-step done" data-i18n="journey.export">Export receipt</span>
+            <span class="pj-arrow">→</span>
+            <a class="pj-verify-link" id="proof-journey-verify" href="fortix-verify-console.html" target="_blank" rel="noopener" data-i18n="journey.verify">Verify independently</a>
+          </div>
+        </div>
+        <div class="adr" id="adr-block">
+          <pre id="adr-json"></pre>
+        </div>
+      </article>
+
+      <!-- Verify -->
+      <article class="panel">
+        <div class="head">
+          <h2 data-i18n="panel.verify">Verify</h2>
+          <span class="pill" id="verify-state">Ready</span>
+        </div>
+        <p class="verify-headline" data-i18n="verify.headline">Verification confirms authenticity and integrity.</p>
+        <p class="verify-context" id="verify-context"></p>
+        <div class="row">
+          <span class="key" style="font-size:12px" data-i18n="verify.label">Independent receipt verification</span>
+          <button id="btn-verify" data-i18n="button.verify">Verify independently</button>
+        </div>
+        <div class="verify-out" id="verify-out">
+          <span class="pill pill-green" id="verdict">VALID</span>
+          <p class="explain" id="verify-explain"></p>
+          <div class="verify-scope">
+            <div class="verify-scope-col confirms">
+              <div class="verify-scope-title" data-i18n="verify.confirms.title">Verification confirms</div>
+              <ul class="verify-scope-list">
+                <li data-i18n="verify.confirms.l1">Authenticity</li>
+                <li data-i18n="verify.confirms.l2">Integrity</li>
+                <li data-i18n="verify.confirms.l3">Signature validity</li>
+                <li data-i18n="verify.confirms.l4">Payload consistency</li>
+              </ul>
+            </div>
+            <div class="verify-scope-col not-confirms">
+              <div class="verify-scope-title" data-i18n="verify.notConfirms.title">Verification does NOT confirm</div>
+              <ul class="verify-scope-list">
+                <li data-i18n="verify.notConfirms.l1">Business correctness</li>
+                <li data-i18n="verify.notConfirms.l2">Legal validity</li>
+                <li data-i18n="verify.notConfirms.l3">External completion</li>
+                <li data-i18n="verify.notConfirms.l4">Ethical quality</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Human Review -->
+      <article class="panel full">
+        <div class="head">
+          <h2 data-i18n="panel.review">Human Review Queue</h2>
+          <span class="pill" id="review-state"></span>
+        </div>
+        <div class="automation-paused" id="automation-paused" hidden>
+          <span class="ap-badge" data-i18n="review.paused.badge">Automation paused</span>
+          <span class="ap-text" data-i18n="review.paused.text">Governance continues through accountable human review.</span>
+        </div>
+        <p class="review-doctrine" data-i18n="review.doctrine">Human review is governed escalation, not manual trust.</p>
+        <p class="review-doctrine" data-i18n="review.doctrine.companion">Automation pauses; accountability continues.</p>
+        <div class="review-list" id="review-queue"></div>
+        <div class="review-chain" id="review-chain" hidden>
+          <div class="review-chain-title" data-i18n="review.chain.title">Review event chain</div>
+          <div class="review-chain-rows">
+            <div class="rc-row rc-original">
+              <div class="rc-label" data-i18n="review.chain.original">Original governed decision</div>
+              <div class="rc-detail" id="rc-original-detail"></div>
+            </div>
+            <div class="rc-row rc-pending">
+              <div class="rc-label" data-i18n="review.chain.pending">Pending review event</div>
+              <div class="rc-detail" id="rc-pending-detail"></div>
+            </div>
+            <div class="rc-row rc-future">
+              <div class="rc-label" data-i18n="review.chain.future">Subsequent governed event</div>
+              <div class="rc-detail" id="rc-future-detail"></div>
+            </div>
+          </div>
+          <p class="review-chain-doctrine" data-i18n="review.chain.doctrine">Review does not mutate the original receipt. It creates or references a subsequent governed event.</p>
+          <div class="review-actions">
+            <button type="button" class="demo-action" disabled title="Demo placeholder" data-i18n="review.approve">Approve governed event</button>
+            <button type="button" class="demo-action demo-action-reject" disabled title="Demo placeholder" data-i18n="review.reject">Reject governed event</button>
+            <span class="demo-action-note" data-i18n="review.demoOnly">Demo placeholder — no backend execution</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Chain of Responsibility -->
+      <article class="panel">
+        <div class="head">
+          <h2 data-i18n="panel.responsibility">Chain of Responsibility</h2>
+          <span class="pill pill-blue" id="responsibility-state"></span>
+        </div>
+        <div class="chain-list" id="responsibility-chain"></div>
+      </article>
+
+      <!-- Audit Controls -->
+      <article class="panel full">
+        <div class="head">
+          <h2 data-i18n="panel.audit">Audit and Verification Controls</h2>
+          <span class="pill pill-green" id="audit-state"></span>
+        </div>
+        <div class="audit-grid" id="audit-panel"></div>
+      </article>
+
+      <!-- Flow Trace -->
+      <article class="panel full">
+        <div class="head">
+          <h2 data-i18n="panel.trace">Flow Trace</h2>
+          <span class="pill" id="trace-count"></span>
+        </div>
+        <div class="trace" id="trace"></div>
+      </article>
+
+    </section>
+
+    <!-- Doctrine -->
+    <div class="doctrine">
+      <div class="doctrine-main">
+        <strong data-i18n="doctrine.logs">Logs are not proof.</strong>
+        <span data-i18n="doctrine.receipts">&ensp;Receipts are verifiable evidence.</span>
+      </div>
+      <div class="doctrine-sub" data-i18n="doctrine.sub">
+        Any party with the public key can verify an ADR receipt — no access to the originating system required.
+      </div>
+    </div>
+
+    <footer>
+      <span data-i18n="footer.copy">FortiX · ADR Protocol v1.0 · Demo mode — no backend connection required</span>
+      <code id="key-id"></code>
+    </footer>
+
+  </main>
+
+  <script>
+    const i18n = {
+      en: {
+        'header.console': 'Agent Governance Console',
+        'nav.back': '← Back to Demo Index',
+        'context.label': 'Context',
+        'context.banking': 'Banking',
+        'context.healthcare': 'Healthcare',
+        'context.industry': 'Industry',
+        'context.supply_chain': 'Supply Chain',
+        'context.public_sector': 'Public Sector',
+        'context.tagline': 'Enterprise actions governed before execution, receipted at execution, verified after execution.',
+        'flow.agent': 'Agent',
+        'flow.tool': 'Tool',
+        'flow.policy': 'Policy',
+        'flow.execution': 'Execution',
+        'flow.adr': 'ADR Receipt',
+        'flow.verify': 'Independent Verification',
+        'panel.action': 'Action',
+        'panel.policy': 'Policy Decision',
+        'panel.governance': 'Governance Layers',
+        'panel.runtime': 'Governed Runtime',
+        'panel.adr': 'ADR Receipt',
+        'panel.verify': 'Verify',
+        'panel.review': 'Human Review Queue',
+        'panel.responsibility': 'Chain of Responsibility',
+        'panel.audit': 'Audit and Verification Controls',
+        'panel.trace': 'Flow Trace',
+        'gov.input': 'Input',
+        'gov.agent': 'Agent',
+        'gov.tool': 'Tool',
+        'gov.policy': 'Policy',
+        'gov.execution': 'Execution',
+        'gov.aggregate': 'Aggregate Decision',
+        'gov.riskLevel': 'Risk level',
+        'gov.riskScore': 'Risk score',
+        'gov.reasonCodes': 'reason_codes',
+        'button.verify': 'Verify independently',
+        'button.viewAdr': 'View full ADR',
+        'button.hideAdr': 'Hide full ADR',
+        'doctrine.governance': 'Runtime governance qualifies risk before execution. ADR attests the governed action. Independent verification validates the receipt.',
+        'doctrine.logs': 'Logs are not proof.',
+        'doctrine.receipts': ' Receipts are verifiable evidence.',
+        'doctrine.sub': 'Any party with the public key can verify an ADR receipt — no access to the originating system required.',
+        'decision.allow.label': 'Allowed',
+        'decision.review.label': 'Pending review',
+        'decision.block.label': 'Blocked',
+        'policy.executionState': 'execution_state',
+        'policy.reviewRequired': 'review_required',
+        'review.doctrine': 'Human review is governed escalation, not manual trust.',
+        'review.doctrine.companion': 'Automation pauses; accountability continues.',
+        'review.paused.badge': 'Automation paused',
+        'review.paused.text': 'Governance continues through accountable human review.',
+        'review.field.reviewerRole': 'Reviewer role',
+        'review.field.reviewState': 'Review state',
+        'review.field.escalationReason': 'Escalation reason',
+        'review.field.submittedAt': 'Submitted at',
+        'review.field.approvalTimestamp': 'Approval timestamp',
+        'review.field.auditNote': 'Audit note',
+        'review.field.linkedAction': 'Linked action',
+        'review.field.linkedReceipt': 'Linked receipt',
+        'review.field.pending': 'pending',
+        'review.chain.title': 'Review event chain',
+        'review.chain.original': 'Original governed decision',
+        'review.chain.pending': 'Pending review event',
+        'review.chain.future': 'Subsequent governed event',
+        'review.chain.doctrine': 'Review does not mutate the original receipt. It creates or references a subsequent governed event.',
+        'review.chain.original.detail': '{decision} · receipt {hash}',
+        'review.chain.pending.detail': 'Reviewer role: {role} · escalation: {reason}',
+        'review.chain.future.detail': 'A new governed decision event will be issued and linked to this action upon approval or rejection.',
+        'review.approve': 'Approve governed event',
+        'review.reject': 'Reject governed event',
+        'review.demoOnly': 'Demo placeholder — no backend execution',
+        'receipt.note': 'The receipt attests the governed decision, not necessarily the external completion of the action.',
+        'receipt.portability': 'The receipt can be carried outside the originating system for independent verification.',
+        'receipt.copy': 'Copy receipt JSON',
+        'receipt.copy.confirm': 'Copied',
+        'receipt.download': 'Download receipt',
+        'receipt.openVerifier': 'Open independent verifier',
+        'journey.title': 'Portable proof journey',
+        'journey.issue': 'Issue receipt',
+        'journey.export': 'Export receipt',
+        'journey.verify': 'Verify independently',
+        'briefing.title': 'Scenario Briefing',
+        'briefing.disclaimer.label': 'FortiX positioning',
+        'briefing.comprehension.title': '30-second comprehension',
+        'briefing.q.action': 'What action was submitted?',
+        'briefing.q.held': 'Why was it held?',
+        'briefing.q.governed': 'Why was it governed?',
+        'briefing.q.blocked': 'Why was it blocked?',
+        'briefing.q.reviewer': 'Who must review?',
+        'briefing.q.accountable': 'Who remains accountable?',
+        'briefing.q.canReview': 'Who can review?',
+        'briefing.q.receipted': 'What was receipted?',
+        'briefing.q.verifiable': 'What can be verified independently?',
+        'briefing.q.notProves': 'What does verification NOT prove?',
+        'receipt.algorithm': 'BLAKE3 hash · Ed25519 signature',
+        'verify.label': 'Independent receipt verification',
+        'verify.ready': 'Ready',
+        'verify.verified': 'Verified',
+        'verify.headline': 'Verification confirms authenticity and integrity.',
+        'verify.confirms.title': 'Verification confirms',
+        'verify.confirms.l1': 'Authenticity',
+        'verify.confirms.l2': 'Integrity',
+        'verify.confirms.l3': 'Signature validity',
+        'verify.confirms.l4': 'Payload consistency',
+        'verify.notConfirms.title': 'Verification does NOT confirm',
+        'verify.notConfirms.l1': 'Business correctness',
+        'verify.notConfirms.l2': 'Legal validity',
+        'verify.notConfirms.l3': 'External completion',
+        'verify.notConfirms.l4': 'Ethical quality',
+        'verify.explain': 'The cryptographic signature is authentic and the payload is unaltered since the receipt was issued. Verification confirms receipt integrity and that the signature matches the supplied public key. It does not confirm the authority or revocation status of that key, nor the correctness of the governance decision encoded in the payload.',
+        'verify.context.banking': 'This receipt can be independently verified by risk, compliance, regulators, or counterparties without access to the originating banking system.',
+        'verify.context.healthcare': 'This receipt can be independently verified by medical auditors or authorized reviewers without access to the originating clinical system.',
+        'verify.context.industry': 'This receipt can be independently verified by safety inspectors, auditors, or partners without access to the originating industrial system.',
+        'verify.context.supply_chain': 'This receipt can be independently verified by procurement control, logistics audit, suppliers, or enterprise risk teams without access to the originating supply-chain system.',
+        'verify.context.public_sector': 'This receipt can be independently verified by oversight, audit, or authorized public-sector reviewers without access to the originating case system.',
+        'trace.count': '{count} events · ADR issued + verified for each',
+        'footer.copy': 'FortiX · Trust layer for sensitive AI and agentic actions · Demo mode',
+        'footer.keyId': 'key_id',
+        'theme.toggle': 'Toggle theme',
+      },
+      fr: {
+        'header.console': 'Console de gouvernance agentique',
+        'nav.back': '← Retour à l’index des démos',
+        'context.label': 'Contexte',
+        'context.banking': 'Banque',
+        'context.healthcare': 'Santé',
+        'context.industry': 'Industrie',
+        'context.supply_chain': 'Supply Chain',
+        'context.public_sector': 'Secteur public',
+        'context.tagline': 'Actions enterprise gouvernées avant exécution, avec reçu à l’exécution, vérifiées après.',
+        'flow.agent': 'Agent',
+        'flow.tool': 'Outil',
+        'flow.policy': 'Politique',
+        'flow.execution': 'Exécution',
+        'flow.adr': 'Reçu ADR',
+        'flow.verify': 'Vérification indépendante',
+        'panel.action': 'Action',
+        'panel.policy': 'Décision de politique',
+        'panel.governance': 'Couches de gouvernance',
+        'panel.runtime': 'Runtime gouverné',
+        'panel.adr': 'Reçu ADR',
+        'panel.verify': 'Vérifier',
+        'panel.review': 'File de revue humaine',
+        'panel.responsibility': 'Chaîne de responsabilité',
+        'panel.audit': 'Contrôles audit et vérification',
+        'panel.trace': 'Trace du flux',
+        'gov.input': 'Entrée',
+        'gov.agent': 'Agent',
+        'gov.tool': 'Outil',
+        'gov.policy': 'Politique',
+        'gov.execution': 'Exécution',
+        'gov.aggregate': 'Décision agrégée',
+        'gov.riskLevel': 'Niveau de risque',
+        'gov.riskScore': 'Score de risque',
+        'gov.reasonCodes': 'codes_raison',
+        'button.verify': 'Vérifier indépendamment',
+        'button.viewAdr': 'Voir l’ADR complet',
+        'button.hideAdr': 'Masquer l’ADR complet',
+        'doctrine.governance': 'La gouvernance runtime qualifie le risque avant exécution. L’ADR atteste l’action gouvernée. La vérification indépendante valide le reçu.',
+        'doctrine.logs': 'Les logs ne sont pas une preuve.',
+        'doctrine.receipts': ' Les reçus sont des preuves vérifiables.',
+        'doctrine.sub': 'Toute partie disposant de la clé publique peut vérifier un reçu ADR — sans accès au système d’origine.',
+        'decision.allow.label': 'Autorisée',
+        'decision.review.label': 'En attente de revue',
+        'decision.block.label': 'Bloquée',
+        'policy.executionState': 'execution_state',
+        'policy.reviewRequired': 'review_required',
+        'review.doctrine': 'La revue humaine est une escalade gouvernée, pas une confiance manuelle.',
+        'review.doctrine.companion': 'L’automatisation s’arrête ; la responsabilité continue.',
+        'review.paused.badge': 'Automatisation suspendue',
+        'review.paused.text': 'La gouvernance continue par une revue humaine traçable.',
+        'review.field.reviewerRole': 'Rôle du réviseur',
+        'review.field.reviewState': 'État de revue',
+        'review.field.escalationReason': 'Raison d’escalade',
+        'review.field.submittedAt': 'Soumis le',
+        'review.field.approvalTimestamp': 'Horodatage d’approbation',
+        'review.field.auditNote': 'Note d’audit',
+        'review.field.linkedAction': 'Action liée',
+        'review.field.linkedReceipt': 'Reçu lié',
+        'review.field.pending': 'en attente',
+        'review.chain.title': 'Chaîne d’événements de revue',
+        'review.chain.original': 'Décision gouvernée initiale',
+        'review.chain.pending': 'Événement de revue en attente',
+        'review.chain.future': 'Événement gouverné ultérieur',
+        'review.chain.doctrine': 'La revue ne modifie pas le reçu initial. Elle crée ou référence un événement gouverné ultérieur.',
+        'review.chain.original.detail': '{decision} · reçu {hash}',
+        'review.chain.pending.detail': 'Rôle du réviseur : {role} · escalade : {reason}',
+        'review.chain.future.detail': 'Un nouvel événement de décision gouvernée sera émis et lié à cette action après approbation ou rejet.',
+        'review.approve': 'Approuver l’événement gouverné',
+        'review.reject': 'Rejeter l’événement gouverné',
+        'review.demoOnly': 'Espace réservé démo — pas d’exécution backend',
+        'receipt.note': 'Le reçu atteste la décision gouvernée, pas nécessairement l’achèvement externe de l’action.',
+        'receipt.portability': 'Le reçu peut être transmis hors du système d’origine pour vérification indépendante.',
+        'receipt.copy': 'Copier le JSON du reçu',
+        'receipt.copy.confirm': 'Copié',
+        'receipt.download': 'Télécharger le reçu',
+        'receipt.openVerifier': 'Ouvrir le vérificateur indépendant',
+        'journey.title': 'Parcours de preuve portable',
+        'journey.issue': 'Émettre le reçu',
+        'journey.export': 'Exporter le reçu',
+        'journey.verify': 'Vérifier indépendamment',
+        'briefing.title': 'Briefing du scénario',
+        'briefing.disclaimer.label': 'Positionnement FortiX',
+        'briefing.comprehension.title': 'Compréhension en 30 secondes',
+        'briefing.q.action': 'Quelle action a été soumise ?',
+        'briefing.q.held': 'Pourquoi est-elle suspendue ?',
+        'briefing.q.governed': 'Pourquoi est-elle gouvernée ?',
+        'briefing.q.blocked': 'Pourquoi a-t-elle été bloquée ?',
+        'briefing.q.reviewer': 'Qui doit examiner ?',
+        'briefing.q.accountable': 'Qui reste responsable ?',
+        'briefing.q.canReview': 'Qui peut examiner ?',
+        'briefing.q.receipted': 'Qu’est-ce qui a été inscrit dans le reçu ?',
+        'briefing.q.verifiable': 'Que peut-on vérifier indépendamment ?',
+        'briefing.q.notProves': 'Que la vérification NE prouve PAS ?',
+        'receipt.algorithm': 'Hash BLAKE3 · signature Ed25519',
+        'verify.label': 'Vérification indépendante du reçu',
+        'verify.ready': 'Prêt',
+        'verify.verified': 'Vérifié',
+        'verify.headline': 'La vérification confirme l’authenticité et l’intégrité.',
+        'verify.confirms.title': 'La vérification confirme',
+        'verify.confirms.l1': 'Authenticité',
+        'verify.confirms.l2': 'Intégrité',
+        'verify.confirms.l3': 'Validité de la signature',
+        'verify.confirms.l4': 'Cohérence de la charge utile',
+        'verify.notConfirms.title': 'La vérification NE confirme PAS',
+        'verify.notConfirms.l1': 'Justesse métier',
+        'verify.notConfirms.l2': 'Validité juridique',
+        'verify.notConfirms.l3': 'Achèvement externe',
+        'verify.notConfirms.l4': 'Qualité éthique',
+        'verify.explain': 'La signature cryptographique est authentique et la charge utile n’a pas été modifiée depuis l’émission du reçu. La vérification confirme l’intégrité du reçu et la correspondance entre la signature et la clé publique fournie. Elle ne confirme ni l’autorité ni le statut de révocation de cette clé, ni la justesse de la décision de gouvernance encodée dans la charge utile.',
+        'verify.context.banking': 'Ce reçu peut être vérifié indépendamment par le risque, la conformité, les régulateurs ou les contreparties sans accès au système bancaire d’origine.',
+        'verify.context.healthcare': 'Ce reçu peut être vérifié indépendamment par des auditeurs médicaux ou des réviseurs autorisés sans accès au système clinique d’origine.',
+        'verify.context.industry': 'Ce reçu peut être vérifié indépendamment par des inspecteurs de sécurité, des auditeurs ou des partenaires sans accès au système industriel d’origine.',
+        'verify.context.supply_chain': 'Ce reçu peut être vérifié indépendamment par le contrôle achats, l’audit logistique, les fournisseurs ou le risque enterprise sans accès au système supply-chain d’origine.',
+        'verify.context.public_sector': 'Ce reçu peut être vérifié indépendamment par le contrôle, l’audit ou des réviseurs publics autorisés sans accès au système dossier d’origine.',
+        'trace.count': '{count} événements · ADR émis et vérifié pour chacun',
+        'footer.copy': 'FortiX · Couche de confiance pour actions IA et agentiques sensibles · Mode démo',
+        'footer.keyId': 'id_clé',
+        'theme.toggle': 'Changer de thème',
+      },
+    };
+
+    const CONTEXTS = {
+
+      banking: {
+        sector_label_en: 'Banking · Payments',
+        sector_label_fr: 'Banque · Paiements',
+        briefing: {
+          lead_en: 'A treasury agent has submitted a high-value cross-border payment from France to the United Arab Emirates. The action exceeds the corridor risk threshold and triggers governed escalation. Automation is paused. A Treasury risk officer must review the action before any payment instruction reaches the rail. A signed ADR receipt is issued at the moment of decision and can be independently verified by auditors, regulators, or partners — without access to the originating banking system.',
+          lead_fr: 'Un agent trésorerie a soumis un paiement transfrontalier de forte valeur de la France vers les Émirats arabes unis. L’action dépasse le seuil de risque du corridor et déclenche une escalade gouvernée. L’automatisation est suspendue. Un responsable risque trésorerie doit examiner l’action avant qu’une instruction de paiement n’atteigne le rail. Un reçu ADR signé est émis au moment de la décision et peut être vérifié indépendamment par les auditeurs, régulateurs ou partenaires — sans accès au système bancaire d’origine.',
+          disclaimer_en: 'FortiX does not replace the PSP or bank core. It governs the sensitive execution decision and issues a verifiable receipt.',
+          disclaimer_fr: 'FortiX ne remplace ni le PSP ni le cœur bancaire. FortiX gouverne la décision d’exécution sensible et émet un reçu vérifiable.',
+          comprehension: [
+            { qKey: 'briefing.q.action',     a_en: 'payment.submit · EUR 180,000 · FR → AE',                                                                       a_fr: 'payment.submit · 180 000 EUR · FR → AE' },
+            { qKey: 'briefing.q.held',       a_en: 'REVIEW_AMOUNT_ABOVE_THRESHOLD · cross-border corridor sensitivity',                                            a_fr: 'REVIEW_AMOUNT_ABOVE_THRESHOLD · sensibilité du corridor transfrontalier' },
+            { qKey: 'briefing.q.reviewer',   a_en: 'Treasury risk officer · payment-risk queue',                                                                    a_fr: 'Responsable risque trésorerie · file risque-paiements' },
+            { qKey: 'briefing.q.receipted',  a_en: 'The governed REQUIRE_REVIEW decision and its full context (BLAKE3 hash, Ed25519 signature, ADR v1).',          a_fr: 'La décision REQUIRE_REVIEW gouvernée et son contexte complet (hash BLAKE3, signature Ed25519, ADR v1).' },
+            { qKey: 'briefing.q.verifiable', a_en: 'Receipt authenticity, integrity, and signature validity — without bank-system access.',                        a_fr: 'L’authenticité, l’intégrité et la validité de signature du reçu — sans accès au système bancaire.' },
+            { qKey: 'briefing.q.notProves',  a_en: 'Business correctness, legal validity, payment settlement, key authority or revocation status.',                a_fr: 'La justesse métier, la validité juridique, le règlement du paiement, l’autorité ou le statut de révocation de la clé.' },
+          ],
+        },
+        action_pill: 'payment.submit',
+        action_primary: 'EUR 180,000 cross-border payment',
+        action_sub: 'FR to AE',
+        action_kv: [
+          ['actor_id', 'agent-payops-01'],
+          ['action_id', 'txn-pay-002'],
+          ['corridor', 'FR to AE'],
+          ['control_domain', 'AML threshold monitoring'],
+          ['permission_scope', 'payments.submit:cross_border'],
+        ],
+        decision: 'REVIEW',
+        decision_class: 'd-review',
+        pill_class: 'pill pill-orange',
+        reason: 'REVIEW_AMOUNT_ABOVE_THRESHOLD',
+        execution_state: 'pending_review',
+        review_required: true,
+        policy_meta: 'Payment execution is contained until a payment-risk reviewer approves the threshold exception.',
+        dashboard: [
+          { label: 'Pending review', value: '1', note: 'Payment-risk queue' },
+          { label: 'Risk score', value: '65', note: 'Medium operational risk' },
+          { label: 'Containment', value: 'Held', note: 'No rail submission' },
+          { label: 'Proof state', value: 'ADR valid', note: 'Portable receipt ready' },
+        ],
+        governance: {
+          aggregateDecision: 'require_review',
+          aggregateRiskLevel: 'medium',
+          aggregateRiskScore: 65,
+          reasonCodes: ['sensitive_external_effect', 'amount_threshold_exceeded'],
+          layers: [
+            { name: 'Input', decision: 'allow', risk: 'low', reason: 'payment_payload_complete' },
+            { name: 'Agent', decision: 'allow', risk: 'low', reason: 'agent_identity_scoped' },
+            { name: 'Tool', decision: 'require_review', risk: 'medium', reason: 'payment_rail_external_effect' },
+            { name: 'Policy', decision: 'require_review', risk: 'medium', reason: 'aml_threshold_exception' },
+            { name: 'Execution', decision: 'allow', risk: 'low', reason: 'execution_contained_pending_review' },
+          ],
+        },
+        runtimeState: 'Contained before rail submission',
+        runtimeFlow: [
+          { stage: 'Agent', title: 'Treasury agent identified', detail: 'Parent: treasury-orchestrator. Sub-agent: payment-agent. Scope is cross-border payment submission.', state: 'scoped_identity' },
+          { stage: 'Tool', title: 'Payment rail API requested', detail: 'External-effect tool call is visible before execution and linked to the action payload.', state: 'external_effect' },
+          { stage: 'Policy', title: 'AML threshold checkpoint', detail: 'Policy requires human approval for the corridor and amount before execution.', state: 'requires_review' },
+          { stage: 'Execution', title: 'Execution contained', detail: 'No payment instruction is released to the rail while review is pending.', state: 'pending_review' },
+          { stage: 'ADR', title: 'Receipt issued', detail: 'The governed action and decision context are sealed in an ADR receipt.', state: 'hash_5386a51a' },
+          { stage: 'Verify', title: 'Independent verifier passes', detail: 'Receipt integrity and origin can be checked without access to the banking system.', state: 'valid' },
+        ],
+        reviewState: 'SLA 15m',
+        reviewQueue: [
+          {
+            title: 'Approve threshold exception',
+            owner: 'Payment Risk Lead',
+            state: 'pending',
+            note: 'Confirm corridor, beneficiary class, and AML monitoring evidence.',
+            reviewer_role_en: 'Treasury risk officer',
+            reviewer_role_fr: 'Responsable risque trésorerie',
+            review_state: 'pending_approval',
+            escalation_reason: 'REVIEW_AMOUNT_ABOVE_THRESHOLD',
+            submitted_at: '2026-05-02T09:14:22Z',
+            approval_timestamp: null,
+            audit_note_en: 'Reviewer must validate corridor, beneficiary class, and AML monitoring evidence before authorising the threshold exception.',
+            audit_note_fr: 'Le réviseur doit valider le corridor, la classe de bénéficiaire et les preuves de surveillance LCB-FT avant d’autoriser la dérogation de seuil.',
+            linked_action_id: 'txn-pay-002',
+            linked_receipt_hash: '5386a51a91dfa1e3...',
+          },
+          {
+            title: 'Release containment',
+            owner: 'Treasury Operations',
+            state: 'blocked',
+            note: 'Allowed only after payment-risk approval is recorded.',
+            reviewer_role_en: 'Treasury operations approver',
+            reviewer_role_fr: 'Approbateur opérations trésorerie',
+            review_state: 'blocked_pending_review',
+            escalation_reason: 'BLOCKED_PENDING_PRIOR_APPROVAL',
+            submitted_at: '2026-05-02T09:14:22Z',
+            approval_timestamp: null,
+            audit_note_en: 'Containment release is blocked until the prior treasury risk approval is recorded.',
+            audit_note_fr: 'La levée du confinement est bloquée tant que l’approbation préalable du risque trésorerie n’est pas enregistrée.',
+            linked_action_id: 'txn-pay-002',
+            linked_receipt_hash: '5386a51a91dfa1e3...',
+          },
+        ],
+        responsibilityState: '4 accountable parties',
+        responsibility: [
+          { title: 'treasury-orchestrator', meta: 'parent agent', note: 'Initiated payment workflow and delegated only payment.submit scope.' },
+          { title: 'payment-agent', meta: 'sub-agent', note: 'Requested the payment rail tool under declared permission scope.' },
+          { title: 'payment-risk-lead', meta: 'human reviewer', note: 'Owns the review decision before execution can leave containment.' },
+          { title: 'adr-verifier', meta: 'independent control', note: 'Verifies the receipt outside the originating runtime.' },
+        ],
+        auditState: 'Portable proof',
+        audit: [
+          { title: 'Govern before execution', meta: 'policy checkpoint', note: 'Sensitive payment cannot execute until the risk gate is decided.' },
+          { title: 'Receipt at execution boundary', meta: 'ADR v1', note: 'The action, decision, and governance context are sealed as a portable proof object.' },
+          { title: 'Verify independently', meta: 'offline verifier', note: 'Auditors can validate the receipt without privileged system access.' },
+        ],
+        trace: [
+          { step: 'agent.identity.bind', sub: 'agent-payops-01 -> treasury-orchestrator', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'scoped' },
+          { step: 'tool.payment_rail.request', sub: 'txn-pay-002', decision: 'REVIEW', pill: 'pill pill-orange', verify: 'VALID', containment: 'held' },
+          { step: 'policy.aml_threshold.check', sub: 'amount=180000 EUR', decision: 'REVIEW', pill: 'pill pill-orange', verify: 'VALID', containment: 'pending_review' },
+          { step: 'adr.receipt.issue', sub: 'hash=5386a51a...', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'portable' },
+        ],
+        adr: {
+          version: '1.0',
+          payload: {
+            action_id: 'txn-pay-002',
+            actor_id: 'agent-payops-01',
+            action: 'payment.submit',
+            target: 'payment_rail',
+            timestamp: '2026-05-02T09:14:22.000Z',
+            payload: {
+              amount: 180000,
+              currency: 'EUR',
+              corridor: 'FR to AE',
+              compliance_context: 'AML threshold monitoring',
+            },
+            governance: {
+              aggregate_decision: 'require_review',
+              aggregate_risk_score: 65,
+              containment_state: 'pending_human_review',
+            },
+          },
+          hash: '5386a51a91dfa1e3b4c746f5d3c978368d27216e7583b2edbe40855b9964e4be',
+          signature: '306543a820fe647b9f4c7d4b77d7c96e1f1bd5a63047e0bb95ef48fe1ee9fcac8fbce7d57e8aaede8a7bd3ad6a4e5e601f38ebb57bbdd79675a36370aa974b0b',
+          algorithm: { hash: 'BLAKE3', signature: 'Ed25519' },
+          key_id: 'demo-key-001',
+        },
+      },
+
+      healthcare: {
+        sector_label_en: 'Healthcare · Oncology',
+        sector_label_fr: 'Santé · Oncologie',
+        briefing: {
+          lead_en: 'An AI-assisted clinical agent has prepared a draft radiotherapy plan for oncologist review. The draft is generated within a strict clinical boundary: no treatment order is created, no patient record is modified, and no clinical decision is finalised. An ADR receipt is issued for the governed clinical decision flow. The plan must still be validated by an oncologist before any clinical execution. Independent verification of the receipt is available for medical audit and clinical-governance review — without access to the originating clinical system.',
+          lead_fr: 'Un agent clinique assisté par IA a préparé un projet de plan de radiothérapie pour revue par un oncologue. Le projet est généré dans une frontière clinique stricte : aucune prescription n’est créée, aucun dossier patient n’est modifié, aucune décision clinique n’est finalisée. Un reçu ADR est émis pour le flux de décision clinique gouverné. Le plan doit encore être validé par un oncologue avant toute exécution clinique. La vérification indépendante du reçu est disponible pour l’audit médical et la revue de gouvernance clinique — sans accès au système clinique d’origine.',
+          disclaimer_en: 'FortiX does not replace medical judgment. It governs and attests sensitive clinical decision flows.',
+          disclaimer_fr: 'FortiX ne remplace pas le jugement médical. FortiX gouverne et atteste les flux de décision clinique sensibles.',
+          comprehension: [
+            { qKey: 'briefing.q.action',      a_en: 'treatment.plan.generate · radiotherapy plan draft (no clinical order issued)',                                                  a_fr: 'treatment.plan.generate · projet de plan de radiothérapie (aucune prescription émise)' },
+            { qKey: 'briefing.q.governed',    a_en: 'AI-assisted clinical recommendation · patient-impacting decision flow · ALLOW within draft boundary',                            a_fr: 'Recommandation clinique assistée par IA · flux de décision impactant le patient · ALLOW dans la frontière draft' },
+            { qKey: 'briefing.q.accountable', a_en: 'Oncology attending · clinical reviewer · oncology team · clinical governance',                                                   a_fr: 'Médecin oncologue · réviseur clinique · équipe oncologie · gouvernance clinique' },
+            { qKey: 'briefing.q.receipted',   a_en: 'The governed decision context, draft action payload reference, and clinical boundary (BLAKE3 hash, Ed25519 signature, ADR v1).',  a_fr: 'Le contexte de décision gouvernée, la référence de la charge utile du projet, et la frontière clinique (hash BLAKE3, signature Ed25519, ADR v1).' },
+            { qKey: 'briefing.q.verifiable',  a_en: 'Receipt authenticity, integrity, and signature validity — for medical audit and clinical-governance review without clinical-system access.', a_fr: 'L’authenticité, l’intégrité et la validité de signature du reçu — pour l’audit médical et la revue de gouvernance clinique sans accès au système clinique.' },
+            { qKey: 'briefing.q.notProves',   a_en: 'Clinical correctness, treatment success, patient outcome, regulatory medical approval, or replacement of clinical judgment.',     a_fr: 'La justesse clinique, le succès du traitement, le résultat patient, l’approbation médicale réglementaire, ni le remplacement du jugement clinique.' },
+          ],
+        },
+        receipt_portability_en: 'The receipt can support clinical audit outside the originating system, without proving clinical correctness.',
+        receipt_portability_fr: 'Le reçu peut soutenir l’audit clinique hors du système d’origine, sans prouver l’exactitude clinique.',
+        action_pill: 'treatment.plan.generate',
+        action_primary: 'Radiotherapy plan draft',
+        action_sub: 'oncologist review boundary',
+        action_kv: [
+          ['actor_id', 'agent-clinical-204'],
+          ['action_id', 'med-hlt-002'],
+          ['patient_ref', 'patient_redacted'],
+          ['workflow', 'clinical draft only'],
+          ['permission_scope', 'treatment.plan:draft'],
+        ],
+        decision: 'ALLOW',
+        decision_class: 'd-allow',
+        pill_class: 'pill pill-green',
+        reason: 'ALLOW_CLINICAL_DRAFT_BOUNDARY',
+        execution_state: 'allowed',
+        review_required: false,
+        policy_meta: 'AI-assisted draft generation is allowed. Treatment execution remains outside the agent scope and requires clinical approval.',
+        dashboard: [
+          { label: 'Clinical state', value: 'Draft', note: 'No treatment execution' },
+          { label: 'Risk score', value: '15', note: 'Low within draft boundary' },
+          { label: 'Reviewer', value: 'Assigned', note: 'Oncologist sign-off' },
+          { label: 'Proof state', value: 'ADR valid', note: 'Clinical audit ready' },
+        ],
+        governance: {
+          aggregateDecision: 'allow',
+          aggregateRiskLevel: 'low',
+          aggregateRiskScore: 15,
+          reasonCodes: ['clinical_draft_ok', 'execution_boundary_enforced'],
+          layers: [
+            { name: 'Input', decision: 'allow', risk: 'low', reason: 'patient_ref_redacted' },
+            { name: 'Agent', decision: 'allow', risk: 'low', reason: 'draft_scope_only' },
+            { name: 'Tool', decision: 'allow', risk: 'low', reason: 'clinical_retrieval_read_only' },
+            { name: 'Policy', decision: 'allow', risk: 'low', reason: 'treatment_execution_excluded' },
+            { name: 'Execution', decision: 'allow', risk: 'low', reason: 'draft_generated_for_review' },
+          ],
+        },
+        runtimeState: 'Draft boundary enforced',
+        runtimeFlow: [
+          { stage: 'Agent', title: 'Clinical agent scoped', detail: 'Agent identity permits plan drafting only, not treatment execution.', state: 'least_privilege' },
+          { stage: 'Tool', title: 'Clinical data retrieval', detail: 'Read-only tool call uses redacted patient reference and clinical context.', state: 'read_only' },
+          { stage: 'Policy', title: 'Care boundary checkpoint', detail: 'Policy confirms draft-only output and mandatory oncologist review.', state: 'allowed' },
+          { stage: 'Execution', title: 'Draft produced', detail: 'Execution produces a reviewable plan artifact, not a clinical order.', state: 'contained_output' },
+          { stage: 'ADR', title: 'Receipt issued', detail: 'The draft action and review boundary are sealed for audit.', state: 'hash_4c4c7ab9' },
+          { stage: 'Verify', title: 'Independent verifier passes', detail: 'The receipt can be checked by clinical audit without opening the clinical system.', state: 'valid' },
+        ],
+        reviewState: 'Clinical sign-off',
+        reviewQueue: [
+          {
+            title: 'Oncologist review',
+            owner: 'Oncology Attending',
+            state: 'scheduled',
+            note: 'Required before any treatment order can be created outside FortiX.',
+            reviewer_role_en: 'Clinical reviewer',
+            reviewer_role_fr: 'Réviseur clinique',
+            review_state: 'scheduled_review',
+            escalation_reason: 'REVIEW_CLINICAL_VALIDATION_REQUIRED',
+            submitted_at: '2026-05-02T09:14:22Z',
+            approval_timestamp: null,
+            audit_note_en: 'Treatment plan draft requires oncologist validation before any clinical order can be issued outside FortiX.',
+            audit_note_fr: 'Le projet de plan de traitement requiert la validation d’un oncologue avant toute prescription clinique en dehors de FortiX.',
+            linked_action_id: 'med-hlt-002',
+            linked_receipt_hash: '4c4c7ab950b5ec4a...',
+          },
+          {
+            title: 'Audit sampling',
+            owner: 'Clinical Governance',
+            state: 'ready',
+            note: 'Receipt and redaction boundary available for independent review.',
+            reviewer_role_en: 'Clinical audit',
+            reviewer_role_fr: 'Audit clinique',
+            review_state: 'audit_ready',
+            escalation_reason: 'AUDIT_SAMPLE_REQUEST',
+            submitted_at: '2026-05-02T09:14:22Z',
+            approval_timestamp: null,
+            audit_note_en: 'Receipt is available for independent clinical-governance review and redaction-boundary verification.',
+            audit_note_fr: 'Le reçu est disponible pour la revue indépendante de gouvernance clinique et la vérification de la frontière de rédaction.',
+            linked_action_id: 'med-hlt-002',
+            linked_receipt_hash: '4c4c7ab950b5ec4a...',
+          },
+        ],
+        responsibilityState: '4 accountable parties',
+        responsibility: [
+          { title: 'clinical-orchestrator', meta: 'parent agent', note: 'Delegated drafting task with no treatment execution permission.' },
+          { title: 'agent-clinical-204', meta: 'sub-agent', note: 'Generated a draft under clinical policy constraints.' },
+          { title: 'oncology-attending', meta: 'human approver', note: 'Owns medical decision before care delivery.' },
+          { title: 'clinical-audit', meta: 'independent verifier', note: 'Validates the receipt and governance boundary.' },
+        ],
+        auditState: 'Clinical evidence',
+        audit: [
+          { title: 'Govern before execution', meta: 'scope boundary', note: 'Agent can draft but cannot execute clinical treatment.' },
+          { title: 'Receipt at execution boundary', meta: 'ADR v1', note: 'The generated draft and its governance limits are sealed.' },
+          { title: 'Verify independently', meta: 'offline verifier', note: 'Reviewers can verify receipt integrity without clinical system access.' },
+        ],
+        trace: [
+          { step: 'agent.identity.bind', sub: 'agent-clinical-204 -> clinical-orchestrator', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'draft_scope' },
+          { step: 'tool.patient_record.query', sub: 'patient_ref=redacted', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'read_only' },
+          { step: 'policy.care_boundary.check', sub: 'treatment_execution=false', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'review_required' },
+          { step: 'adr.receipt.issue', sub: 'hash=4c4c7ab9...', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'portable' },
+        ],
+        adr: {
+          version: '1.0',
+          payload: {
+            action_id: 'med-hlt-002',
+            actor_id: 'agent-clinical-204',
+            action: 'treatment.plan.generate',
+            target: 'clinical_draft_workspace',
+            timestamp: '2026-05-02T09:14:22.000Z',
+            payload: {
+              patient_ref: 'patient_redacted',
+              context: 'radiotherapy planning',
+              validation_required: 'oncologist_review',
+              treatment_priority: 'high',
+            },
+            governance: {
+              aggregate_decision: 'allow',
+              aggregate_risk_score: 15,
+              containment_state: 'draft_only',
+            },
+          },
+          hash: '4c4c7ab950b5ec4a2a529000d564526ec37e4079ba28e9f1330b743d57b8d174',
+          signature: '9a4f2e8c1b7d3f5a0e6c2b8d4f1a7e3c5b9d2f8a4e0c6b1d7f3a9e5c4b0d6f2a7e3c1b9d5f0a8e2c6b4d1f7a3e9c5b2d8f4a0e6c1b7d3f9a5e2c8b4d0f6a1e7c',
+          algorithm: { hash: 'BLAKE3', signature: 'Ed25519' },
+          key_id: 'demo-key-001',
+        },
+      },
+
+      industry: {
+        sector_label_en: 'Industry · Operations',
+        sector_label_fr: 'Industrie · Opérations',
+        briefing: {
+          lead_en: 'An industrial AI controller has requested a safety override on turbine_line_2 at plant_04. Required safety authorization context is incomplete. Governance refuses execution: no command is issued to the industrial control system, the action is contained at the policy boundary, and an ADR receipt is sealed for the blocked decision. BLOCK is a governed containment outcome, not a system failure. Any subsequent release or override would require a new governed event; the original receipt remains immutable. The receipt can be independently verified by safety supervisors, insurers, internal audit, or public authorities — without access to the originating industrial control system.',
+          lead_fr: 'Un contrôleur industriel IA a demandé un override de sécurité sur turbine_line_2 du plant_04. Le contexte d’autorisation de sécurité requis est incomplet. La gouvernance refuse l’exécution : aucune commande n’est émise au système de contrôle industriel, l’action est confinée à la frontière de la politique, et un reçu ADR est scellé pour la décision bloquée. BLOCK est un résultat de confinement gouverné, pas une panne système. Toute libération ou override ultérieur requerrait un nouvel événement gouverné ; le reçu initial reste immuable. Le reçu peut être vérifié indépendamment par les superviseurs sécurité, les assureurs, l’audit interne ou les autorités publiques — sans accès au système de contrôle industriel d’origine.',
+          disclaimer_en: 'FortiX does not replace SCADA, OT historians, safety PLCs, EHS, or plant safety procedures. It governs sensitive industrial execution paths and issues receipts that can be verified outside the originating control system.',
+          disclaimer_fr: 'FortiX ne remplace ni SCADA, ni les historians OT, ni les automates de sécurité, ni l’EHS, ni les procédures de sécurité site. FortiX gouverne les chemins d’exécution industrielle sensibles et émet des reçus vérifiables hors du système de contrôle d’origine.',
+          comprehension: [
+            { qKey: 'briefing.q.action',     a_en: 'machine.override.request · turbine_line_2 safety override (no industrial control command issued)',                                                            a_fr: 'machine.override.request · override de sécurité turbine_line_2 (aucune commande de contrôle industriel émise)' },
+            { qKey: 'briefing.q.blocked',    a_en: 'BLOCK_SAFETY_OVERRIDE_UNAUTHORIZED · missing safety authorization · unsafe override condition · policy fail-closed',                                          a_fr: 'BLOCK_SAFETY_OVERRIDE_UNAUTHORIZED · autorisation de sécurité manquante · condition d’override non sécurisée · politique fail-closed' },
+            { qKey: 'briefing.q.canReview',  a_en: 'Safety supervisor · plant operations supervisor · EHS · internal audit · insurer · public authority',                                                          a_fr: 'Superviseur sécurité · superviseur opérations site · EHS · audit interne · assureur · autorité publique' },
+            { qKey: 'briefing.q.receipted',  a_en: 'The governed BLOCK decision and the blocked-action context (BLAKE3 hash, Ed25519 signature, ADR v1) — issued even though execution was contained.',           a_fr: 'La décision BLOCK gouvernée et le contexte de l’action bloquée (hash BLAKE3, signature Ed25519, ADR v1) — émise même si l’exécution a été confinée.' },
+            { qKey: 'briefing.q.verifiable', a_en: 'Receipt authenticity, integrity, and signature validity — for safety supervisor, insurer, internal audit, or public authority review without access to the originating industrial control system.', a_fr: 'L’authenticité, l’intégrité et la validité de signature du reçu — pour la revue par le superviseur sécurité, l’assureur, l’audit interne ou l’autorité publique sans accès au système de contrôle industriel d’origine.' },
+            { qKey: 'briefing.q.notProves',  a_en: 'Mechanical correctness, legal safety certification, root-cause conclusion, absence of physical damage, operational compliance, or replacement of EHS or safety procedures.', a_fr: 'La justesse mécanique, la certification légale de sécurité, la conclusion de cause racine, l’absence de dommage physique, la conformité opérationnelle, ni le remplacement de l’EHS ou des procédures de sécurité.' },
+          ],
+        },
+        receipt_portability_en: 'The receipt can support post-incident review by safety supervisors, insurers, auditors, or public authorities without access to the originating industrial control system.',
+        receipt_portability_fr: 'Le reçu peut soutenir une revue post-incident par les superviseurs sécurité, assureurs, auditeurs ou autorités publiques sans accès au système de contrôle industriel d’origine.',
+        action_pill: 'machine.override.request',
+        action_primary: 'Safety override request',
+        action_sub: 'turbine_line_2',
+        action_kv: [
+          ['actor_id', 'agent-plant-871'],
+          ['action_id', 'ops-ind-002'],
+          ['asset', 'plant_04 / turbine_line_2'],
+          ['safety_level', 'critical'],
+          ['permission_scope', 'maintenance.override:request'],
+        ],
+        decision: 'DENY',
+        decision_class: 'd-deny',
+        pill_class: 'pill pill-red',
+        reason: 'BLOCK_SAFETY_OVERRIDE_UNAUTHORIZED',
+        execution_state: 'blocked_by_policy',
+        review_required: false,
+        policy_meta: 'Critical infrastructure override is blocked. Required safety authorization context is incomplete.',
+        dashboard: [
+          { label: 'Safety gate', value: 'Blocked', note: 'No machine override' },
+          { label: 'Risk score', value: '100', note: 'High critical asset risk' },
+          { label: 'Containment', value: 'Hard stop', note: 'Execution not started' },
+          { label: 'Proof state', value: 'ADR valid', note: 'Safety audit ready' },
+        ],
+        governance: {
+          aggregateDecision: 'block',
+          aggregateRiskLevel: 'high',
+          aggregateRiskScore: 100,
+          reasonCodes: ['sensitive_external_effect', 'missing_safety_authorization'],
+          layers: [
+            { name: 'Input', decision: 'allow', risk: 'low', reason: 'asset_reference_valid' },
+            { name: 'Agent', decision: 'allow', risk: 'low', reason: 'maintenance_agent_identified' },
+            { name: 'Tool', decision: 'require_review', risk: 'high', reason: 'industrial_control_external_effect' },
+            { name: 'Policy', decision: 'block', risk: 'high', reason: 'missing_safety_authorization' },
+            { name: 'Execution', decision: 'allow', risk: 'low', reason: 'execution_not_started' },
+          ],
+        },
+        runtimeState: 'Blocked before plant control',
+        runtimeFlow: [
+          { stage: 'Agent', title: 'Maintenance agent identified', detail: 'Parent plant orchestrator delegates an override request, not direct machine control.', state: 'identity_bound' },
+          { stage: 'Tool', title: 'Industrial control tool requested', detail: 'External-effect tool is classified as critical infrastructure control.', state: 'high_risk_tool' },
+          { stage: 'Policy', title: 'Safety authorization checkpoint', detail: 'Policy blocks because safety approver evidence is absent.', state: 'blocked' },
+          { stage: 'Execution', title: 'Execution suppressed', detail: 'No command is issued to the turbine control system.', state: 'contained' },
+          { stage: 'ADR', title: 'Receipt issued', detail: 'The denied action is still sealed for safety audit and dispute review.', state: 'hash_c11c1996' },
+          { stage: 'Verify', title: 'Independent verifier passes', detail: 'Inspectors can verify the blocked action record without plant-system access.', state: 'valid' },
+        ],
+        reviewState: 'Safety escalation',
+        reviewQueue: [
+          {
+            title: 'Safety authorization missing',
+            owner: 'Site Safety Officer',
+            state: 'blocked',
+            note: 'Override cannot proceed until authorization evidence is attached.',
+            reviewer_role_en: 'Safety supervisor',
+            reviewer_role_fr: 'Superviseur sécurité',
+            review_state: 'blocked_pending_review',
+            escalation_reason: 'BLOCK_SAFETY_OVERRIDE_UNAUTHORIZED',
+            submitted_at: '2026-05-02T09:14:22Z',
+            approval_timestamp: null,
+            audit_note_en: 'Override request is blocked by policy. Safety supervisor must attach authorization evidence before any subsequent governed event can permit execution.',
+            audit_note_fr: 'La demande d’override est bloquée par la politique. Le superviseur sécurité doit joindre une preuve d’autorisation avant qu’un événement gouverné ultérieur ne puisse autoriser l’exécution.',
+            linked_action_id: 'ops-ind-002',
+            linked_receipt_hash: 'c11c1996ef752ac1...',
+          },
+          {
+            title: 'Operations review',
+            owner: 'Plant Operations',
+            state: 'queued',
+            note: 'Review requested action against active maintenance window.',
+            reviewer_role_en: 'Plant operations supervisor',
+            reviewer_role_fr: 'Superviseur opérations site',
+            review_state: 'queued_review',
+            escalation_reason: 'REVIEW_OPERATIONAL_WINDOW_CHECK',
+            submitted_at: '2026-05-02T09:14:22Z',
+            approval_timestamp: null,
+            audit_note_en: 'Plant operations must check the requested action against the active maintenance window before any reissue.',
+            audit_note_fr: 'Les opérations du site doivent vérifier l’action demandée par rapport à la fenêtre de maintenance active avant toute réémission.',
+            linked_action_id: 'ops-ind-002',
+            linked_receipt_hash: 'c11c1996ef752ac1...',
+          },
+        ],
+        responsibilityState: '5 accountable parties',
+        responsibility: [
+          { title: 'plant-orchestrator', meta: 'parent agent', note: 'Controls delegation and asset context.' },
+          { title: 'agent-plant-871', meta: 'sub-agent', note: 'Requested override under maintenance permission scope.' },
+          { title: 'site-safety-officer', meta: 'required approver', note: 'Authorization absent, so policy blocks execution.' },
+          { title: 'operations-control', meta: 'execution owner', note: 'No command admitted to the control system.' },
+          { title: 'safety-audit', meta: 'independent verifier', note: 'Can verify the blocked receipt later.' },
+        ],
+        auditState: 'Blocked proof',
+        audit: [
+          { title: 'Govern before execution', meta: 'safety gate', note: 'Critical control request is evaluated before plant execution.' },
+          { title: 'Receipt at execution boundary', meta: 'ADR v1', note: 'The blocked request remains attestable and portable.' },
+          { title: 'Verify independently', meta: 'offline verifier', note: 'Inspection teams can validate the denial record independently.' },
+        ],
+        trace: [
+          { step: 'agent.identity.bind', sub: 'agent-plant-871 -> plant-orchestrator', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'scoped' },
+          { step: 'tool.industrial_control.request', sub: 'asset=turbine_line_2', decision: 'REVIEW', pill: 'pill pill-orange', verify: 'VALID', containment: 'guarded' },
+          { step: 'policy.safety_authorization.check', sub: 'authorization=missing', decision: 'DENY', pill: 'pill pill-red', verify: 'VALID', containment: 'blocked' },
+          { step: 'adr.receipt.issue', sub: 'hash=c11c1996...', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'portable' },
+        ],
+        adr: {
+          version: '1.0',
+          payload: {
+            action_id: 'ops-ind-002',
+            actor_id: 'agent-plant-871',
+            action: 'machine.override.request',
+            target: 'industrial_control_system',
+            timestamp: '2026-05-02T09:14:22.000Z',
+            payload: {
+              asset: 'turbine_line_2',
+              context: 'high-risk operational override',
+              safety_context: 'critical infrastructure',
+              safety_level: 'critical',
+            },
+            governance: {
+              aggregate_decision: 'block',
+              aggregate_risk_score: 100,
+              containment_state: 'blocked_by_policy',
+            },
+          },
+          hash: 'c11c1996ef752ac1945fadd94516cf9d78897aaa283272b0a965d23a6ab2984b',
+          signature: 'c7e2a9f4b0d3e8f1a5c2b7d4f9e0a3c6b1d8f5a2e7c4b9d0f3a8e5c1b6d2f7a4e9c3b0d5f8a1e6c2b7d4f0a9e3c5b8d1f6a2e7c4b0d9f3a8e1c6b5d2f4a0e8',
+          algorithm: { hash: 'BLAKE3', signature: 'Ed25519' },
+          key_id: 'demo-key-001',
+        },
+      },
+
+      supply_chain: {
+        sector_label_en: 'Supply Chain · Logistics',
+        sector_label_fr: 'Supply Chain · Logistique',
+        briefing: {
+          lead_en: 'An autonomous supply-chain agent has detected a 72-hour port delay on the EU-North lane and prepared two operational responses: a logistics reroute from ocean to rail intermodal, and a procurement recommendation to substitute the primary supplier. The action is held. Automation is paused. A Procurement risk lead must review the supplier substitution and cost delta before any external operational call is released. A signed ADR receipt is issued for the governed operational decision and can be independently verified — across legal entities, jurisdictions, and supply-chain partners — without access to the originating ERP or TMS.',
+          lead_fr: 'Un agent supply chain autonome a détecté un retard portuaire de 72 heures sur la voie EU-Nord et préparé deux réponses opérationnelles : un re-routage logistique de l’océan vers le ferroviaire intermodal, et une recommandation d’achats visant à substituer le fournisseur principal. L’action est suspendue. L’automatisation est en pause. Un responsable risque achats doit examiner la substitution du fournisseur et le delta de coût avant toute libération d’appel opérationnel externe. Un reçu ADR signé est émis pour la décision opérationnelle gouvernée et peut être vérifié indépendamment — entre entités juridiques, juridictions et partenaires supply chain — sans accès à l’ERP ou au TMS d’origine.',
+          disclaimer_en: 'FortiX does not replace ERP, TMS, or procurement systems. It governs sensitive operational decisions across organizations and issues receipts that can be verified across legal entities.',
+          disclaimer_fr: 'FortiX ne remplace ni l’ERP, ni le TMS, ni les systèmes d’achats. FortiX gouverne les décisions opérationnelles sensibles entre organisations et émet des reçus vérifiables entre entités juridiques.',
+          comprehension: [
+            { qKey: 'briefing.q.action',     a_en: 'supply_chain.adjustment.execute · reroute (ocean → rail intermodal) + supplier substitution recommendation',                                                  a_fr: 'supply_chain.adjustment.execute · re-routage (océan → ferroviaire intermodal) + recommandation de substitution de fournisseur' },
+            { qKey: 'briefing.q.held',       a_en: 'REVIEW_SUPPLIER_SUBSTITUTION_AND_REROUTE · cross-border risk · cost delta · alternate supplier qualification · customs sensitivity',                          a_fr: 'REVIEW_SUPPLIER_SUBSTITUTION_AND_REROUTE · risque transfrontalier · delta de coût · qualification du fournisseur alternatif · sensibilité douanière' },
+            { qKey: 'briefing.q.reviewer',   a_en: 'Procurement risk lead · logistics operations approver · enterprise risk approver',                                                                            a_fr: 'Responsable risque achats · approbateur opérations logistiques · approbateur risque enterprise' },
+            { qKey: 'briefing.q.receipted',  a_en: 'The governed REQUIRE_REVIEW decision, the reroute recommendation, the supplier-substitution boundary, and the chain of responsibility (BLAKE3 hash, Ed25519 signature, ADR v1).', a_fr: 'La décision REQUIRE_REVIEW gouvernée, la recommandation de re-routage, la frontière de substitution du fournisseur, et la chaîne de responsabilité (hash BLAKE3, signature Ed25519, ADR v1).' },
+            { qKey: 'briefing.q.verifiable', a_en: 'Receipt authenticity, integrity, and signature validity — across legal entities, jurisdictions, and partners, without ERP, TMS, or procurement access.',     a_fr: 'L’authenticité, l’intégrité et la validité de signature du reçu — entre entités juridiques, juridictions et partenaires, sans accès à l’ERP, au TMS ou aux achats.' },
+            { qKey: 'briefing.q.notProves',  a_en: 'Commercial correctness, customs approval, supplier legal validity, delivery success, contract performance, or replacement of operational systems.',           a_fr: 'La justesse commerciale, l’approbation douanière, la validité juridique du fournisseur, le succès de livraison, l’exécution contractuelle, ni le remplacement des systèmes opérationnels.' },
+          ],
+        },
+        receipt_portability_en: 'The receipt can be verified across legal entities, jurisdictions, and supply-chain partners without access to the originating ERP or TMS.',
+        receipt_portability_fr: 'Le reçu peut être vérifié entre entités juridiques, juridictions et partenaires supply chain sans accès à l’ERP ou au TMS d’origine.',
+        action_pill: 'supply_chain.adjustment.execute',
+        action_primary: 'Autonomous supply-chain adjustment',
+        action_sub: 'port delay to rail reroute',
+        action_kv: [
+          ['actor_id', 'agent-scm-042'],
+          ['action_id', 'scm-adj-1042'],
+          ['disruption', '72h port delay'],
+          ['workflow', 'reroute + procurement recommendation'],
+          ['permission_scope', 'logistics.plan:modify / supplier.substitute:request'],
+        ],
+        decision: 'REVIEW',
+        decision_class: 'd-review',
+        pill_class: 'pill pill-orange',
+        reason: 'REVIEW_SUPPLIER_SUBSTITUTION_AND_REROUTE',
+        execution_state: 'pending_review',
+        review_required: true,
+        policy_meta: 'The agent may prepare the logistics reroute and procurement recommendation, but supplier substitution and cost-impact execution require human review.',
+        dashboard: [
+          { label: 'Service impact', value: '18h saved', note: 'Projected delay reduction' },
+          { label: 'Risk score', value: '78', note: 'High supplier and cost impact' },
+          { label: 'Containment', value: 'Review hold', note: 'No supplier change executed' },
+          { label: 'Proof state', value: 'ADR valid', note: 'Decision record verifiable' },
+        ],
+        governance: {
+          aggregateDecision: 'require_review',
+          aggregateRiskLevel: 'high',
+          aggregateRiskScore: 78,
+          reasonCodes: ['supplier_substitution_requires_review', 'logistics_external_effect', 'cost_delta_threshold'],
+          layers: [
+            { name: 'Input', decision: 'allow', risk: 'low', reason: 'disruption_signal_confirmed' },
+            { name: 'Agent', decision: 'allow', risk: 'medium', reason: 'parent_subagent_chain_valid' },
+            { name: 'Tool', decision: 'require_review', risk: 'high', reason: 'tms_procurement_external_effect' },
+            { name: 'Policy', decision: 'require_review', risk: 'high', reason: 'supplier_substitution_policy' },
+            { name: 'Execution', decision: 'require_review', risk: 'medium', reason: 'execution_contained_until_approval' },
+          ],
+        },
+        runtimeState: 'Supplier change contained',
+        runtimeFlow: [
+          { stage: 'Agent', title: 'Supply-chain agent detects disruption', detail: 'Parent: supply-chain-orchestrator. Sub-agent: disruption-response. Identity and scope are bound before action.', state: 'identity_bound' },
+          { stage: 'Tool', title: 'TMS and procurement tools requested', detail: 'Reroute planning and supplier-substitution recommendation are visible as external-effect tool calls.', state: 'external_effect' },
+          { stage: 'Policy', title: 'Supplier substitution checkpoint', detail: 'Policy requires review for alternate supplier activation and cost delta above threshold.', state: 'requires_review' },
+          { stage: 'Execution', title: 'Plan prepared, execution held', detail: 'Logistics reroute is staged. Supplier substitution is not executed until approved.', state: 'contained' },
+          { stage: 'ADR', title: 'Receipt issued', detail: 'The disruption, recommendation, policy decision, and containment state are sealed.', state: 'hash_9f2d45aa' },
+          { stage: 'Verify', title: 'Independent verifier passes', detail: 'Audit can verify the decision record without access to ERP, TMS, or procurement systems.', state: 'valid' },
+        ],
+        reviewState: 'Ops approval required',
+        reviewQueue: [
+          {
+            title: 'Approve supplier substitution',
+            owner: 'Procurement Control Lead',
+            state: 'pending',
+            note: 'Validate alternate supplier, contractual constraints, and quality certification.',
+            reviewer_role_en: 'Procurement risk lead',
+            reviewer_role_fr: 'Responsable risque achats',
+            review_state: 'pending_approval',
+            escalation_reason: 'REVIEW_SUPPLIER_SUBSTITUTION_AND_REROUTE',
+            submitted_at: '2026-05-02T09:14:22Z',
+            approval_timestamp: null,
+            audit_note_en: 'Procurement risk lead must validate alternate supplier qualification, contractual constraints, and quality certification before substitution proceeds.',
+            audit_note_fr: 'Le responsable risque achats doit valider la qualification du fournisseur alternatif, les contraintes contractuelles et la certification qualité avant toute substitution.',
+            linked_action_id: 'scm-adj-1042',
+            linked_receipt_hash: '9f2d45aa6c7e91b4...',
+          },
+          {
+            title: 'Approve logistics reroute',
+            owner: 'Supply Chain Operations',
+            state: 'pending',
+            note: 'Confirm rail capacity, ETA impact, and cost delta before release.',
+            reviewer_role_en: 'Logistics operations approver',
+            reviewer_role_fr: 'Approbateur opérations logistiques',
+            review_state: 'pending_approval',
+            escalation_reason: 'REVIEW_LOGISTICS_REROUTE_COST_DELTA',
+            submitted_at: '2026-05-02T09:14:22Z',
+            approval_timestamp: null,
+            audit_note_en: 'Logistics operations must confirm rail capacity, ETA impact, and cost delta before reroute release.',
+            audit_note_fr: 'Les opérations logistiques doivent confirmer la capacité ferroviaire, l’impact ETA et le delta de coût avant la libération du re-routage.',
+            linked_action_id: 'scm-adj-1042',
+            linked_receipt_hash: '9f2d45aa6c7e91b4...',
+          },
+          {
+            title: 'Release execution containment',
+            owner: 'Enterprise Risk',
+            state: 'blocked',
+            note: 'Allowed only after both operational approvals are recorded.',
+            reviewer_role_en: 'Enterprise risk approver',
+            reviewer_role_fr: 'Approbateur risque enterprise',
+            review_state: 'blocked_pending_review',
+            escalation_reason: 'BLOCKED_PENDING_PRIOR_APPROVALS',
+            submitted_at: '2026-05-02T09:14:22Z',
+            approval_timestamp: null,
+            audit_note_en: 'Containment release is blocked until both operational approvals are recorded.',
+            audit_note_fr: 'La levée du confinement est bloquée tant que les deux approbations opérationnelles ne sont pas enregistrées.',
+            linked_action_id: 'scm-adj-1042',
+            linked_receipt_hash: '9f2d45aa6c7e91b4...',
+          },
+        ],
+        responsibilityState: '6 accountable parties',
+        responsibility: [
+          { title: 'supply-chain-orchestrator', meta: 'parent agent', note: 'Detected disruption and delegated bounded response workflow.' },
+          { title: 'disruption-response-agent', meta: 'sub-agent', note: 'Prepared reroute and procurement recommendation within declared scopes.' },
+          { title: 'transport-management-system', meta: 'tool owner', note: 'Receives no execution call until policy and review gates pass.' },
+          { title: 'procurement-control-lead', meta: 'human reviewer', note: 'Approves or rejects supplier substitution.' },
+          { title: 'supply-chain-operations', meta: 'execution owner', note: 'Releases reroute after operational review.' },
+          { title: 'independent-verifier', meta: 'audit control', note: 'Validates receipt integrity outside the operational systems.' },
+        ],
+        auditState: 'Decision replay ready',
+        audit: [
+          { title: 'Govern before execution', meta: 'runtime policy', note: 'The agent is stopped at supplier substitution and cost-impact checkpoints.' },
+          { title: 'Receipt at execution boundary', meta: 'ADR v1', note: 'The governed decision, containment state, and responsible parties become portable proof.' },
+          { title: 'Execution replay', meta: 'timeline', note: 'Audit can replay disruption detection, tool request, policy checkpoint, review escalation, receipt, and verification.' },
+          { title: 'Verify independently', meta: 'offline verifier', note: 'The decision record verifies without ERP, TMS, or procurement access.' },
+        ],
+        trace: [
+          { step: 'agent.disruption.detect', sub: 'port_delay=72h / lane=EU-North', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'observed' },
+          { step: 'tool.tms.reroute.plan', sub: 'ocean -> rail intermodal', decision: 'REVIEW', pill: 'pill pill-orange', verify: 'VALID', containment: 'staged' },
+          { step: 'tool.procurement.recommendation.modify', sub: 'supplier_alt=approved_candidate', decision: 'REVIEW', pill: 'pill pill-orange', verify: 'VALID', containment: 'review_hold' },
+          { step: 'policy.supplier_substitution.check', sub: 'cost_delta=4.8%', decision: 'REVIEW', pill: 'pill pill-orange', verify: 'VALID', containment: 'human_review' },
+          { step: 'adr.receipt.issue', sub: 'hash=9f2d45aa...', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'portable' },
+          { step: 'verify.independent.run', sub: 'public_key=demo-key-001', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'verified' },
+        ],
+        adr: {
+          version: '1.0',
+          payload: {
+            action_id: 'scm-adj-1042',
+            actor_id: 'agent-scm-042',
+            action: 'supply_chain.adjustment.execute',
+            target: 'tms_and_procurement_workflow',
+            timestamp: '2026-05-02T09:14:22.000Z',
+            payload: {
+              disruption: '72h port delay',
+              logistics_adjustment: 'reroute EU-North lane to rail intermodal',
+              procurement_recommendation: 'modify replenishment recommendation',
+              supplier_substitution: 'alternate supplier requested',
+              human_review_required: true,
+            },
+            governance: {
+              aggregate_decision: 'require_review',
+              aggregate_risk_score: 78,
+              containment_state: 'supplier_change_pending_human_review',
+              chain_of_responsibility: ['supply-chain-orchestrator', 'disruption-response-agent', 'procurement-control-lead'],
+            },
+          },
+          hash: '9f2d45aa6c7e91b4d8a312ef0c44a7d2b83c5e99a102d61f7a0b8c3e4d5f6071',
+          signature: '44f2a9e1c0b7d3f5a8e2c6b4d1f7a3e9c5b2d8f4a0e6c1b7d3f9a5e2c8b4d0f6a1e7c3b9d5f0a8e2c6b4d1f7a3e9c5b2d8f4a0e6c1b7d3f9a5e2c8',
+          algorithm: { hash: 'BLAKE3', signature: 'Ed25519' },
+          key_id: 'demo-key-001',
+        },
+      },
+
+      public_sector: {
+        sector_label_en: 'Public Sector · Administrative',
+        sector_label_fr: 'Secteur public · Administratif',
+        briefing: {
+          lead_en: 'An administrative AI-assisted agent has prepared a benefits eligibility adjustment recommendation tied to a redacted citizen case. The action is held: no benefit record is modified and no eligibility decision is finalised. Automation is paused. A senior caseworker — operating under administrative authority — must review the recommendation against source evidence and due-process requirements before any case-system change is authorised. A signed ADR receipt is issued for the governed administrative decision flow. Independent verification of the receipt is available for oversight bodies, program audit, or citizen review — without access to the originating case-management system.',
+          lead_fr: 'Un agent administratif assisté par IA a préparé une recommandation d’ajustement d’éligibilité aux prestations liée à un dossier citoyen anonymisé. L’action est suspendue : aucun enregistrement de prestation n’est modifié et aucune décision d’éligibilité n’est finalisée. L’automatisation est en pause. Un agent instructeur senior — opérant sous l’autorité administrative — doit examiner la recommandation au regard des pièces justificatives et des exigences de procédure régulière avant qu’une modification du système dossier ne soit autorisée. Un reçu ADR signé est émis pour le flux de décision administrative gouverné. La vérification indépendante du reçu est disponible pour les organes de contrôle, l’audit programme, ou la revue citoyenne — sans accès au système de gestion de dossiers d’origine.',
+          disclaimer_en: 'FortiX does not replace administrative authority, statute, or case-management systems. It governs sensitive administrative decision flows and issues receipts that oversight bodies can verify independently.',
+          disclaimer_fr: 'FortiX ne remplace ni l’autorité administrative, ni la loi, ni les systèmes de gestion de dossiers. FortiX gouverne les flux de décision administrative sensibles et émet des reçus vérifiables indépendamment par les organes de contrôle.',
+          comprehension: [
+            { qKey: 'briefing.q.action',     a_en: 'case.benefit.adjust · eligibility adjustment recommendation (no benefit record modified)',                                                                    a_fr: 'case.benefit.adjust · recommandation d’ajustement d’éligibilité (aucun enregistrement de prestation modifié)' },
+            { qKey: 'briefing.q.held',       a_en: 'REVIEW_PUBLIC_BENEFIT_IMPACT · citizen-impacting decision flow · due-process control · accountable authority required',                                       a_fr: 'REVIEW_PUBLIC_BENEFIT_IMPACT · flux de décision impactant le citoyen · contrôle de procédure régulière · autorité responsable requise' },
+            { qKey: 'briefing.q.reviewer',   a_en: 'Senior caseworker · administrative authority · oversight reviewer · program audit',                                                                            a_fr: 'Agent instructeur senior · autorité administrative · réviseur de contrôle · audit programme' },
+            { qKey: 'briefing.q.receipted',  a_en: 'The governed REQUIRE_REVIEW decision, the recommendation context, and the recommendation-only boundary (BLAKE3 hash, Ed25519 signature, ADR v1).',             a_fr: 'La décision REQUIRE_REVIEW gouvernée, le contexte de la recommandation, et la frontière recommandation-seulement (hash BLAKE3, signature Ed25519, ADR v1).' },
+            { qKey: 'briefing.q.verifiable', a_en: 'Receipt authenticity, integrity, and signature validity — for oversight, audit, or authorized public-sector review without access to the case-management system.', a_fr: 'L’authenticité, l’intégrité et la validité de signature du reçu — pour le contrôle, l’audit ou la revue publique autorisée sans accès au système de gestion de dossiers.' },
+            { qKey: 'briefing.q.notProves',  a_en: 'Legal validity, administrative correctness, statutory interpretation, citizen eligibility correctness, due-process completeness, or replacement of public authority.', a_fr: 'La validité juridique, la justesse administrative, l’interprétation statutaire, l’exactitude de l’éligibilité citoyenne, la complétude de la procédure régulière, ni le remplacement de l’autorité publique.' },
+          ],
+        },
+        receipt_portability_en: 'The receipt can support oversight, audit, or citizen review without access to the originating administrative system.',
+        receipt_portability_fr: 'Le reçu peut soutenir le contrôle, l’audit ou la revue citoyenne sans accès au système administratif d’origine.',
+        action_pill: 'case.benefit.adjust',
+        action_primary: 'Benefits eligibility adjustment',
+        action_sub: 'caseworker approval required',
+        action_kv: [
+          ['actor_id', 'agent-case-518'],
+          ['action_id', 'pub-case-207'],
+          ['case_ref', 'case_redacted'],
+          ['workflow', 'eligibility recommendation'],
+          ['permission_scope', 'case.recommend:adjust'],
+        ],
+        decision: 'REVIEW',
+        decision_class: 'd-review',
+        pill_class: 'pill pill-orange',
+        reason: 'REVIEW_PUBLIC_BENEFIT_IMPACT',
+        execution_state: 'pending_review',
+        review_required: true,
+        policy_meta: 'The agent can recommend an eligibility adjustment, but benefit-impact execution requires accountable human approval.',
+        dashboard: [
+          { label: 'Case impact', value: 'Material', note: 'Citizen-facing decision' },
+          { label: 'Risk score', value: '70', note: 'High due process sensitivity' },
+          { label: 'Containment', value: 'Recommendation', note: 'No benefit change executed' },
+          { label: 'Proof state', value: 'ADR valid', note: 'Oversight-ready receipt' },
+        ],
+        governance: {
+          aggregateDecision: 'require_review',
+          aggregateRiskLevel: 'high',
+          aggregateRiskScore: 70,
+          reasonCodes: ['citizen_impact_requires_review', 'due_process_control'],
+          layers: [
+            { name: 'Input', decision: 'allow', risk: 'low', reason: 'case_ref_redacted' },
+            { name: 'Agent', decision: 'allow', risk: 'medium', reason: 'case_agent_scope_valid' },
+            { name: 'Tool', decision: 'allow', risk: 'low', reason: 'eligibility_tool_recommendation_only' },
+            { name: 'Policy', decision: 'require_review', risk: 'high', reason: 'human_accountability_required' },
+            { name: 'Execution', decision: 'require_review', risk: 'medium', reason: 'execution_held_as_recommendation' },
+          ],
+        },
+        runtimeState: 'Recommendation only',
+        runtimeFlow: [
+          { stage: 'Agent', title: 'Case agent identified', detail: 'Agent may prepare a recommendation but cannot change benefits directly.', state: 'scoped_identity' },
+          { stage: 'Tool', title: 'Eligibility tool queried', detail: 'Tool output is advisory and tied to a redacted case reference.', state: 'recommendation_only' },
+          { stage: 'Policy', title: 'Due-process checkpoint', detail: 'Policy requires human accountability for citizen-facing impact.', state: 'requires_review' },
+          { stage: 'Execution', title: 'Execution held', detail: 'No benefit record is modified; the recommendation enters review.', state: 'contained' },
+          { stage: 'ADR', title: 'Receipt issued', detail: 'The recommendation and review requirement are sealed for oversight.', state: 'hash_71c9ab30' },
+          { stage: 'Verify', title: 'Independent verifier passes', detail: 'Oversight can verify the receipt without accessing the case system.', state: 'valid' },
+        ],
+        reviewState: 'Caseworker queue',
+        reviewQueue: [
+          {
+            title: 'Review eligibility recommendation',
+            owner: 'Senior Caseworker',
+            state: 'pending',
+            note: 'Check source evidence and due-process requirements.',
+            reviewer_role_en: 'Administrative authority',
+            reviewer_role_fr: 'Autorité administrative',
+            review_state: 'pending_approval',
+            escalation_reason: 'REVIEW_PUBLIC_BENEFIT_IMPACT',
+            submitted_at: '2026-05-02T09:14:22Z',
+            approval_timestamp: null,
+            audit_note_en: 'Senior caseworker must check source evidence and due-process requirements before any benefit-impact decision is recorded.',
+            audit_note_fr: 'L’agent instructeur senior doit vérifier les pièces justificatives et les exigences de procédure régulière avant tout enregistrement d’une décision affectant les prestations.',
+            linked_action_id: 'pub-case-207',
+            linked_receipt_hash: '71c9ab302e5f44d6...',
+          },
+          {
+            title: 'Oversight sample',
+            owner: 'Program Audit',
+            state: 'ready',
+            note: 'Receipt can be exported for independent review.',
+            reviewer_role_en: 'Program audit',
+            reviewer_role_fr: 'Audit programme',
+            review_state: 'audit_ready',
+            escalation_reason: 'AUDIT_SAMPLE_REQUEST',
+            submitted_at: '2026-05-02T09:14:22Z',
+            approval_timestamp: null,
+            audit_note_en: 'Receipt can be exported for independent oversight review without access to the case system.',
+            audit_note_fr: 'Le reçu peut être exporté pour une revue de contrôle indépendante sans accès au système dossier.',
+            linked_action_id: 'pub-case-207',
+            linked_receipt_hash: '71c9ab302e5f44d6...',
+          },
+        ],
+        responsibilityState: '5 accountable parties',
+        responsibility: [
+          { title: 'case-orchestrator', meta: 'parent agent', note: 'Delegates recommendation workflow only.' },
+          { title: 'agent-case-518', meta: 'sub-agent', note: 'Produces governed recommendation for human review.' },
+          { title: 'senior-caseworker', meta: 'human reviewer', note: 'Owns the citizen-facing decision.' },
+          { title: 'program-audit', meta: 'oversight', note: 'Can verify the receipt independently.' },
+          { title: 'case-system', meta: 'system of record', note: 'No update admitted until review approval exists.' },
+        ],
+        auditState: 'Oversight ready',
+        audit: [
+          { title: 'Govern before execution', meta: 'due process', note: 'Citizen-impact action is evaluated before any system-of-record change.' },
+          { title: 'Receipt at execution boundary', meta: 'ADR v1', note: 'The recommendation, policy decision, and containment state are sealed.' },
+          { title: 'Verify independently', meta: 'offline verifier', note: 'Oversight bodies can validate the receipt without privileged case access.' },
+        ],
+        trace: [
+          { step: 'agent.identity.bind', sub: 'agent-case-518 -> case-orchestrator', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'scoped' },
+          { step: 'tool.eligibility.query', sub: 'case_ref=redacted', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'advisory' },
+          { step: 'policy.due_process.check', sub: 'citizen_impact=true', decision: 'REVIEW', pill: 'pill pill-orange', verify: 'VALID', containment: 'review_hold' },
+          { step: 'adr.receipt.issue', sub: 'hash=71c9ab30...', decision: 'ALLOW', pill: 'pill pill-green', verify: 'VALID', containment: 'portable' },
+        ],
+        adr: {
+          version: '1.0',
+          payload: {
+            action_id: 'pub-case-207',
+            actor_id: 'agent-case-518',
+            action: 'case.benefit.adjust',
+            target: 'benefits_case_system',
+            timestamp: '2026-05-02T09:14:22.000Z',
+            payload: {
+              case_ref: 'case_redacted',
+              recommendation: 'eligibility_adjustment',
+              human_review_required: true,
+              due_process_context: 'citizen-facing benefit impact',
+            },
+            governance: {
+              aggregate_decision: 'require_review',
+              aggregate_risk_score: 70,
+              containment_state: 'recommendation_only',
+            },
+          },
+          hash: '71c9ab302e5f44d6a7b8c9d012ef3456aabbccddeeff00112233445566778899',
+          signature: '77a1d4f0c8b2e6a9d3f5c1b7e0a4d8f2c6b9e3a5d1f7c0b4e8a2d6f9c3b7e1a5d0f4c8b2e6a9d3f5c1b7e0a4d8f2c6b9e3a5d1f7c0b4e8a2d6f9c',
+          algorithm: { hash: 'BLAKE3', signature: 'Ed25519' },
+          key_id: 'demo-key-001',
+        },
+      },
+
+    };
+
+    const STORAGE_KEYS = {
+      lang: 'fortix-control-console-lang',
+      theme: 'fortix-control-console-theme',
+    };
+    const LAYER_I18N_KEYS = {
+      Input: 'gov.input',
+      Agent: 'gov.agent',
+      Tool: 'gov.tool',
+      Policy: 'gov.policy',
+      Execution: 'gov.execution',
+    };
+
+    let currentCtx = 'banking';
+    let currentLang = 'en';
+    let currentTheme = 'light';
+    let adrOpen = false;
+
+    function storageGet(key, fallback) {
+      try {
+        return localStorage.getItem(key) || fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function storageSet(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        // Local file demos may run in privacy-restricted browser modes.
+      }
+    }
+
+    function t(key) {
+      return (i18n[currentLang] && i18n[currentLang][key]) || i18n.en[key] || key;
+    }
+
+    function formatTraceCount(count) {
+      return t('trace.count').replace('{count}', count);
+    }
+
+    function layerLabel(name) {
+      return t(LAYER_I18N_KEYS[name] || name);
+    }
+
+    function setLanguage(lang) {
+      currentLang = i18n[lang] ? lang : 'en';
+      document.documentElement.lang = currentLang;
+      storageSet(STORAGE_KEYS.lang, currentLang);
+
+      document.querySelectorAll('[data-lang]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+      });
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = t(el.dataset.i18n);
+      });
+
+      updateDynamicLanguage();
+    }
+
+    function setTheme(theme) {
+      currentTheme = theme === 'light' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      storageSet(STORAGE_KEYS.theme, currentTheme);
+      updateThemeButton();
+    }
+
+    function toggleTheme() {
+      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    }
+
+    function updateThemeButton() {
+      const btn = document.getElementById('theme-toggle');
+      btn.textContent = currentTheme === 'dark' ? '🌙 / ☀' : '☀ / 🌙';
+      btn.setAttribute('aria-label', t('theme.toggle'));
+      btn.title = t('theme.toggle');
+    }
+
+    function updateDynamicLanguage() {
+      const c = CONTEXTS[currentCtx];
+      if (!c) return;
+
+      renderBriefing(c);
+      renderGovernance(c.governance);
+      renderDashboard(c.dashboard);
+      renderRuntime(c);
+      renderReview(c);
+      renderResponsibility(c);
+      renderAudit(c);
+      document.getElementById('toggle-adr').textContent = t(adrOpen ? 'button.hideAdr' : 'button.viewAdr');
+      applyReceiptPortability(c);
+      updateVerifierLinks(c);
+      document.getElementById('verify-context').textContent = t('verify.context.' + currentCtx);
+      document.getElementById('trace-count').textContent = formatTraceCount(c.trace.length);
+      document.getElementById('key-id').textContent = t('footer.keyId') + ': ' + c.adr.key_id;
+      document.getElementById('decision-sub').textContent = decisionDisplayLabel(c.decision);
+      const vs = document.getElementById('verify-state');
+      vs.textContent = t(vs.dataset.stateKey || 'verify.ready');
+      if (document.getElementById('verify-out').classList.contains('open')) {
+        document.getElementById('verify-explain').textContent = t('verify.explain');
+      }
+      updateThemeButton();
+    }
+
+    function decisionPillClass(decision) {
+      if (decision === 'ALLOW') return 'pill pill-green';
+      if (decision === 'BLOCK') return 'pill pill-red';
+      return 'pill pill-orange';
+    }
+
+    function decisionTextClass(decision) {
+      if (decision === 'ALLOW') return 'd-allow';
+      if (decision === 'BLOCK') return 'd-deny';
+      return 'd-review';
+    }
+
+    function decisionDisplayLabel(decision) {
+      if (decision === 'ALLOW') return t('decision.allow.label');
+      if (decision === 'BLOCK') return t('decision.block.label');
+      return t('decision.review.label');
+    }
+
+    function reviewRequiredLabel(value) {
+      return value ? 'true' : 'false';
+    }
+
+    function localeText(item, fieldEn, fieldFr) {
+      if (currentLang === 'fr' && item[fieldFr]) return item[fieldFr];
+      return item[fieldEn] || '';
+    }
+
+    function escapeHtml(value) {
+      if (value === null || value === undefined) return '';
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function pickPrimaryReviewItem(items) {
+      if (!items || !items.length) return null;
+      return items.find(it => it.review_state === 'pending_approval')
+          || items.find(it => it.review_state === 'scheduled_review')
+          || items.find(it => it.review_state === 'blocked_pending_review')
+          || items[0];
+    }
+
+    function applyReceiptPortability(context) {
+      const el = document.querySelector('[data-i18n="receipt.portability"]');
+      if (!el) return;
+      const override = currentLang === 'fr'
+        ? context.receipt_portability_fr
+        : context.receipt_portability_en;
+      el.textContent = override || t('receipt.portability');
+    }
+
+    function updateVerifierLinks(context) {
+      let url = 'fortix-verify-console.html';
+      try {
+        if (context && context.adr) {
+          const json = JSON.stringify(context.adr);
+          // base64-encode UTF-8; safe for short ADR payloads
+          const b64 = btoa(unescape(encodeURIComponent(json)));
+          url = 'fortix-verify-console.html?receipt=' + encodeURIComponent(b64);
+        }
+      } catch (_) {
+        // Fall back to plain link without prefilled receipt.
+      }
+      const a = document.getElementById('receipt-open-verifier');
+      const b = document.getElementById('proof-journey-verify');
+      if (a) a.setAttribute('href', url);
+      if (b) b.setAttribute('href', url);
+    }
+
+    function renderGovernance(governance) {
+      const gp = document.getElementById('governance-pill');
+      gp.textContent = governance.aggregateDecision;
+      gp.className = decisionPillClass(governance.aggregateDecision);
+
+      document.getElementById('governance-layers').innerHTML = governance.layers.map(layer => `
+        <div class="gov-row">
+          <div class="gov-name">${layerLabel(layer.name)}</div>
+          <span class="${decisionPillClass(layer.decision)}">${layer.decision}</span>
+          <code class="gov-risk">${layer.risk}</code>
+          <code class="gov-reason">${layer.reason}</code>
+        </div>
+      `).join('');
+
+      const aggregate = document.getElementById('gov-aggregate-decision');
+      aggregate.textContent = governance.aggregateDecision;
+      aggregate.className = 'gov-aggregate-main ' + decisionTextClass(governance.aggregateDecision);
+      document.getElementById('gov-aggregate-risk').textContent = governance.aggregateRiskLevel;
+      document.getElementById('gov-aggregate-score').textContent = governance.aggregateRiskScore;
+      document.getElementById('gov-aggregate-reasons').textContent =
+        t('gov.reasonCodes') + ': ' + governance.reasonCodes.join(', ');
+    }
+
+    function renderDashboard(items) {
+      document.getElementById('dashboard').innerHTML = items.map(item => `
+        <div class="summary-tile">
+          <div class="summary-label">${item.label}</div>
+          <div class="summary-value">${item.value}</div>
+          <div class="summary-note">${item.note}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderRuntime(context) {
+      const runtimeState = document.getElementById('runtime-state');
+      runtimeState.textContent = context.runtimeState;
+      runtimeState.className = decisionPillClass(context.decision);
+      document.getElementById('runtime-flow').innerHTML = context.runtimeFlow.map(item => `
+        <div class="runtime-step">
+          <div class="runtime-stage">${item.stage}</div>
+          <div class="runtime-title">${item.title}</div>
+          <div class="runtime-detail">${item.detail}</div>
+          <span class="runtime-state">${item.state}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderReview(context) {
+      const reviewState = document.getElementById('review-state');
+      reviewState.textContent = context.reviewState;
+      reviewState.className = decisionPillClass(context.decision);
+
+      // Automation-paused banner — visible only when REVIEW (D1)
+      const paused = document.getElementById('automation-paused');
+      if (context.decision === 'REVIEW') {
+        paused.removeAttribute('hidden');
+      } else {
+        paused.setAttribute('hidden', '');
+      }
+
+      // Render structured review items
+      document.getElementById('review-queue').innerHTML = context.reviewQueue.map(item => {
+        const auditNote = escapeHtml(localeText(item, 'audit_note_en', 'audit_note_fr')) || escapeHtml(item.note || '');
+        const reviewerRole = escapeHtml(localeText(item, 'reviewer_role_en', 'reviewer_role_fr')) || escapeHtml(item.owner || '');
+        const approvalDisplay = item.approval_timestamp
+          ? `<code>${escapeHtml(item.approval_timestamp)}</code>`
+          : `<span class="placeholder">${escapeHtml(t('review.field.pending'))}</span>`;
+        return `
+          <div class="review-item">
+            <div class="review-top">
+              <div class="review-title">${escapeHtml(item.title || '')}</div>
+              <code class="review-meta">${escapeHtml(item.review_state || item.state || '')} · ${escapeHtml(item.owner || '')}</code>
+            </div>
+            <div class="review-fields">
+              <div class="key">${escapeHtml(t('review.field.reviewerRole'))}</div>
+              <div>${reviewerRole}</div>
+              <div class="key">${escapeHtml(t('review.field.reviewState'))}</div>
+              <code>${escapeHtml(item.review_state || '')}</code>
+              <div class="key">${escapeHtml(t('review.field.escalationReason'))}</div>
+              <code>${escapeHtml(item.escalation_reason || '')}</code>
+              <div class="key">${escapeHtml(t('review.field.submittedAt'))}</div>
+              <code>${escapeHtml(item.submitted_at || '')}</code>
+              <div class="key">${escapeHtml(t('review.field.approvalTimestamp'))}</div>
+              <div>${approvalDisplay}</div>
+              <div class="key">${escapeHtml(t('review.field.auditNote'))}</div>
+              <div>${auditNote}</div>
+              <div class="key">${escapeHtml(t('review.field.linkedAction'))}</div>
+              <code>${escapeHtml(item.linked_action_id || '')}</code>
+              <div class="key">${escapeHtml(t('review.field.linkedReceipt'))}</div>
+              <code>${escapeHtml(item.linked_receipt_hash || '')}</code>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Review event chain — visible only when REVIEW (D1)
+      const chain = document.getElementById('review-chain');
+      if (context.decision === 'REVIEW') {
+        const primary = pickPrimaryReviewItem(context.reviewQueue);
+        const role = primary ? (localeText(primary, 'reviewer_role_en', 'reviewer_role_fr') || primary.owner || '') : '';
+        const reason = primary ? (primary.escalation_reason || '') : (context.reason || '');
+        const linkedHash = primary ? primary.linked_receipt_hash : (context.adr && context.adr.hash ? context.adr.hash.slice(0, 16) + '...' : '');
+
+        const originalDetail = t('review.chain.original.detail')
+          .replace('{decision}', escapeHtml(context.decision))
+          .replace('{hash}', `<code>${escapeHtml(linkedHash)}</code>`);
+        const pendingDetail = t('review.chain.pending.detail')
+          .replace('{role}', escapeHtml(role))
+          .replace('{reason}', `<code>${escapeHtml(reason)}</code>`);
+        const futureDetail = `<span class="placeholder">${escapeHtml(t('review.chain.future.detail'))}</span>`;
+
+        document.getElementById('rc-original-detail').innerHTML = originalDetail;
+        document.getElementById('rc-pending-detail').innerHTML = pendingDetail;
+        document.getElementById('rc-future-detail').innerHTML = futureDetail;
+        chain.removeAttribute('hidden');
+      } else {
+        chain.setAttribute('hidden', '');
+      }
+    }
+
+    function renderResponsibility(context) {
+      const responsibilityState = document.getElementById('responsibility-state');
+      responsibilityState.textContent = context.responsibilityState;
+      document.getElementById('responsibility-chain').innerHTML = context.responsibility.map(item => `
+        <div class="chain-row">
+          <div class="chain-top">
+            <div class="chain-title">${item.title}</div>
+            <code class="chain-meta">${item.meta}</code>
+          </div>
+          <div class="chain-note">${item.note}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderBriefing(context) {
+      const panel = document.getElementById('briefing-panel');
+      if (!context.briefing) {
+        panel.setAttribute('hidden', '');
+        return;
+      }
+      panel.removeAttribute('hidden');
+
+      const sectorLabel = currentLang === 'fr' && context.sector_label_fr
+        ? context.sector_label_fr
+        : (context.sector_label_en || '');
+      document.getElementById('briefing-sector').textContent = sectorLabel;
+
+      const lead = currentLang === 'fr' && context.briefing.lead_fr
+        ? context.briefing.lead_fr
+        : context.briefing.lead_en;
+      document.getElementById('briefing-lead').textContent = lead || '';
+
+      const disclaimer = currentLang === 'fr' && context.briefing.disclaimer_fr
+        ? context.briefing.disclaimer_fr
+        : context.briefing.disclaimer_en;
+      document.getElementById('briefing-disclaimer').textContent = disclaimer || '';
+
+      const block = document.getElementById('briefing-comprehension-block');
+      const grid = document.getElementById('briefing-comprehension');
+      if (context.briefing.comprehension && context.briefing.comprehension.length) {
+        grid.innerHTML = context.briefing.comprehension.map(item => {
+          const answer = currentLang === 'fr' && item.a_fr ? item.a_fr : item.a_en;
+          return `
+            <div class="comprehension-item">
+              <div class="comprehension-q">${escapeHtml(t(item.qKey))}</div>
+              <div class="comprehension-a">${escapeHtml(answer || '')}</div>
+            </div>
+          `;
+        }).join('');
+        block.removeAttribute('hidden');
+      } else {
+        block.setAttribute('hidden', '');
+        grid.innerHTML = '';
+      }
+    }
+
+    function renderAudit(context) {
+      const auditState = document.getElementById('audit-state');
+      auditState.textContent = context.auditState;
+      document.getElementById('audit-panel').innerHTML = context.audit.map(item => `
+        <div class="audit-row">
+          <div class="audit-top">
+            <div class="audit-title">${item.title}</div>
+            <code class="audit-meta">${item.meta}</code>
+          </div>
+          <div class="audit-note">${item.note}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderCtx(id) {
+      currentCtx = id;
+      const c = CONTEXTS[id];
+
+      // Action panel
+      document.getElementById('action-pill').textContent    = c.action_pill;
+      document.getElementById('action-primary').textContent = c.action_primary;
+      document.getElementById('action-sub').textContent     = c.action_sub;
+      document.getElementById('action-kv').innerHTML        = c.action_kv
+        .map(([k, v]) => `<div class="key">${k}</div><code>${v}</code>`)
+        .join('');
+
+      // Policy panel
+      const dec = document.getElementById('decision-big');
+      dec.textContent = c.decision;
+      dec.className   = 'decision-big ' + c.decision_class;
+      const pp = document.getElementById('policy-pill');
+      pp.textContent = c.decision;
+      pp.className   = c.pill_class;
+      document.getElementById('decision-sub').textContent = decisionDisplayLabel(c.decision);
+      document.getElementById('reason-code').textContent  = c.reason;
+      document.getElementById('policy-meta').textContent  = c.policy_meta;
+      document.getElementById('policy-execution-state').textContent = c.execution_state;
+      document.getElementById('policy-review-required').textContent = reviewRequiredLabel(c.review_required);
+
+      // Governance panel
+      renderBriefing(c);
+      renderGovernance(c.governance);
+      renderDashboard(c.dashboard);
+      renderRuntime(c);
+      renderReview(c);
+      renderResponsibility(c);
+      renderAudit(c);
+
+      // Receipt panel
+      document.getElementById('receipt-hash').textContent = c.adr.hash;
+      document.getElementById('receipt-sig').textContent  = c.adr.signature;
+      document.getElementById('adr-json').textContent     = JSON.stringify(c.adr, null, 2);
+      document.getElementById('key-id').textContent       = t('footer.keyId') + ': ' + c.adr.key_id;
+      applyReceiptPortability(c);
+      updateVerifierLinks(c);
+
+      // Collapse ADR on context switch
+      adrOpen = false;
+      document.getElementById('adr-block').classList.remove('open');
+      document.getElementById('toggle-adr').textContent = t('button.viewAdr');
+
+      // Verify panel — reset
+      document.getElementById('verify-context').textContent = t('verify.context.' + id);
+      const vs = document.getElementById('verify-state');
+      vs.dataset.stateKey = 'verify.ready';
+      vs.textContent = t('verify.ready');
+      vs.className   = 'pill';
+      document.getElementById('verify-out').classList.remove('open');
+
+      // Trace panel
+      document.getElementById('trace-count').textContent = formatTraceCount(c.trace.length);
+      document.getElementById('trace').innerHTML = c.trace.map(ev => `
+        <div class="trace-event">
+          <div>
+            <div class="trace-step">${ev.step}</div>
+            <div class="trace-sub">${ev.sub} · containment: ${ev.containment}</div>
+          </div>
+          <span class="${ev.pill}">${ev.decision}</span>
+          <span class="pill pill-green">${ev.verify}</span>
+        </div>
+      `).join('');
+    }
+
+    function switchCtx(id) {
+      if (!CONTEXTS[id]) id = 'banking';
+      document.querySelectorAll('.ctx-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.context === id);
+      });
+      renderCtx(id);
+    }
+
+    function initialContext() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const fromQuery = params.get('context');
+        const fromHash = window.location.hash ? window.location.hash.slice(1) : '';
+        return CONTEXTS[fromQuery] ? fromQuery : (CONTEXTS[fromHash] ? fromHash : 'banking');
+      } catch {
+        return 'banking';
+      }
+    }
+
+    document.getElementById('toggle-adr').addEventListener('click', e => {
+      adrOpen = !adrOpen;
+      document.getElementById('adr-block').classList.toggle('open', adrOpen);
+      e.currentTarget.textContent = t(adrOpen ? 'button.hideAdr' : 'button.viewAdr');
+    });
+
+    document.getElementById('btn-verify').addEventListener('click', () => {
+      const vs = document.getElementById('verify-state');
+      vs.dataset.stateKey = 'verify.verified';
+      vs.textContent = t('verify.verified');
+      vs.className  = 'pill pill-green';
+      document.getElementById('verify-explain').textContent = t('verify.explain');
+      document.getElementById('verify-out').classList.add('open');
+    });
+
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+    function flashCopyConfirm() {
+      const el = document.getElementById('receipt-copy-confirm');
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 1600);
+    }
+
+    function currentReceiptJson() {
+      const ctx = CONTEXTS[currentCtx];
+      return ctx && ctx.adr ? JSON.stringify(ctx.adr, null, 2) : '';
+    }
+
+    document.getElementById('receipt-copy').addEventListener('click', async () => {
+      const json = currentReceiptJson();
+      if (!json) return;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(json);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = json;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+        flashCopyConfirm();
+      } catch (_) {
+        // Silent failure: demo file may run under restricted permissions.
+      }
+    });
+
+    document.getElementById('receipt-download').addEventListener('click', () => {
+      const json = currentReceiptJson();
+      if (!json) return;
+      const ctx = CONTEXTS[currentCtx];
+      const actionId = (ctx && ctx.adr && ctx.adr.payload && ctx.adr.payload.action_id) || currentCtx;
+      const filename = 'fortix-adr-' + actionId + '.json';
+      try {
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (_) {
+        // Silent failure: demo file may run under restricted permissions.
+      }
+    });
+
+    // Boot
+    setTheme(storageGet(STORAGE_KEYS.theme, 'light'));
+    switchCtx(initialContext());
+    setLanguage(storageGet(STORAGE_KEYS.lang, 'en'));
+  </script>
+</body>
+</html>

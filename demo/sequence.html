@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FortiX · ADR v1.0</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: {
+              base:    '#0D0F1A',
+              raised:  '#161926',
+              overlay: '#1E2235',
+              subtle:  '#252A3D',
+            },
+            border: {
+              default: '#2D3350',
+              subtle:  '#1E2235',
+            },
+            tx: {
+              primary:   '#E8EAF0',
+              secondary: '#8B8FA8',
+              muted:     '#565A73',
+            },
+            state: {
+              verified:          '#10B981',
+              'verified-subtle': '#064E3B',
+              review:            '#F59E0B',
+              'review-subtle':   '#78350F',
+              denied:            '#EF4444',
+              'denied-subtle':   '#7F1D1D',
+              pending:           '#6B7280',
+              'pending-subtle':  '#1F2937',
+            },
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'Cascadia Code', 'ui-monospace', 'Courier New', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    .slide   { display: none; }
+    .slide.active { display: block; }
+    .mono    { font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace; }
+    .h-trunc { font-family: 'JetBrains Mono', ui-monospace, monospace;
+               max-width: 38ch; overflow: hidden; text-overflow: ellipsis;
+               white-space: nowrap; display: inline-block; vertical-align: bottom; }
+  </style>
+</head>
+
+<body class="bg-surface-base text-tx-primary min-h-screen font-sans flex flex-col">
+
+  <!-- ── Header ──────────────────────────────────────────────────────── -->
+  <header class="border-b border-border-default px-6 py-3 flex items-center justify-between flex-shrink-0">
+    <div class="flex items-center gap-3">
+      <span class="text-base font-semibold tracking-tight">FortiX</span>
+      <span class="text-xs text-tx-secondary mono bg-surface-subtle px-2 py-0.5 rounded">ADR v1.0</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <!-- Mode toggle -->
+      <div class="flex items-center gap-1">
+        <button id="btn-short" onclick="setMode('short')" class="px-3 py-1 text-xs rounded transition-colors">Short</button>
+        <button id="btn-long"  onclick="setMode('long')"  class="px-3 py-1 text-xs rounded transition-colors">Long</button>
+      </div>
+      <!-- Counter -->
+      <span id="slide-counter" class="text-xs text-tx-secondary mono w-12 text-center">1 / 5</span>
+      <!-- Nav -->
+      <div class="flex items-center gap-0.5">
+        <button onclick="prevSlide()" class="px-2 py-1 text-tx-secondary hover:text-tx-primary text-sm rounded hover:bg-surface-subtle transition-colors" title="Previous (←)">←</button>
+        <button onclick="nextSlide()" class="px-2 py-1 text-tx-secondary hover:text-tx-primary text-sm rounded hover:bg-surface-subtle transition-colors" title="Next (→)">→</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Slides ───────────────────────────────────────────────────────── -->
+  <main class="flex-1 overflow-auto px-6 py-8">
+    <div class="max-w-3xl mx-auto space-y-4">
+
+      <!-- ── 1: The Form ──────────────────────────────────────────────── -->
+      <div id="slide-1" class="slide">
+        <div class="bg-surface-raised border border-border-default rounded-lg p-6 space-y-5">
+          <h2 class="text-base font-semibold">Action Submission</h2>
+
+          <div>
+            <p class="text-xs text-tx-secondary mb-2">Preset scenarios</p>
+            <div class="flex flex-wrap gap-2">
+              <button class="px-3 py-1.5 text-sm rounded border-2 border-state-verified text-state-verified bg-surface-overlay">
+                Standard transfer — low risk → ALLOW
+              </button>
+              <button class="px-3 py-1.5 text-sm rounded border border-border-default text-tx-secondary bg-surface-overlay">
+                High-value transfer — elevated risk → REVIEW
+              </button>
+              <button class="px-3 py-1.5 text-sm rounded border border-border-default text-tx-secondary bg-surface-overlay">
+                External transfer → DENY
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-tx-secondary mb-1">action_id</label>
+              <div class="bg-surface-overlay border border-border-default rounded px-3 py-2 text-sm mono">txn-demo-001</div>
+            </div>
+            <div>
+              <label class="block text-xs text-tx-secondary mb-1">actor_id</label>
+              <div class="bg-surface-overlay border border-border-default rounded px-3 py-2 text-sm mono">agent-finops-01</div>
+            </div>
+            <div>
+              <label class="block text-xs text-tx-secondary mb-1">action</label>
+              <div class="bg-surface-overlay border border-border-default rounded px-3 py-2 text-sm mono">approve_transfer</div>
+            </div>
+            <div>
+              <label class="block text-xs text-tx-secondary mb-1">target</label>
+              <div class="bg-surface-overlay border border-border-default rounded px-3 py-2 text-sm mono">internal</div>
+            </div>
+            <div>
+              <label class="block text-xs text-tx-secondary mb-1">amount / currency</label>
+              <div class="bg-surface-overlay border border-border-default rounded px-3 py-2 text-sm mono">12000 EUR</div>
+            </div>
+            <div>
+              <label class="block text-xs text-tx-secondary mb-1">risk</label>
+              <div class="bg-surface-overlay border border-border-default rounded px-3 py-2 text-sm mono">low</div>
+            </div>
+          </div>
+
+          <button class="w-full py-2 bg-state-verified text-white text-sm font-medium rounded opacity-80 cursor-default">
+            Submit action
+          </button>
+        </div>
+
+        <div class="mt-4 px-4 py-3 bg-surface-overlay border border-border-subtle rounded text-sm text-tx-secondary">
+          An AI agent submits a transfer for authorization. The payload is visible: action, actor, amount, target.
+        </div>
+      </div>
+
+      <!-- ── 2: ALLOW — Policy Decision ──────────────────────────────── -->
+      <div id="slide-2" class="slide">
+        <p class="text-xs text-tx-muted mono mb-3">▸ txn-demo-001 · approve_transfer → internal</p>
+
+        <div class="bg-surface-raised border border-border-default rounded-lg p-6 space-y-4">
+          <h2 class="text-base font-semibold">Policy Decision</h2>
+          <div class="flex items-start justify-between">
+            <div class="space-y-2">
+              <div class="text-3xl font-bold text-state-verified">ALLOW</div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs bg-surface-overlay border border-border-default rounded px-2 py-0.5 mono">ok</span>
+                <span class="text-xs bg-state-verified-subtle text-state-verified border border-state-verified rounded-full px-2 py-0.5 font-medium">Executed</span>
+              </div>
+              <div class="text-xs text-tx-muted mono">action_id: txn-demo-001</div>
+            </div>
+            <div class="text-xs text-tx-secondary">status: <span class="text-tx-primary">executed</span></div>
+          </div>
+        </div>
+
+        <div class="mt-4 px-4 py-3 bg-surface-overlay border border-border-subtle rounded text-sm text-tx-secondary">
+          The gateway approved the transfer. The decision is recorded. The receipt was generated before this decision was evaluated — ALLOW is the outcome of the policy layer, not the cryptographic layer.
+        </div>
+      </div>
+
+      <!-- ── 3: ALLOW — ADR Receipt + VERIFIED ───────────────────────── -->
+      <div id="slide-3" class="slide">
+        <p class="text-xs text-tx-muted mono mb-3">▸ txn-demo-001 · approve_transfer → internal</p>
+
+        <div class="bg-surface-raised border border-border-default rounded-lg p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <h2 class="text-base font-semibold">ADR Receipt</h2>
+              <span class="text-xs bg-surface-overlay border border-border-default rounded px-2 py-0.5 mono text-tx-secondary">ADR v1.0</span>
+            </div>
+            <span class="text-xs bg-state-verified-subtle text-state-verified border border-state-verified rounded-full px-3 py-1 font-semibold">VERIFIED</span>
+          </div>
+
+          <div class="space-y-2 text-sm">
+            <div class="flex gap-3">
+              <span class="text-tx-muted w-24 flex-shrink-0">key_id</span>
+              <span class="mono text-tx-secondary">demo-key-001</span>
+            </div>
+            <div class="flex gap-3">
+              <span class="text-tx-muted w-24 flex-shrink-0">algorithm</span>
+              <span class="mono text-tx-secondary">BLAKE3 · Ed25519</span>
+            </div>
+            <div class="flex gap-3">
+              <span class="text-tx-muted w-24 flex-shrink-0">hash</span>
+              <span class="h-trunc text-tx-secondary">6791f7a9ab96fda06c3e16e90c9fba1dc3372aa9713b8c4ea75b80d02a8628c4</span>
+            </div>
+            <div class="flex gap-3">
+              <span class="text-tx-muted w-24 flex-shrink-0">signature</span>
+              <span class="h-trunc text-tx-secondary">fa1636bb5be7f86b461cabc152527480f297368ca57a52576206ccabd16878a52caaf6c48203dfced3dcb2695a5bf435af3ab856dd943ba444d50af05b532f09</span>
+            </div>
+          </div>
+
+          <div class="border-t border-border-subtle pt-3">
+            <span class="text-xs text-tx-muted">▸ Payload (7 fields)</span>
+          </div>
+        </div>
+
+        <div class="mt-4 px-4 py-3 bg-surface-overlay border border-border-subtle rounded text-sm text-tx-secondary">
+          VERIFIED. The BLAKE3 hash of the canonical payload was computed and signed with Ed25519. Anyone with this public key can independently confirm: this exact action, by this actor, at this timestamp, was processed here.
+        </div>
+      </div>
+
+      <!-- ── 4: Audit Drawer — 9-step trace ──────────────────────────── -->
+      <div id="slide-4" class="slide">
+        <p class="text-xs text-tx-muted mono mb-3">▸ txn-demo-001 · approve_transfer → internal</p>
+
+        <div class="bg-surface-raised border border-border-default rounded-lg p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-semibold">Verification trace (9 steps)</h2>
+            <span class="text-xs bg-state-verified-subtle text-state-verified border border-state-verified rounded-full px-3 py-1 font-semibold">PASS</span>
+          </div>
+          <div id="steps-list" class="space-y-1.5"></div>
+        </div>
+
+        <div class="mt-4 px-4 py-3 bg-surface-overlay border border-border-subtle rounded text-sm text-tx-secondary">
+          The verifier runs 9 ordered checks. Canonicalize the payload. Recompute the BLAKE3 hash. Compare it. Reconstruct the signing input — the hash hex string, UTF-8 encoded. Verify the Ed25519 signature. Pass. The receipt is valid.
+        </div>
+      </div>
+
+      <!-- ── 5: REVIEW — Policy Decision (long only) ─────────────────── -->
+      <div id="slide-5" class="slide">
+        <p class="text-xs text-tx-muted mono mb-3">▸ txn-demo-002 · approve_transfer → internal</p>
+
+        <div class="bg-surface-raised border border-border-default rounded-lg p-6 space-y-4">
+          <h2 class="text-base font-semibold">Policy Decision</h2>
+          <div class="flex items-start justify-between">
+            <div class="space-y-2">
+              <div class="text-3xl font-bold text-state-review">REVIEW</div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs bg-surface-overlay border border-border-default rounded px-2 py-0.5 mono">high_risk_requires_review</span>
+                <span class="text-xs bg-state-pending-subtle text-state-pending border border-state-pending rounded-full px-2 py-0.5 font-medium">Not executed</span>
+              </div>
+              <div class="text-xs text-tx-muted mono">action_id: txn-demo-002</div>
+            </div>
+            <div class="text-xs text-tx-secondary">status: <span class="text-tx-primary">pending_review</span></div>
+          </div>
+        </div>
+
+        <div class="mt-4 bg-surface-raised border border-border-default rounded-lg p-4 flex items-center justify-between">
+          <span class="text-sm text-tx-secondary">ADR Receipt</span>
+          <span class="text-xs bg-state-verified-subtle text-state-verified border border-state-verified rounded-full px-3 py-1 font-semibold">VERIFIED</span>
+        </div>
+        <p class="mt-2 text-xs text-tx-muted italic px-1">Receipt issued before policy execution. Verification confirms integrity and origin, not business approval.</p>
+
+        <div class="mt-4 px-4 py-3 bg-surface-overlay border border-border-subtle rounded text-sm text-tx-secondary">
+          High-risk flag. The gateway routes to human review. The transfer does not execute. But the receipt exists — and it verifies. What was requested is frozen in the hash regardless of what happens next.
+        </div>
+      </div>
+
+      <!-- ── 6: DENY + VERIFIED ───────────────────────────────────────── -->
+      <div id="slide-6" class="slide">
+        <p class="text-xs text-tx-muted mono mb-3">▸ txn-demo-003 · transfer → external</p>
+
+        <div class="bg-surface-raised border border-border-default rounded-lg p-6 space-y-4">
+          <h2 class="text-base font-semibold">Policy Decision</h2>
+          <div class="flex items-start justify-between">
+            <div class="space-y-2">
+              <div class="text-3xl font-bold text-state-denied">DENY</div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs bg-surface-overlay border border-border-default rounded px-2 py-0.5 mono">external_transfer_requires_review_approved</span>
+                <span class="text-xs bg-state-pending-subtle text-state-pending border border-state-pending rounded-full px-2 py-0.5 font-medium">Not executed</span>
+              </div>
+              <div class="text-xs text-tx-muted mono">action_id: txn-demo-003</div>
+            </div>
+            <div class="text-xs text-tx-secondary">status: <span class="text-tx-primary">blocked_by_policy</span></div>
+          </div>
+        </div>
+
+        <div class="mt-4 bg-surface-raised border border-border-default rounded-lg p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium">ADR Receipt</span>
+              <span class="text-xs bg-surface-overlay border border-border-default rounded px-2 py-0.5 mono text-tx-secondary">ADR v1.0</span>
+            </div>
+            <span class="text-xs bg-state-verified-subtle text-state-verified border border-state-verified rounded-full px-3 py-1 font-semibold">VERIFIED</span>
+          </div>
+          <p class="text-xs text-tx-muted italic">Receipt issued before policy execution. Verification confirms integrity and origin, not business approval.</p>
+        </div>
+
+        <div class="mt-4 px-4 py-3 bg-surface-overlay border border-border-subtle rounded text-sm text-tx-secondary">
+          Blocked. No execution. The receipt is still valid. DENY and VERIFIED are not in contradiction — they operate at different layers.
+        </div>
+      </div>
+
+      <!-- ── 7: Replay — DENY replay_detected (long only) ────────────── -->
+      <div id="slide-7" class="slide">
+        <p class="text-xs text-tx-muted mono mb-3">▸ txn-demo-003 · transfer → external (replay)</p>
+
+        <div class="bg-surface-raised border border-border-default rounded-lg p-6 space-y-4">
+          <h2 class="text-base font-semibold">Policy Decision</h2>
+          <div class="space-y-2">
+            <div class="text-3xl font-bold text-state-denied">DENY</div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs bg-surface-overlay border border-border-default rounded px-2 py-0.5 mono">replay_detected</span>
+              <span class="text-xs bg-state-pending-subtle text-state-pending border border-state-pending rounded-full px-2 py-0.5 font-medium">Not executed</span>
+            </div>
+            <div class="text-xs text-tx-muted mono">action_id: txn-demo-003</div>
+            <div class="text-xs text-tx-secondary">status: <span class="mono text-tx-primary">blocked_by_replay_protection</span></div>
+          </div>
+        </div>
+
+        <div class="mt-4 px-4 py-3 bg-surface-overlay border border-border-subtle rounded text-sm text-tx-secondary">
+          Same action_id. Same payload. Blocked — replay detected. The gateway remembers what it has processed. Two DENY receipts exist for the same action_id. Both verifiable.
+        </div>
+      </div>
+
+      <!-- ── 8: Evidence Timeline (long only) ────────────────────────── -->
+      <div id="slide-8" class="slide">
+        <div class="bg-surface-raised border border-border-default rounded-lg p-6 space-y-4">
+          <h2 class="text-base font-semibold">Evidence Timeline</h2>
+          <div id="timeline-list" class="space-y-2.5"></div>
+        </div>
+
+        <div class="mt-4 px-4 py-3 bg-surface-overlay border border-border-subtle rounded text-sm text-tx-secondary">
+          Every event timestamped. The audit trail accumulates. A receipt issued 30 days ago is still verifiable today with the same public key — no system access required.
+        </div>
+      </div>
+
+    </div><!-- /max-w -->
+  </main>
+
+  <!-- ── Footer ───────────────────────────────────────────────────────── -->
+  <footer class="border-t border-border-default px-6 py-3 flex items-center justify-between flex-shrink-0">
+    <span class="text-xs text-tx-muted">FortiX Core · ADR v1.0 · demonstration sequence</span>
+    <span class="text-xs text-tx-muted">← → or arrow keys to navigate</span>
+  </footer>
+
+  <script>
+    // ── Frozen reference data (generated 2026-03-25, demo-key-001) ──────
+    const STEPS = [
+      "Receipt is a dict",
+      "Required fields present",
+      "Algorithm subfields valid",
+      "Version and algorithm values",
+      "Payload type and key_id",
+      "Canonicalize payload",
+      "Hash match",
+      "Signing input reconstruction",
+      "Signature valid",
+    ];
+
+    const TIMELINE = [
+      { dot: 'gray',  label: 'Action submitted',              detail: 'txn-demo-001 · approve_transfer → internal' },
+      { dot: 'gray',  label: 'ADR receipt issued',            detail: 'hash: 6791f7a9…' },
+      { dot: 'green', label: 'Policy decision: ALLOW',        detail: 'reason: ok · executed' },
+      { dot: 'green', label: 'Receipt independently verified', detail: '' },
+      { sep: true,    label: 'new submission' },
+      { dot: 'gray',  label: 'Action submitted',              detail: 'txn-demo-002 · approve_transfer → internal' },
+      { dot: 'gray',  label: 'ADR receipt issued',            detail: 'hash: a6d8b5e6…' },
+      { dot: 'amber', label: 'Policy decision: REVIEW',       detail: 'reason: high_risk_requires_review · pending_review' },
+      { dot: 'green', label: 'Receipt independently verified', detail: '' },
+      { sep: true,    label: 'new submission' },
+      { dot: 'gray',  label: 'Action submitted',              detail: 'txn-demo-003 · transfer → external' },
+      { dot: 'gray',  label: 'ADR receipt issued',            detail: 'hash: ad9499a1…' },
+      { dot: 'red',   label: 'Policy decision: DENY',         detail: 'reason: external_transfer_requires_review_approved · blocked_by_policy' },
+      { dot: 'green', label: 'Receipt independently verified', detail: '' },
+      { sep: true,    label: 'replay attempt' },
+      { dot: 'red',   label: 'Replay blocked',                detail: 'txn-demo-003 · reason: replay_detected · blocked_by_replay_protection' },
+    ];
+
+    const DOT_COLOR = { gray: '#6B7280', green: '#10B981', amber: '#F59E0B', red: '#EF4444' };
+
+    // ── Render step list ────────────────────────────────────────────────
+    const stepsList = document.getElementById('steps-list');
+    STEPS.forEach((label, i) => {
+      const row = document.createElement('div');
+      row.className = 'flex items-center gap-3 text-sm';
+      row.innerHTML =
+        `<span class="text-tx-muted mono w-5 text-right flex-shrink-0">${i + 1}</span>` +
+        `<span class="text-tx-primary flex-1">${label}</span>` +
+        `<span class="text-state-verified font-bold">✓</span>`;
+      stepsList.appendChild(row);
+    });
+
+    // ── Render timeline ─────────────────────────────────────────────────
+    const timelineList = document.getElementById('timeline-list');
+    TIMELINE.forEach(ev => {
+      const row = document.createElement('div');
+      if (ev.sep) {
+        row.className = 'flex items-center gap-2 py-1';
+        row.innerHTML =
+          `<div class="flex-1 border-t border-border-default"></div>` +
+          `<span class="text-xs text-tx-muted mono">${ev.label}</span>` +
+          `<div class="flex-1 border-t border-border-default"></div>`;
+      } else {
+        row.className = 'flex items-start gap-3';
+        row.innerHTML =
+          `<div class="w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0" style="background:${DOT_COLOR[ev.dot]}"></div>` +
+          `<div class="text-sm">` +
+            `<span class="text-tx-primary">${ev.label}</span>` +
+            (ev.detail ? `<span class="text-tx-muted ml-2 mono text-xs">${ev.detail}</span>` : '') +
+          `</div>`;
+      }
+      timelineList.appendChild(row);
+    });
+
+    // ── Slide management ────────────────────────────────────────────────
+    // Short version: screens 1–4 + 6 (from show-sequence.md)
+    const SHORT_ORDER = ['slide-1', 'slide-2', 'slide-3', 'slide-4', 'slide-6'];
+    const LONG_ORDER  = ['slide-1', 'slide-2', 'slide-3', 'slide-4', 'slide-5', 'slide-6', 'slide-7', 'slide-8'];
+
+    let mode = 'short';
+    let idx  = 0;
+
+    function order() { return mode === 'short' ? SHORT_ORDER : LONG_ORDER; }
+
+    function setMode(m) {
+      mode = m;
+      if (idx >= order().length) idx = order().length - 1;
+      updateModeButtons();
+      render();
+    }
+
+    function updateModeButtons() {
+      const active   = 'px-3 py-1 text-xs rounded bg-surface-subtle text-tx-primary transition-colors';
+      const inactive = 'px-3 py-1 text-xs rounded text-tx-muted hover:text-tx-secondary transition-colors';
+      document.getElementById('btn-short').className = mode === 'short' ? active : inactive;
+      document.getElementById('btn-long').className  = mode === 'long'  ? active : inactive;
+    }
+
+    function render() {
+      const o = order();
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById(o[idx]);
+      if (el) el.classList.add('active');
+      document.getElementById('slide-counter').textContent = `${idx + 1} / ${o.length}`;
+    }
+
+    function nextSlide() {
+      if (idx < order().length - 1) { idx++; render(); }
+    }
+
+    function prevSlide() {
+      if (idx > 0) { idx--; render(); }
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault(); nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault(); prevSlide();
+      }
+    });
+
+    // Init
+    updateModeButtons();
+    render();
+  </script>
+</body>
+</html>

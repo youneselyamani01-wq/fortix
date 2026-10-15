@@ -1,0 +1,14 @@
+.peb-intake { border-block: 1px solid var(--rule-strong); }
+.peb-intake__layout { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 96px); align-items: center; }
+.peb-intake__intro h2 { font-size: clamp(30px, 3.2vw, 46px); line-height: 1.12; letter-spacing: -.035em; margin: 18px 0 24px; }
+.peb-intake__intro > p:not(.section-kicker) { font-size: 17px; line-height: 1.6; color: var(--ink-soft); max-width: 45ch; }
+.peb-intake__destination { display: inline-block; margin-top: 24px; color: var(--accent); font-size: 13px; line-height: 1.6; }
+.peb-intake__drop { border: 1px solid var(--rule-strong); border-top: 3px solid var(--accent); padding: clamp(24px, 4vw, 42px); background: var(--surface); }
+.peb-intake__drop[data-over="true"] { outline: 2px solid var(--accent); outline-offset: 4px; background: var(--accent-soft); }
+.peb-intake__label { display: block; font: 500 11px var(--font-mono); letter-spacing: .12em; color: var(--accent); }
+.peb-intake__drop h3 { margin: 22px 0; font-size: 22px; font-weight: 500; letter-spacing: -.02em; }
+.peb-intake__note, .peb-intake__status { font-size: 12px; line-height: 1.65; color: var(--ink-soft); overflow-wrap: anywhere; }
+.peb-intake__note { margin: 18px 0 0; }
+.peb-intake__status { min-height: 40px; margin: 16px 0 0; }
+.peb-intake__file { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (max-width: 760px) { .peb-intake__layout { grid-template-columns: 1fr; } }

@@ -1,0 +1,5 @@
+.fact-provenance { margin: .8rem 0; font-size: .875rem; line-height: 1.5; }
+.fact-provenance p { margin: .3rem 0; }
+.fact-provenance p:first-child { display: flex; flex-wrap: wrap; gap: .4rem .65rem; align-items: baseline; }
+.fact-provenance strong { padding: .2rem .5rem; border: 1px solid currentColor; border-radius: .25rem; font-size: .75rem; }
+.fact-provenance details summary { cursor: pointer; min-height: 2.75rem; display: flex; align-items: center; text-decoration: underline; }

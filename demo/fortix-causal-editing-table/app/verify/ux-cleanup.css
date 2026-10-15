@@ -1,0 +1,41 @@
+/* UX cleanup: one persistent reading context and room for the causal canvas. */
+.verifier-route-header { min-height: 48px; padding-block: 6px; grid-template-columns: minmax(0,1fr) auto; }
+.verifier-route-language button { min-height: 36px; }
+.verifier-return-bar { position: static; display: flex; flex-wrap: wrap; gap: 8px 16px; padding-block: 4px; background: #fff; color: #172033; }
+.verifier-history-controls { flex: 1; min-width: 0; align-items: center; }
+.verifier-history-controls button { min-height: 36px; padding-block: 5px; }
+.verifier-live-sync { min-height: 36px; margin-left: auto; color: #526170; }
+.verifier-context-return { min-height: 36px; padding-block: 6px; }
+.verifier-route-nav { gap: 4px; padding-block: 4px; grid-template-columns: repeat(8,minmax(98px,1fr)); }
+.verifier-route-nav a { min-height: 36px; padding: 6px 10px; border-radius: 5px; }
+.persistent-story-timeline { top: 48px; margin: 0; padding: 6px clamp(16px,3vw,42px); border-width: 0 0 1px; border-radius: 0; }
+.persistent-story-timeline header { margin: 0; align-items: center; flex-wrap: nowrap; gap: 10px; }
+.persistent-story-timeline .verifier-reading-context { display: flex; min-width: 0; flex: 1; align-items: baseline; flex-wrap: wrap; gap: 3px 0; font-size: 13px; }
+.verifier-reading-context > * + *::before { content: "·"; display: inline-block; margin-inline: 8px; font-weight: 400; color: #526170; }
+.persistent-story-timeline .verifier-reading-context strong { display: inline; font-size: 13px; line-height: 1.4; font-weight: 650; }
+.verifier-story-return { min-height: 36px; flex-shrink: 0; padding: 5px 10px; font-size: 12px; }
+.persistent-story-timeline--empty { padding-block: 8px; }
+.verifier-route-page[data-view=graph] .verifier-route-main { padding-top: 8px; padding-bottom: 18px; }
+.verifier-route-page[data-view=graph] .verifier-route-intro { margin-bottom: 6px; align-items: center; gap: 12px; }
+.verifier-route-page[data-view=graph] .verifier-route-intro h1 { margin: 0; font-size: 22px; letter-spacing: -.02em; line-height: 1.25; }
+.verifier-route-page[data-view=graph] .verifier-new-tab { min-height: 36px; padding-block: 7px; }
+.verifier-business-search { margin: 4px clamp(16px,3vw,42px); padding: 6px 8px; display: grid; grid-template-columns: auto minmax(0,1fr); align-items: center; gap: 6px 14px; }
+.verifier-business-search > label { margin: 0; font-size: 12px; }
+.verifier-business-search__field input { padding: 6px; font-size: 12px; }
+.verifier-business-search__field button { min-height: 36px; padding-block: 5px; font-size: 12px; }
+.verifier-business-search__results { grid-column: 1/-1; }
+.verifier-route-page[data-view=graph] .verifier-context-return { display: none; }
+@media (max-width: 780px) {
+  .verifier-route-nav { grid-template-columns: repeat(4,minmax(0,1fr)); overflow: visible; }
+  .verifier-live-sync { margin-left: 0; }
+  .persistent-story-timeline header { align-items: flex-start; }
+  .persistent-story-timeline .verifier-reading-context { font-size: 12px; }
+  .persistent-story-timeline .verifier-reading-context strong { font-size: 12px; }
+  .verifier-business-search { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 480px) {
+  .persistent-story-timeline { padding: 6px 12px; }
+  .verifier-reading-context > * + *::before { margin-inline: 5px; }
+  .verifier-route-page .verifier-story-return { position: fixed; z-index: 50; left: 8px; right: 8px; bottom: 8px; min-height: 44px; justify-content: center; }
+  .verifier-route-page[data-view=graph] .verifier-route-intro { grid-template-columns: minmax(0,1fr); gap: 6px; }
+}

@@ -1,0 +1,50 @@
+.fortix-site .final-statement {
+  position: relative; isolation: isolate; overflow: hidden;
+  background: var(--site-aqua); color: var(--site-text-primary);
+  border: 0; min-height: 610px;
+}
+.fortix-site .final-statement__visual {
+  position: absolute; inset: 5% -16% 5% 65%; pointer-events: none; z-index: -1;
+  background: var(--site-atmosphere-image) center / cover;
+  opacity: 1; border-radius: 3px; overflow: hidden;
+}
+.fortix-site .final-statement__canvas { width: 100%; height: 100%; }
+.fortix-site .final-statement__canvas canvas { display: block; width: 100% !important; height: 100% !important; }
+.fortix-site .final-statement__content {
+  display: flex; position: relative; flex-direction: column; align-items: flex-start;
+  padding-block: clamp(88px, 8.5vw, 136px);
+}
+.fortix-site .final-statement__lines {
+  display: flex; flex-direction: column; gap: 10px; max-width: 20ch; width: 63%;
+  font-family: var(--font-brand); font-weight: 400; font-synthesis: none;
+  font-size: clamp(34px, 3.8vw, 56px); line-height: 1.14; letter-spacing: -.025em;
+  color: var(--site-text-primary);
+}
+.fortix-site .final-statement__line--emphasis { color: var(--site-blue); font-weight: 400; }
+.fortix-site .final-statement__signature { margin-top: 30px; color: var(--site-text-primary); font: 600 15px/1.6 var(--font-sans); }
+.fortix-site .final-statement__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; max-width: 65%; }
+@media(max-width:1000px) { .fortix-site .final-statement__visual { inset: 13% -28% 10% 65%; } }
+@media(max-width:760px) {
+  .fortix-site .final-statement { min-height: 0; }
+  .fortix-site .final-statement__content { padding-block: 72px 330px; }
+  .fortix-site .final-statement__lines { width: 100%; max-width: 23ch; font-size: clamp(29px, 7.3vw, 40px); }
+  .fortix-site .final-statement__signature { margin-top: 25px; font-size: 14px; }
+  .fortix-site .final-statement__actions { max-width: 100%; gap: 10px; }
+  .fortix-site .final-statement__visual { inset: auto 20px 22px 20px; height: 265px; }
+}
+@media(max-width:460px) { .fortix-site .final-statement__actions, .fortix-site .final-statement__actions .button { width: 100%; } }
+
+/* The closing brand illustration uses the same light Site artifact as the hero. */
+.fortix-site .final-statement__visual { inset:10% 0% 10% 63%; display:flex; align-items:center; justify-content:center; background:none; overflow:visible; }
+.fortix-site .final-statement__visual .evidence-artifact { width:100%; }
+.fortix-site .final-statement__visual .evidence-artifact figcaption { display:none; }
+@media(max-width:1050px) {
+ .fortix-site .final-statement__visual { inset:auto 24px 22px; height:300px; max-width:520px; margin-inline:auto; }
+ .fortix-site .final-statement__content { padding-bottom:355px; }
+ .fortix-site .final-statement__lines { width:100%; max-width:26ch; }
+ .fortix-site .final-statement__actions { max-width:100%; }
+}
+@media(max-width:600px) {
+ .fortix-site .final-statement__visual { inset:auto 10px 20px; height:245px; }
+ .fortix-site .final-statement__content { padding-bottom:280px; }
+}

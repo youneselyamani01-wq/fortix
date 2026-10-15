@@ -1,0 +1,20 @@
+{
+  "name": "invalid missing key_id",
+  "description": "Receipt is missing the required key_id field; verification must fail.",
+  "expected_verification_result": false,
+  "public_key": "ca987f7a6cd863424641d4500dc7deba9782533ee071c5f00bc300bc85452437",
+  "receipt": {
+    "version": "1.0",
+    "payload": {
+      "action": "test",
+      "actor": "fortix-core",
+      "timestamp": "2026-03-11T15:00:00Z"
+    },
+    "hash": "96f51329dc2dced9f57d33db08d081c1aca51032f59380a28ea8547a7a363823",
+    "signature": "4008d628a4182e41a6aa1e52705e41080a0319e32a153870b5c1773c5d4f6b75473894c5510e1343661fbe2ba99ccfc888fe4caa27470b1594fe23b1b0c4d308",
+    "algorithm": {
+      "hash": "BLAKE3",
+      "signature": "Ed25519"
+    }
+  }
+}

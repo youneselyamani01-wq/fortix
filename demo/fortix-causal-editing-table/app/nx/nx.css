@@ -1,0 +1,1214 @@
+@import "./fonts.css";
+/*
+ * D-006 NX1 — light only. Porcelain ground, mineral structure, precise dark
+ * type, controlled vivid accents that appear only when something happens.
+ * There is no dark branch in this file and none is planned.
+ *
+ * B R2 — the proof is the major visual object of the page: the world, the
+ * fact, the controls and the closed workspace are headers around it. Colour
+ * on the proof means ACTION FAMILY (what a receipt attests), never provenance
+ * (which is horizontal position) and never chronology (which is vertical).
+ *
+ * NX3 / B2 — the tokens below are the site's light theme, by name
+ * (site/src/styles/tokens.css, its light-theme block; scenePalette.ts
+ * `light`; the map is artifacts/d006-nx3/DESIGN_TOKEN_REPORT.md). Colour is
+ * spent on exactly three things: BRAND / INTERACTION (--nx-accent: a control
+ * answering the pointer or the keyboard, a selection, the one object that can
+ * be picked up), EVIDENCE STRUCTURE (--nx-family-*: what a receipt attests)
+ * and CANONICAL STATES (--nx-verdict-*: what the verifier established, and
+ * the reconciliation's finding about it). The three are separated BY
+ * ELEMENT, not by distance — a family colour is worn only by a bead's rim,
+ * a legend swatch or a dossier glyph; a verdict colour only by a verdict
+ * record, a verdict dot or the reconciliation band's finding; the accent
+ * only by a control, a selection or the takeable object — so a blue ring is
+ * never a verdict and a green rule is never a button. Everything else is
+ * ink on porcelain. (DESIGN_TOKEN_REPORT.md §1 lists every wearer.)
+ */
+.nx {
+  /* Compatibility aliases for the existing inspection typography. */
+  --font-geist-sans: "Inter";
+  --font-geist-mono: "JetBrains Mono";
+  /* Ground and type. The NX porcelain already IS the site's light canvas
+     (#f6f4ef there, #f6f3ec here — one step warmer so paper and porcelain
+     still separate on a laptop panel); ink and paper sit within two units
+     of the site's. Kept as they were; the site tokens are noted beside each. */
+  --nx-porcelain: #f6f3ec;              /* site --canvas #f6f4ef */
+  --nx-paper: #fffdf9;                  /* site --surface #fffdf8 */
+  --nx-ink: #16171b;                    /* site --ink #14161b */
+  --nx-ink-2: #5b5c62;                  /* between site --ink-soft #4b5160 and --muted #676f7d */
+  --nx-mineral: #d8d3c8;                /* no site token: the demo's structural mineral (roads, rails, props) */
+  --nx-mineral-2: #b8b3a7;              /* no site token: the mineral's darker step; also the unclassified family */
+  --nx-rule: rgba(22, 23, 27, 0.14);    /* between site --rule .10 and --rule-strong .18 */
+  /* Brand and interaction: the site's cold blue, light theme. Worn by the
+     keyboard ring, the selected receipt's ring, the takeable PEB and the
+     signature act — and by nothing that is evidence, nothing that is a verdict. */
+  --nx-accent: #3552c9;                        /* site --accent */
+  --nx-accent-ink: #f4f6ff;                    /* site --accent-ink */
+  --nx-accent-soft: rgba(53, 82, 201, 0.08);   /* site --accent-soft */
+  --nx-accent-line: rgba(53, 82, 201, 0.3);    /* site --accent-line */
+  /* Canonical verdict states: the site's light verdicts. Realigned from the
+     demo's own green, amber and red (was #1f9d55 / #b8860b / #d0342c): the
+     site's are darker and lower in chroma, so a verdict reads as printed on
+     the page, not lit — and no pulse or family colour can pass for one. */
+  --nx-verdict-valid: #1f7a52;          /* site --valid   (was #1f9d55) · VALID */
+  --nx-verdict-open: #8a5a10;           /* site --warning (was #b8860b) · INDETERMINATE and REVOKED */
+  --nx-verdict-fail: #b0273f;           /* site --invalid (was #d0342c) · INVALID */
+  /* NX4: the site's one warning colour again, under the name of what it means
+     outside a verdict — a CAUTION: an approval the mission waits for, a
+     provenance no lane resolves. Same value as --nx-verdict-open, on purpose
+     (the site wears --warning for REVOKED and for warnings alike); a second
+     name so a test can list who wears the caution and who wears the verdict. */
+  --nx-caution: #8a5a10;                /* site --warning · caution cues */
+  /* The site's experience palette (--experience-violet/-cyan, scenePalette
+     shell and slab) is NOT declared here: no NX element wears it. The
+     INSPECT drawings take their lane inks from laneInk() in
+     gate2/VariantCanvas.tsx and their depth cues from the Gate 2 renderer
+     (DESIGN_TOKEN_REPORT.md §2). */
+  /* Pulses and lamps: the demo's information colours — a lamp, a sightline,
+     a lost link, a tool at work. Vivid and light where the verdicts are dark
+     and printed: every pulse and lamp sits at least 11° of hue from the
+     nearest verdict colour, and all but the cyan pulse (15 points) and the
+     red lamp (17) at least 20 points of lightness above it; the family
+     colours are matched by element, not by distance (DESIGN_TOKEN_REPORT.md
+     §3). Kept. */
+  --nx-pulse-lime: #b4ec19;
+  --nx-pulse-cyan: #12c8d6;
+  --nx-pulse-blue: #2f4bff;
+  --nx-pulse-coral: #ff5a4e;
+  --nx-pulse-orange: #ff7a1a;
+  --nx-pulse-violet: #7a4dff;
+  --nx-pulse-yellow: #ffd60a;
+  --nx-brake: #ff4a3d;
+  --nx-signal-green: #3ddc6a;
+  --nx-signal-yellow: #ffcf1f;
+  --nx-signal-red: #ff3b30;
+  /* Action families (B R2 §8–§9): calm, distinct, legible on porcelain; carried on the bubble's rim. */
+  --nx-family-perception: #3f7fbf;
+  --nx-family-intent: #c1962e;
+  --nx-family-decision: #7b5cc4;
+  --nx-family-authorization: #cc5f57;
+  --nx-family-action: #1f8b84;
+  --nx-family-result: #6f9a45;
+  --nx-family-network: #6c7d8c;
+  --nx-family-unclassified: #b8b3a7;
+  /* Shape and motion: the site's scale (--radius-*, --motion-*, --ease). The
+     demo's own evidence easing stays for beads, threads and the fact: a
+     receipt landing is not a button answering. */
+  --nx-radius-sm: 3px;                  /* site --radius-sm · tokens, ordinals, labels */
+  --nx-radius-md: 6px;                  /* site --radius-md · recorded results, rows */
+  --nx-radius-lg: 10px;                 /* site --radius-lg */
+  --nx-motion-fast: 140ms;              /* site --motion-fast · a control answering */
+  --nx-motion-medium: 260ms;            /* site --motion-medium */
+  --nx-motion-slow: 480ms;              /* site --motion-slow */
+  --nx-ease: cubic-bezier(0.2, 0, 0, 1); /* site --ease */
+  --nx-motion: 320ms cubic-bezier(0.2, 0.7, 0.2, 1); /* the demo's evidence easing · kept */
+
+  /* One screen: a definite height, so the proof row is the room the page has
+     and the field scrolls inside itself — never the whole page (B R2 §14). */
+  height: 100vh;
+  display: grid;
+  /* top · world · fact · PROOF (the room the page has) · controls · workspace */
+  grid-template-rows: auto auto auto minmax(260px, 1fr) auto auto;
+  background: var(--nx-porcelain);
+  color: var(--nx-ink);
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.nx :where(button) { font: inherit; color: inherit; }
+/* The keyboard's answer is the brand's colour (site :focus-visible): a ring
+   in the accent, never a pulse's blue and never a verdict's green. */
+.nx :focus-visible { outline: 2px solid var(--nx-accent); outline-offset: 3px; }
+.nx code { font-family: "JetBrains Mono", Consolas, monospace; font-size: 0.74rem; overflow-wrap: anywhere; }
+
+/*
+ * INTERACTION GRAMMAR (Checkpoint C, C-F01 / C-F02). Three axes, so a viewer
+ * never has to click to find out what is clickable:
+ *
+ *   SHAPE says the class.  999px pill = an act you perform. A folder corner
+ *                          (4px 12px 4px 4px) = an evidence object you open.
+ *                          A 3px left rule on porcelain = a recorded result.
+ *                          A dotted underline = navigation. Nothing = type.
+ *   FILL says the weight.  Ink = the one act the page expects now. Paper = a
+ *                          second act or an object. Porcelain = recessed
+ *                          navigation. No fill = a toggle or a status.
+ *   VOICE says passivity.  Mono uppercase belongs to status and information
+ *                          ONLY. Every act is written in the sentence-case
+ *                          sans face, so no passive phrase can be mistaken
+ *                          for a control and no control for a label.
+ *   COLOUR says the brand. (NX3) The accent marks interaction and nothing
+ *                          else: the keyboard ring, the selected receipt's
+ *                          ring, the PEB while it can be picked up, the
+ *                          signature act. Verdict colours mark verdicts and
+ *                          nothing else; family colours mark receipts.
+ *
+ * Every control answers the pointer (hover) and the keyboard (focus-visible),
+ * and nothing that is not a control does.
+ */
+.nx button:not(:disabled) { cursor: pointer; }
+.nx-kicker {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2);
+}
+/* A RECORDED RESULT: filed, readable, and never an act. */
+.nx-recorded {
+  border-left: 3px solid var(--nx-mineral-2);
+  background: var(--nx-porcelain);
+  border-radius: 0 var(--nx-radius-md) var(--nx-radius-md) 0;
+  padding: 0.3rem 0.5rem 0.3rem 0.55rem;
+  cursor: default;
+}
+.nx-recorded::before {
+  content: "✓";
+  margin-right: 0.4rem;
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.7rem;
+  color: var(--nx-ink-2);
+}
+.nx-recorded[data-tone="valid"] { border-left-color: var(--nx-verdict-valid); }
+.nx-recorded[data-tone="valid"]::before { color: var(--nx-verdict-valid); }
+
+/* action families: one custom property, set by class, read by bubbles, legend swatches and dossier rows */
+.action-perception { --family: var(--nx-family-perception); }
+.action-intent { --family: var(--nx-family-intent); }
+.action-decision { --family: var(--nx-family-decision); }
+.action-authorization { --family: var(--nx-family-authorization); }
+.action-action { --family: var(--nx-family-action); }
+.action-result { --family: var(--nx-family-result); }
+.action-network { --family: var(--nx-family-network); }
+.action-unclassified { --family: var(--nx-family-unclassified); }
+
+/* --- top bar ----------------------------------------------------------- */
+.nx-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.5rem 2rem 0.3rem;
+}
+.nx-brand { display: inline-flex; align-items: baseline; gap: 0.7rem; }
+.nx-brand strong { font-weight: 600; letter-spacing: -0.01em; }
+.nx-brand span { color: var(--nx-ink-2); font-size: 0.85rem; }
+.nx-language { display: inline-flex; align-items: center; gap: 0.35rem; }
+/* HEADER PILLS (NX4 §1, §5): the language toggle and the evidence toggle are
+   NAVIGATION — they change what is shown, never what is true — so they wear
+   the neutral pill: ink-2 at rest, ink under the pointer, and the one
+   selected idiom every selectable control shares (accent text, accent rule,
+   the accent's soft ground) when pressed or expanded. Written in the page's
+   sans, sentence case: a control speaks in the voice of an act, never in the
+   mono uppercase of a status. */
+.nx-language button {
+  border: 1px solid transparent;
+  background: transparent;
+  min-height: 28px;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--nx-ink-2);
+  transition: border-color var(--nx-motion-fast) var(--nx-ease), color var(--nx-motion-fast) var(--nx-ease), background-color var(--nx-motion-fast) var(--nx-ease);
+}
+.nx-language button:hover { border-color: var(--nx-mineral-2); color: var(--nx-ink); background: var(--nx-porcelain); }
+.nx-language button[aria-pressed="true"] { border-color: var(--nx-accent); color: var(--nx-accent); background: var(--nx-accent-soft); }
+.nx-language i { width: 1px; height: 0.9rem; background: var(--nx-rule); }
+/* The proof count: useful, secondary (B R2 §21) — a quiet toggle, never the anchor. */
+.nx-top .nx-evidence-control { margin-left: auto; }
+.nx-evidence-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 28px;
+  border: 1px solid var(--nx-mineral-2);
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.22rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--nx-ink-2);
+  font-variant-numeric: tabular-nums;
+  transition: background-color var(--nx-motion-fast) var(--nx-ease), border-color var(--nx-motion-fast) var(--nx-ease), color var(--nx-motion-fast) var(--nx-ease);
+}
+.nx-evidence-control:hover { border-color: var(--nx-ink); color: var(--nx-ink); background: var(--nx-porcelain); }
+.nx-evidence-control[aria-expanded="true"] { border-color: var(--nx-accent); color: var(--nx-accent); background: var(--nx-accent-soft); }
+/* PASSIVE STATUS: the physical link as the sentinel observes it. No container,
+   so a fact the viewer cannot act on never wears the costume of an act. */
+.nx-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.2rem;
+  color: var(--nx-ink-2);
+  cursor: default;
+}
+/* C-R2-F04 — FOUR BARS AND NO WORDS. The written status mixed link state with
+   where evidence was kept, which are different facts; link state is this
+   glyph's alone now. Hollow bars are "not observed": the sentinel has said
+   nothing, and nothing observed must never be drawn as a connection. */
+.nx-link-chip i {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 1.5px;
+  height: 12px;
+  position: relative;
+}
+.nx-link-chip i b {
+  display: block;
+  width: 2.5px;
+  border-radius: 0.5px;
+  border: 0.8px solid color-mix(in srgb, var(--nx-ink-2) 55%, transparent);
+  background: transparent;
+  transition: background var(--nx-motion), border-color var(--nx-motion);
+}
+.nx-link-chip i b:nth-child(1) { height: 4px; }
+.nx-link-chip i b:nth-child(2) { height: 6.5px; }
+.nx-link-chip i b:nth-child(3) { height: 9px; }
+.nx-link-chip i b:nth-child(4) { height: 11.5px; }
+/* Observed and up: the bars fill, in ink. A link that is up is a fact, not a
+   confirmation of anything (NX4 §6: green is for established / valid cues
+   only); it wore the VALID green before NX3 and the lamp green after. */
+.nx-link-chip[data-link="CONNECTED"] i b { background: var(--nx-ink); border-color: var(--nx-ink); }
+/* Observed and down: the bars go quiet and a stroke crosses them out. */
+.nx-link-chip[data-link="LOST"] i b { background: color-mix(in srgb, var(--nx-ink-2) 30%, transparent); border-color: color-mix(in srgb, var(--nx-ink-2) 40%, transparent); }
+.nx-link-chip[data-link="LOST"] i::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  top: 50%;
+  height: 1.4px;
+  background: var(--nx-pulse-coral);
+  transform: rotate(-32deg);
+  border-radius: 1px;
+}
+.nx-link-chip[data-flash="LOST"] i b { box-shadow: 0 0 0 3px color-mix(in srgb, var(--nx-pulse-coral) 22%, transparent); }
+.nx-link-chip[data-flash="RESTORED"] i b { box-shadow: 0 0 0 3px color-mix(in srgb, var(--nx-ink) 22%, transparent); }
+
+/* --- world ------------------------------------------------------------- */
+/* The stage is cropped to its drawing (no empty sky) and holds a fixed share of the height: present, never microscopic. */
+.nx-world { padding: 0 1.5rem; display: grid; align-items: end; min-height: 0; }
+.nx-stage { width: 100%; height: auto; max-height: min(15vh, 134px); display: block; }
+.nx:not([data-workspace="compact"]) .nx-stage { max-height: min(12.5vh, 112px); }
+.nx-road { stroke: var(--nx-mineral-2); stroke-width: 3; stroke-linecap: round; }
+.nx-road-lane { stroke: var(--nx-mineral); stroke-width: 1; stroke-dasharray: 10 14; }
+.nx-prop rect { fill: var(--nx-paper); stroke: var(--nx-mineral-2); stroke-width: 1.5; }
+.nx-prop text, .nx-taxi-label {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  fill: var(--nx-ink-2);
+}
+.nx-garage-door { fill: var(--nx-mineral) !important; stroke: none !important; }
+.nx-garage-tool { stroke: var(--nx-ink-2); stroke-width: 3; stroke-linecap: round; transform-origin: 0 -10px; transform: rotate(calc(-24deg + 48deg * var(--work, 0))); }
+.nx-garage.is-working .nx-garage-tool { stroke: var(--nx-pulse-orange); }
+.nx-queue rect { fill: var(--nx-mineral); }
+.nx-queue circle { fill: var(--nx-mineral-2); }
+
+.nx-signal-pole { stroke: var(--nx-mineral-2); stroke-width: 3; }
+.nx-signal-head { fill: var(--nx-ink); }
+.nx-lamp { fill: #2a2b30; transition: fill var(--nx-motion); }
+.nx-signal.is-green .nx-lamp-green { fill: var(--nx-signal-green); }
+.nx-signal.is-yellow .nx-lamp-yellow { fill: var(--nx-signal-yellow); }
+.nx-signal.is-red .nx-lamp-red { fill: var(--nx-signal-red); }
+.nx-sightline { stroke: var(--nx-pulse-cyan); stroke-width: 1.5; stroke-dasharray: 4 6; opacity: 0.9; }
+
+.nx-taxi-body { fill: var(--nx-paper); stroke: var(--nx-ink); stroke-width: 1.8; }
+.nx-taxi-cabin { fill: var(--nx-paper); stroke: var(--nx-ink); stroke-width: 1.8; stroke-linejoin: round; }
+.nx-taxi-window { fill: var(--nx-mineral); }
+.nx-taxi-occupant { fill: var(--nx-ink); }
+.nx-taxi-wheel { fill: var(--nx-ink); }
+.nx-taxi-headlamp { fill: var(--nx-mineral-2); }
+.nx-taxi-brakelamp { fill: var(--nx-mineral-2); transition: fill 120ms linear; }
+.nx-taxi.is-braking .nx-taxi-brakelamp { fill: var(--nx-brake); filter: drop-shadow(0 0 4px var(--nx-brake)); }
+.nx-pulse { fill: none; stroke: var(--pulse); stroke-width: 2; opacity: 0; }
+.is-pulsing .nx-pulse { opacity: 0.9; animation: nx-pulse 900ms ease-out 1; }
+@keyframes nx-pulse { from { transform: scale(0.4); opacity: 0.9; } to { transform: scale(1.6); opacity: 0; } }
+.nx-passenger circle, .nx-passenger path { fill: var(--nx-ink); }
+.nx-passenger.is-walking-to-taxi, .nx-passenger.is-stepping-out { transform-box: fill-box; }
+
+/* --- current fact -------------------------------------------------------- */
+.nx-fact { padding: 0.1rem 2rem 0; min-height: 2.4rem; }
+/* The one headline on the page carries the site's headline weight
+   (.section-title: 650). Geist at 600 sits where Inter sits at 650, and the
+   tracking stays at Geist's own -0.02em: the face is the deliberate
+   divergence (DESIGN_TOKEN_REPORT.md §6), the weight is the alignment. */
+.nx-fact h1 {
+  margin: 0.05rem 0 0;
+  font-size: clamp(1.3rem, 2.1vw, 1.7rem);
+  line-height: 1.08;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  max-width: 60ch;
+  animation: nx-fact-rise 420ms cubic-bezier(0.2, 0.7, 0.2, 1) 1;
+}
+.nx-fact.is-fresh h1 { color: var(--nx-ink); }
+/* While a panel is open the technical layer has the floor: the world and the fact step back, never away. */
+.nx:not([data-workspace="compact"]) .nx-fact { min-height: 0; }
+.nx:not([data-workspace="compact"]) .nx-fact h1 { font-size: clamp(1.2rem, 2vw, 1.5rem); }
+@keyframes nx-fact-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* --- proof: horizontal = provenance, vertical = reading order, thread = causality, colour = family --- */
+.nx-evidence { padding: 0.2rem 2rem 0.25rem; display: flex; flex-direction: column; min-height: 0; }
+/* The band takes the room the page gives it; the geometry is computed from
+   the measured size and the dataset above readability floors
+   (proofGeometry.ts). When the whole story does not fit at the floors the
+   field scrolls inside itself: headers, rail and legend stay. */
+.nx-proof {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 240px;
+  margin-top: 0.1rem;
+  display: grid;
+  grid-template-rows: var(--label-h, 22px) minmax(0, 1fr) var(--legend-h, 22px);
+}
+.nx-proof-head { display: grid; grid-template-columns: var(--gutter, 100px) minmax(0, 1fr); align-items: end; }
+.nx-reading-head {
+  padding-left: 12px;
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  /* The axis name may be longer than the lane-name column ("PROFONDEUR
+     CAUSALE" at 1440 px); it runs on into the empty head row rather than
+     being cut ("PROFONDEUR CAUSALI" in the first FR capture). */
+  white-space: nowrap;
+  overflow: visible;
+  color: var(--nx-ink-2);
+  padding-bottom: 3px;
+}
+.nx-branch-labels { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--columns, 1), minmax(0, 1fr)); }
+.nx-branch-labels li { min-width: 0; text-align: center; transition: opacity var(--nx-motion); }
+/* Context steps back, never out: a lane name is a control and must stay legible. */
+.nx-branch-labels li[data-dim="true"] { opacity: 0.5; }
+/* The selected receipt, in words, for anyone reading the page rather than looking at it. */
+.nx-proof-selected { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* NAVIGATION: a lane label opens its evidence. The dotted underline at rest
+   says so; it becomes a solid ink rule under the pointer or the keyboard.
+   The lane name may be shortened with an ellipsis; the count never is. */
+.nx-branch-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  max-width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--nx-rule);
+  background: transparent;
+  padding: 0 0.3rem 3px;
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2);
+  white-space: nowrap;
+  transition: border-color var(--nx-motion), color var(--nx-motion);
+}
+.nx-branch-label:hover, .nx-branch-label:focus-visible { border-bottom-color: var(--nx-ink); color: var(--nx-ink); }
+.nx-branch-label span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.nx-branch-label b { flex: none; font-weight: 500; color: var(--nx-ink); }
+.nx-proof[data-lane-density="dense"] .nx-branch-label { font-size: 0.6rem; letter-spacing: 0.06em; gap: 0.3rem; }
+.nx-proof[data-lane-density="tight"] .nx-branch-label { font-size: 0.56rem; letter-spacing: 0.04em; gap: 0.25rem; }
+.nx-branch-labels li[data-branch="unresolved"] .nx-branch-label { color: var(--nx-caution); }
+.nx-proof-field { position: relative; overflow: hidden; min-height: 0; }
+.nx-proof-field[data-fit="scroll"] { overflow-y: auto; scrollbar-gutter: stable; }
+.nx-proof-scroll { position: relative; }
+.nx-proof-edges { position: absolute; top: 0; left: 0; width: 100%; pointer-events: none; }
+.nx-proof-edges marker path { fill: var(--nx-ink); }
+/* The reading rail: order, not causality — a dotted line down the gutter, a
+   start mark, a tick and a small rule where a chapter begins, a tip at the end. */
+.nx-rail-line { fill: none; stroke: var(--nx-ink-2); stroke-opacity: 0.5; stroke-width: 1; stroke-dasharray: 1 3; stroke-linecap: round; }
+.nx-rail-start { fill: var(--nx-ink); }
+.nx-rail-tick { stroke: var(--nx-ink-2); stroke-opacity: 0.55; stroke-width: 1; }
+.nx-rail-tip { fill: none; stroke: var(--nx-ink-2); stroke-opacity: 0.7; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+.nx-chapter-rule { stroke: var(--nx-ink-2); stroke-opacity: 0.13; stroke-width: 1; stroke-dasharray: 2 5; }
+.nx-chapters { list-style: none; margin: 0; padding: 0; position: absolute; top: 0; left: 0; width: var(--gutter, 100px); pointer-events: none; transition: opacity var(--nx-motion); }
+.nx-chapters li {
+  position: absolute;
+  top: var(--y);
+  left: 24px;
+  width: calc(var(--gutter, 100px) - 30px);
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.6rem;
+  line-height: 1.15;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2);
+}
+/* Threads, not graph edges: one fine filament per declared parent relation.
+   Three states — historical (fine, low contrast), newly attached (ink,
+   briefly), the selected chain (ink, with a light direction mark) — and
+   everything outside a selected chain steps back. Crossings between lanes
+   are a hair more present than a lane's own sequence. */
+.nx-edge { fill: none; stroke: var(--nx-ink-2); stroke-width: 0.8; stroke-linecap: round; stroke-opacity: 0.2; transition: stroke-opacity var(--nx-motion), stroke-width var(--nx-motion); }
+.nx-edge-observed { stroke-dasharray: 2 4; stroke-opacity: 0.18; }
+.nx-edge.is-cross { stroke-opacity: 0.3; }
+.nx-edge.is-new { stroke: var(--nx-ink); stroke-opacity: 0.9; stroke-width: 1.2; }
+.nx-edge.is-focus { stroke: var(--nx-ink); stroke-opacity: 1; stroke-width: 1.5; marker-end: url(#nx-thread-tip); }
+.nx-edge.is-dim { stroke-opacity: 0.05; }
+/* The compilation: a dotted gathering line from each lane's last sealed receipt down to one rail, a stem to the capsule — never a wall, never a causal thread. */
+.nx-edge-compile { stroke: var(--nx-ink-2); stroke-opacity: 0.4; stroke-width: 0.8; stroke-dasharray: 1 3; }
+.nx-compile-rail, .nx-compile-stem { stroke-opacity: 0.6; stroke-width: 1; }
+.nx-proof[data-focus="true"] .nx-compile { opacity: 0.12 !important; }
+.nx-proof[data-focus="true"] .nx-rail, .nx-proof[data-focus="true"] .nx-chapters { opacity: 0.4; }
+.nx-beads { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; }
+/* A nano-receipt: a light, translucent bubble with its family on the rim. The
+   button is the hit area (never smaller than 20 px); the bubble keeps its size. */
+.nx-bead {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: max(var(--bead, 8px), var(--hit, 20px));
+  height: max(var(--bead, 8px), var(--hit, 20px));
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.nx-bead i {
+  display: block;
+  width: var(--bead, 8px);
+  height: var(--bead, 8px);
+  border: 1.2px solid color-mix(in srgb, var(--family, var(--nx-ink-2)) 78%, var(--nx-ink));
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.95) 0, rgba(255, 255, 255, 0.55) 36%, color-mix(in srgb, var(--family, var(--nx-mineral-2)) 16%, white) 68%, color-mix(in srgb, var(--family, var(--nx-mineral-2)) 42%, white) 100%);
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.7), 0 0.5px 1.5px rgba(22, 23, 27, 0.14);
+  transform: scale(var(--nr-appear, 1));
+  transition: opacity var(--nx-motion), box-shadow var(--nx-motion), border-color var(--nx-motion);
+  /* A bead arrives lightly whether the clock carries it or it lands at rest. */
+  animation: nx-bead-in 420ms cubic-bezier(0.2, 0.7, 0.2, 1) 1;
+}
+@keyframes nx-bead-in { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: scale(var(--nr-appear, 1)); } }
+/* A bead answers the pointer: the smallest control on the page still says it is one. */
+.nx-bead:hover i { border-color: var(--nx-ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--family, var(--nx-ink-2)) 20%, transparent); }
+.nx-bead.is-latest { z-index: 2; }
+.nx-bead.is-latest i {
+  box-shadow: 0 0 0 calc(7px * (1 - var(--lock, 0))) color-mix(in srgb, var(--family, var(--pulse)) 24%, transparent), 0 1px 3px rgba(22, 23, 27, 0.14);
+}
+.nx-bead.is-focus { z-index: 3; }
+.nx-bead.is-focus i {
+  border-color: color-mix(in srgb, var(--family, var(--nx-ink-2)) 70%, var(--nx-ink));
+  background: radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.95) 0, color-mix(in srgb, var(--family, var(--nx-ink-2)) 28%, white) 55%, color-mix(in srgb, var(--family, var(--nx-ink-2)) 52%, white) 100%);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--family, var(--nx-ink-2)) 20%, transparent);
+}
+/* The selected receipt itself, after the chain's own rule so it wins the
+   cascade: an ink rim and a ring the rest of the chain does not carry.
+   C-R2-F03 widens the halo and lifts the bubble, so the one receipt a viewer
+   asked for is findable at a glance across a field of 58. Restrained on
+   purpose: one more ring and a slight scale, no glow and no colour it did not
+   already have — the family stays the family.
+   NX3: the 3.5px ring is the accent. A selection is something the viewer
+   did, so it wears the brand's interaction colour — not ink, which every
+   bead's rim already is, and never a verdict colour. The rim stays ink and
+   the two outer halos stay the family, so the receipt's own meaning is
+   untouched by being chosen. */
+.nx-bead.is-selected { z-index: 4; }
+.nx-bead.is-selected i {
+  border-color: var(--nx-ink);
+  border-width: 2px;
+  box-shadow: 0 0 0 2px var(--nx-paper), 0 0 0 3.5px var(--nx-accent), 0 0 0 6px color-mix(in srgb, var(--family, var(--nx-ink)) 26%, transparent), 0 0 0 10px color-mix(in srgb, var(--family, var(--nx-ink)) 12%, transparent);
+  transform: scale(calc(var(--nr-appear, 1) * 1.25));
+}
+.nx-bead.is-dim i { opacity: 0.22; }
+.nx-bead.is-not-retained i { border-style: dashed; }
+.nx-bead.is-unresolved i { border-color: var(--nx-caution); border-style: dotted; }
+.nx-bead.is-journal i { border-style: dashed; }
+/* The three status modifiers above are declared AFTER the selected rule and
+   write `border-color`, so at equal specificity an unresolved, quarantined or
+   post-seal bead lost the selected ink rim (found while mapping C-R2-F03).
+   The rim is restored here, last, and only the rim: each modifier keeps the
+   dash or dot that carries its own meaning. */
+.nx-bead.is-selected.is-not-retained i,
+.nx-bead.is-selected.is-unresolved i,
+.nx-bead.is-selected.is-journal i { border-color: var(--nx-ink); }
+/* C-R2-F01 — THE BEAD SAYS ITS NUMBER. `01`, beside the bubble, in the lane's
+   own free width (lanes are 127-166 px apart, so the room is there). Mono and
+   tabular so every numeral takes the same box and the column reads as one;
+   small and quiet, because it is a handle for finding a receipt again, not a
+   label competing with the evidence. It sits inside the button, so the number
+   is part of the same control the bubble is. */
+.nx-bead-ordinal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: calc(var(--bead, 8px) / 2 + 4px);
+  transform: translateY(-50%);
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--nx-ink) 46%, transparent);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  opacity: var(--nr-appear, 1);
+  transition: color var(--nx-motion), opacity var(--nx-motion);
+}
+/* The selected receipt's number is the one a viewer is looking for (C-R2-F03). */
+.nx-bead.is-focus .nx-bead-ordinal { color: color-mix(in srgb, var(--nx-ink) 70%, transparent); }
+.nx-bead.is-selected .nx-bead-ordinal { color: var(--nx-ink); font-weight: 700; }
+.nx-bead.is-dim .nx-bead-ordinal { opacity: 0.18; }
+.nx-bead:hover .nx-bead-ordinal { color: var(--nx-ink); }
+.nx-bead-caption {
+  position: absolute;
+  left: calc(var(--x) + 12px);
+  top: var(--y);
+  transform: translateY(-50%);
+  display: grid;
+  gap: 0.05rem;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  color: var(--nx-ink);
+  opacity: var(--nr-appear, 1);
+  pointer-events: none;
+  z-index: 3;
+}
+.nx-bead-caption em { font-style: normal; font-family: "JetBrains Mono", Consolas, monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nx-ink-2); display: inline-flex; align-items: baseline; gap: 0.4rem; }
+.nx-bead-caption.is-left { left: auto; right: calc(100% - var(--x) + 12px); text-align: right; justify-items: end; }
+.nx-bead-caption.is-left em { flex-direction: row-reverse; }
+/* The human handle: enough to remember, never louder than what the receipt says. */
+.nx-caption-ordinal { font-weight: 500; color: var(--nx-ink); border: 1px solid var(--nx-rule); border-radius: var(--nx-radius-sm); padding: 0 0.25rem; }
+.nx-episode-item .nx-ordinal, .nx-receipt .nx-ordinal {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--nx-ink-2);
+  font-weight: 400;
+}
+.nx-episode-item .nx-ordinal { grid-row: 1; grid-column: 1 / -1; justify-self: start; }
+/* The post-seal zone: records the engine appended after the Final Receipt boundary. */
+.nx-post-seal { position: absolute; left: var(--gutter, 100px); right: 0; top: calc(var(--y) - 2px); display: flex; align-items: center; gap: 0.6rem; font-family: "JetBrains Mono", Consolas, monospace; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--nx-ink-2); pointer-events: none; }
+.nx-post-seal::before, .nx-post-seal::after { content: ""; flex: 1; border-top: 1px dotted var(--nx-mineral-2); }
+
+/* The Final Receipt: compiled beneath the nano-receipts, one distinct capsule,
+   outside the rows. An EVIDENCE OBJECT, so it wears the folder corner the PEB
+   invented — never the 999px pill, which on this page means an act. */
+.nx-compilation { position: absolute; left: var(--gutter, 100px); right: 0; top: var(--y); display: grid; justify-items: center; transform: translateY(-50%); z-index: 2; }
+.nx-final-receipt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 28px;
+  border: 1px solid var(--nx-ink);
+  border-radius: var(--nx-radius-sm) var(--nx-radius-lg) var(--nx-radius-sm) var(--nx-radius-sm);
+  background: var(--nx-paper);
+  padding: 0.18rem 0.85rem 0.18rem 0.5rem;
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nx-ink);
+  opacity: var(--nr-appear, 1);
+  transform: scale(calc(0.85 + 0.15 * var(--nr-appear, 1)));
+  transition: box-shadow var(--nx-motion);
+}
+.nx-final-receipt:hover { box-shadow: 0 1px 3px rgba(22, 23, 27, 0.18); }
+.nx-final-receipt i { width: 10px; height: 12px; border-radius: 1px 4px 1px 1px; background: transparent; border: 1.5px solid var(--nx-ink); }
+.nx-final-receipt.is-arriving { box-shadow: 0 0 0 6px color-mix(in srgb, var(--nx-pulse-blue) 16%, transparent); }
+.nx-final-receipt.is-dim { opacity: 0.35; }
+/* The family legend: compact, derived from the families this run actually contains. */
+.nx-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  height: var(--legend-h, 22px);
+  overflow: hidden;
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2);
+  white-space: nowrap;
+}
+.nx-legend-kicker { letter-spacing: 0.14em; margin-right: 0.1rem; }
+.nx-legend-item { display: inline-flex; align-items: center; gap: 0.38rem; }
+/* INFORMATION ONLY: a key, never a filter. It refuses the pointer explicitly,
+   and its swatches are flat so they cannot be taken for beads to click. */
+.nx-legend, .nx-legend li { cursor: default; }
+.nx-legend li { pointer-events: none; }
+/* The three kinds of line on the picture, named: caused by · observed · compiled. */
+.nx-legend-threads { margin-left: auto; display: inline-flex; align-items: center; gap: 0.9rem; padding-right: 0.2rem; }
+.nx-legend-thread { display: inline-flex; align-items: center; gap: 0.35rem; }
+.nx-legend-thread svg { width: 18px; height: 4px; overflow: visible; }
+.nx-legend-thread path { fill: none; stroke: var(--nx-ink-2); stroke-width: 1; stroke-opacity: 0.7; }
+.nx-legend-thread path.is-observed { stroke-dasharray: 2 4; }
+.nx-legend-thread path.is-compiled { stroke-dasharray: 1 3; }
+/* NAVIGATION: under the fallback scroll, a recessed tab toward the start or
+   the end of the story that lies out of view. Porcelain with a mineral rule,
+   so it can never be read as the paper object whose name it carries. */
+.nx-scroll-cue {
+  position: absolute;
+  left: 2px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--nx-mineral-2);
+  border-radius: var(--nx-radius-sm);
+  background: var(--nx-porcelain);
+  padding: 0.12rem 0.5rem 0.12rem 0.4rem;
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nx-ink-2);
+  transition: border-color var(--nx-motion), color var(--nx-motion);
+}
+.nx-scroll-cue:hover, .nx-scroll-cue:focus-visible { border-color: var(--nx-ink); color: var(--nx-ink); }
+.nx-scroll-cue.is-top { top: calc(var(--label-h, 22px) + 4px); }
+.nx-scroll-cue.is-bottom { bottom: calc(var(--legend-h, 22px) + 4px); }
+.nx-scroll-cue i { width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent; }
+.nx-scroll-cue.is-top i { border-bottom: 4px solid var(--nx-ink-2); }
+.nx-scroll-cue.is-bottom i { border-top: 4px solid var(--nx-ink-2); }
+.nx-legend-item i, .nx-family-line i {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.2px solid color-mix(in srgb, var(--family, var(--nx-ink-2)) 78%, var(--nx-ink));
+  background: radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.95) 0, color-mix(in srgb, var(--family, var(--nx-mineral-2)) 34%, white) 100%);
+}
+.nx-family-line i { margin-right: 0.4rem; vertical-align: -1px; }
+
+/* --- controls ------------------------------------------------------------ */
+.nx-controls {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 0.3rem 2rem 0.3rem;
+  border-top: 1px solid var(--nx-rule);
+}
+/*
+ * THE ACTS (NX3 / B2 §23–§26). Three weights of one control, then a signature:
+ *
+ *   .nx-primary    ink fill          the one act the page expects now
+ *   .nx-secondary  paper, ink rule   the second act beside it
+ *   .nx-act        paper, ink rule   an act inside a panel (same costume, its own margin)
+ *   .nx-signature  accent fill       ANALYZE / INSPECT — the act that turns evidence into a verdict
+ *
+ * One geometry for all four, so a pair sits on one baseline: the 999px pill
+ * (the shape that means "an act you perform" — the grammar above; the site's
+ * 6px would put a secondary act in the costume of .nx-object-final, an
+ * evidence object with the same ink rule on the same paper), the site's
+ * button size and weight (14px, weight 600), one 1px border that is part of
+ * the surface, and one soft shadow at most. Three sizes and no other:
+ * compact (28px, beside a record), default (34px), consequential (38px —
+ * the authority pair and ANALYZE, the two moments a person decides something
+ * the mission cannot undo). Every state is a change of surface, never of
+ * shape, and the same for every act (NX4 §5): hover steps the surface one
+ * notch toward ink — porcelain under an outlined act, ink 86% under the ink
+ * fill, accent 90% under the signature — and never introduces the accent,
+ * which is selection and the signature act alone; pressed sits down 1px;
+ * disabled is one costume for all (paper, mineral-2 rule, ink-2 text); the
+ * keyboard gets the accent ring from `.nx :focus-visible`. Transitions run
+ * on the site's fast curve — a control answers in 140ms; evidence keeps its
+ * own 320ms.
+ */
+.nx-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 34px;
+  padding: 0.4rem 1.2rem;
+  border: 1px solid var(--nx-ink);
+  border-radius: 999px;
+  background: var(--nx-ink);
+  color: var(--nx-paper);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.2;
+  box-shadow: 0 1px 2px rgba(22, 23, 27, 0.16);
+  transition: background-color var(--nx-motion-fast) var(--nx-ease), border-color var(--nx-motion-fast) var(--nx-ease), color var(--nx-motion-fast) var(--nx-ease), box-shadow var(--nx-motion-fast) var(--nx-ease), transform var(--nx-motion-fast) var(--nx-ease);
+}
+.nx .nx-primary { color: var(--nx-paper); }
+.nx-primary:hover { background: color-mix(in srgb, var(--nx-ink) 86%, var(--nx-porcelain)); border-color: color-mix(in srgb, var(--nx-ink) 86%, var(--nx-porcelain)); box-shadow: 0 2px 6px rgba(22, 23, 27, 0.18); }
+.nx-primary:active { transform: translateY(1px); background: var(--nx-ink); border-color: var(--nx-ink); box-shadow: none; }
+.nx-primary:disabled { background: var(--nx-paper); border-color: var(--nx-mineral-2); color: var(--nx-ink-2); box-shadow: none; transform: none; }
+.nx .nx-primary:disabled { color: var(--nx-ink-2); }
+.nx-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 34px;
+  padding: 0.4rem 1.2rem;
+  border: 1px solid var(--nx-ink);
+  border-radius: 999px;
+  background: var(--nx-paper);
+  color: var(--nx-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.2;
+  transition: background-color var(--nx-motion-fast) var(--nx-ease), border-color var(--nx-motion-fast) var(--nx-ease), color var(--nx-motion-fast) var(--nx-ease), box-shadow var(--nx-motion-fast) var(--nx-ease), transform var(--nx-motion-fast) var(--nx-ease);
+}
+.nx-secondary:hover { background: var(--nx-porcelain); box-shadow: 0 1px 2px rgba(22, 23, 27, 0.1); }
+.nx-secondary:active { transform: translateY(1px); background: color-mix(in srgb, var(--nx-ink) 6%, var(--nx-porcelain)); box-shadow: none; }
+.nx-secondary:disabled { border-color: var(--nx-mineral-2); color: var(--nx-ink-2); background: var(--nx-paper); box-shadow: none; transform: none; }
+/* An act inside a panel: the secondary costume with its own margin, so the
+   page never shows two primary acts at once. Declared here, before
+   .nx-act-inline, so the inline variant's own padding wins the cascade (it
+   lost it while this rule lived after it in the workspace section). */
+.nx-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: 0.6rem 0 0;
+  min-height: 34px;
+  padding: 0.4rem 1.1rem;
+  border: 1px solid var(--nx-ink);
+  border-radius: 999px;
+  background: var(--nx-paper);
+  color: var(--nx-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.2;
+  transition: background-color var(--nx-motion-fast) var(--nx-ease), border-color var(--nx-motion-fast) var(--nx-ease), color var(--nx-motion-fast) var(--nx-ease), box-shadow var(--nx-motion-fast) var(--nx-ease), transform var(--nx-motion-fast) var(--nx-ease);
+}
+.nx .nx-act { color: var(--nx-ink); }
+.nx-act:hover { background: var(--nx-porcelain); box-shadow: 0 1px 2px rgba(22, 23, 27, 0.1); }
+.nx-act:active { transform: translateY(1px); background: color-mix(in srgb, var(--nx-ink) 6%, var(--nx-porcelain)); box-shadow: none; }
+/* An act that is not available yet, shown so the viewer sees it coming. */
+.nx-act:disabled, .nx-act[aria-disabled="true"] { border-color: var(--nx-mineral-2); color: var(--nx-ink-2); background: var(--nx-paper); box-shadow: none; transform: none; cursor: default; }
+.nx .nx-act:disabled, .nx .nx-act[aria-disabled="true"] { color: var(--nx-ink-2); }
+/* SIGNATURE ACT: ANALYZE and INSPECT. The site's primary button (accent fill,
+   accent ink, a 1px lift under the pointer) on the demo's act geometry — the
+   one place the brand colour fills a surface, because this is the act that
+   turns evidence into a verdict, or opens the verifier's own reading of it.
+   Applied beside an act class (`nx-act nx-signature`, `nx-primary
+   nx-signature`) and declared after all three, so its surface wins their
+   hover and pressed states at equal specificity; `.nx .nx-signature`
+   outranks the acts' own legibility rules. Disabled, it wears the one
+   disabled costume every act wears: an unavailable act is unavailable. */
+.nx-signature { background: var(--nx-accent); border-color: color-mix(in srgb, var(--nx-accent) 82%, var(--nx-ink)); color: var(--nx-accent-ink); box-shadow: 0 1px 2px color-mix(in srgb, var(--nx-accent) 24%, transparent); }
+.nx .nx-signature { color: var(--nx-accent-ink); }
+.nx-signature:hover { background: color-mix(in srgb, var(--nx-accent) 90%, white); border-color: color-mix(in srgb, var(--nx-accent) 90%, white); transform: translateY(-1px); box-shadow: 0 4px 10px color-mix(in srgb, var(--nx-accent) 26%, transparent); }
+.nx-signature:active { transform: translateY(0); background: color-mix(in srgb, var(--nx-accent) 86%, var(--nx-ink)); border-color: color-mix(in srgb, var(--nx-accent) 86%, var(--nx-ink)); box-shadow: none; }
+.nx-signature:disabled, .nx-signature[aria-disabled="true"] { background: var(--nx-paper); border-color: var(--nx-mineral-2); color: var(--nx-ink-2); box-shadow: none; transform: none; cursor: default; }
+.nx .nx-signature:disabled, .nx .nx-signature[aria-disabled="true"] { color: var(--nx-ink-2); }
+/* THE CONSEQUENTIAL SIZE: the authority pair, and ANALYZE inside the
+   instrument (verifier.css .nx-vs-analyze .nx-primary) — a step larger, one
+   geometry (38px, 0.5rem 1.6rem, 0.95rem). The kicker is a caution (an
+   approval the mission waits for), in the caution amber; it wore the coral
+   pulse, which is the LOST alarm's colour, before NX4. */
+.nx-authority { display: grid; grid-template-columns: auto auto; gap: 0.2rem 0.6rem; align-items: center; }
+.nx-authority .nx-kicker { grid-column: 1 / -1; color: var(--nx-caution); }
+.nx-authority p { grid-column: 1 / -1; margin: 0 0 0.3rem; font-size: 0.95rem; }
+.nx-authority .nx-primary, .nx-authority .nx-secondary { min-height: 38px; padding: 0.5rem 1.6rem; font-size: 0.95rem; }
+/* NAVIGATION: the scrubber moves the viewer through the story. A rail and a
+   handle — never a filled bar, which reads as progress the mission made. */
+.nx-scrub { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.8rem; }
+.nx-scrub span, .nx-scrub output { font-family: "JetBrains Mono", Consolas, monospace; font-size: 0.78rem; letter-spacing: 0.08em; color: var(--nx-ink-2); font-variant-numeric: tabular-nums; }
+.nx-scrub input {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--nx-mineral);
+  cursor: pointer;
+}
+.nx-scrub input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--nx-ink);
+  border: 2px solid var(--nx-paper);
+  box-shadow: 0 0 0 1px var(--nx-ink);
+}
+.nx-scrub input::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--nx-ink);
+  border: 2px solid var(--nx-paper);
+  box-shadow: 0 0 0 1px var(--nx-ink);
+}
+.nx-scrub input::-moz-range-track { height: 3px; border-radius: 999px; background: var(--nx-mineral); }
+
+/* --- workspace: RECONCILIATION above · VERIFIER left · DOSSIER right --------- */
+/* NX3: the verifier is no longer a drawer in this grid — it is a dedicated
+   surface over the mission (verifier/VerifierSurface.tsx). The workspace is
+   the reconciliation band above the dossier, at full width. */
+.nx-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "reconciliation"
+    "dossier";
+  gap: 0.25rem 0.8rem;
+  padding: 0.3rem 2rem 0.35rem;
+  border-top: 1px solid var(--nx-rule);
+  background: color-mix(in srgb, var(--nx-paper) 55%, var(--nx-porcelain));
+}
+/* Closed panels are inspection tabs, not rooms: a header line each, no reserved body (B R2 §13). */
+.nx-reconciliation {
+  grid-area: reconciliation;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.2rem 0.9rem;
+  border: 1px solid var(--nx-rule);
+  border-radius: var(--nx-radius-lg);
+  background: var(--nx-paper);
+}
+.nx-reconciliation p { margin: 0; font-size: 0.86rem; color: var(--nx-ink-2); }
+/* The transfer receipt is a filed artefact, not an act and not a live state. */
+.nx-reconciliation small { display: inline-flex; gap: 0.4rem; align-items: baseline; font-size: 0.68rem; color: var(--nx-ink-2); }
+.nx-band-facts { display: inline-flex; flex-wrap: wrap; gap: 0.8rem; align-items: baseline; justify-content: flex-end; }
+.nx-band-facts em { font-style: normal; font-family: "JetBrains Mono", Consolas, monospace; font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nx-ink-2); }
+.nx-band-facts em[data-locality="RECONCILED"] { color: var(--nx-verdict-valid); }
+.nx-band-reasons { grid-column: 1 / -1; list-style: none; margin: 0.2rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline; font-size: 0.62rem; color: var(--nx-ink-2); }
+/* The tone is carried on a 3px left rule — the same mark every recorded state
+   on the page uses — rather than a hairline border the eye never registers. */
+.nx-reconciliation { border-left-width: 3px; }
+.nx-reconciliation[data-tone="LOST"] { border-left-color: var(--nx-pulse-coral); }
+.nx-reconciliation[data-tone="LOST"] p { color: var(--nx-ink); }
+/* A process under way is neutral: the accent's blue is not a state (NX4 §6). */
+.nx-reconciliation[data-tone="ACTIVE"] { border-left-color: var(--nx-ink-2); }
+.nx-reconciliation[data-tone="ACTIVE"] p { color: var(--nx-ink); }
+.nx-reconciliation[data-tone="COMPLETE"] { border-left-color: var(--nx-verdict-valid); }
+.nx-reconciliation[data-tone="COMPLETE"] p { color: var(--nx-ink); }
+.nx-reconciliation[data-tone="FAILED"] { border-left-color: var(--nx-verdict-fail); }
+.nx-reconciliation[data-flash="LOST"] { box-shadow: 0 0 0 4px color-mix(in srgb, var(--nx-pulse-coral) 18%, transparent); }
+.nx-reconciliation[data-flash="RESTORED"] { box-shadow: 0 0 0 4px color-mix(in srgb, var(--nx-ink) 14%, transparent); }
+
+/* the portable PEB: taken from the dossier's head, carried by the pointer, dropped on the verifier */
+.nx-dossier-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.4rem; padding-right: 0.6rem; }
+/* THE PEB CHIP is an object, not a tag: paper, an ink rule, the folder corner
+   every evidence object wears, a corner-marked glyph for the bundle itself
+   and the state word in the quiet mono voice. It becomes the one thing on
+   the page that can be picked up — and only then does it wear the accent:
+   rule, glyph and word turn brand blue, a soft ring says "in reach", and it
+   lifts a pixel under the pointer. Carried, it stays behind as a ghost;
+   handed over, it is a dashed record of where it went. */
+.nx-peb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid var(--nx-ink);
+  border-radius: var(--nx-radius-sm) var(--nx-radius-lg) var(--nx-radius-sm) var(--nx-radius-sm);
+  background: var(--nx-paper);
+  padding: 0.18rem 0.6rem 0.18rem 0.5rem;
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nx-ink);
+  cursor: default;
+  touch-action: manipulation;
+  user-select: none;
+  transition: border-color var(--nx-motion-fast) var(--nx-ease), color var(--nx-motion-fast) var(--nx-ease), box-shadow var(--nx-motion-fast) var(--nx-ease), transform var(--nx-motion-fast) var(--nx-ease), opacity var(--nx-motion-fast) var(--nx-ease);
+}
+.nx-peb-chip i { width: 10px; height: 12px; border: 1.5px solid var(--nx-ink); border-radius: 1px 4px 1px 1px; transition: border-color var(--nx-motion-fast) var(--nx-ease); }
+.nx-peb-chip b { font-weight: 500; color: var(--nx-ink-2); }
+.nx-peb-chip.is-takeable { cursor: pointer; border-color: var(--nx-accent); color: var(--nx-accent); box-shadow: 0 1px 2px rgba(22, 23, 27, 0.1), 0 0 0 3px var(--nx-accent-soft); }
+.nx-peb-chip.is-takeable i { border-color: var(--nx-accent); }
+.nx-peb-chip.is-takeable b { color: var(--nx-accent); }
+.nx-peb-chip.is-takeable:hover { transform: translateY(-1px); box-shadow: 0 3px 8px color-mix(in srgb, var(--nx-accent) 18%, transparent), 0 0 0 3px var(--nx-accent-soft); }
+.nx-peb-chip.is-carried { opacity: 1; cursor: pointer; transform: none; border-color: var(--nx-accent); background: var(--nx-accent-soft); box-shadow: 0 0 0 2px var(--nx-accent-soft); }
+/* Handed over: a quiet record of where the object went — a mineral rule and
+   the quiet ink, solid. It was dashed; a dash on this page marks evidence
+   that is not retained, not an object that has moved (NX4 §7). */
+.nx-peb-chip.is-handed-off { border-color: var(--nx-mineral-2); color: var(--nx-ink-2); }
+.nx-peb-chip.is-handed-off i { border-color: var(--nx-mineral-2); }
+.nx-peb-carry {
+  position: fixed;
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-50%, -50%) rotate(-2deg);
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--nx-ink);
+  border-radius: var(--nx-radius-sm) var(--nx-radius-lg) var(--nx-radius-sm) var(--nx-radius-sm);
+  background: var(--nx-paper);
+  box-shadow: 0 8px 24px rgba(22, 23, 27, 0.16);
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.nx-peb-carry i { width: 12px; height: 15px; border: 1.5px solid var(--nx-ink); border-radius: 1px 5px 1px 1px; }
+/* NX3: the carried bundle answering its destination is an INTERACTION, so it
+   wears the accent over the receiving surface (verifier/verifier.css owns
+   that surface). It wore the VALID green before, which promised a verdict
+   the verifier had not yet produced (mandate §5: no unsupported assurance). */
+.nx-peb-carry[data-over="true"] { border-color: var(--nx-accent); box-shadow: 0 8px 24px rgba(22, 23, 27, 0.16), 0 0 0 3px var(--nx-accent-soft); transform: translate(-50%, -50%) rotate(0deg) scale(1.04); }
+/* THE COMPACT SIZE: an act beside a record (NX4 §4). */
+.nx-act-inline { margin: 0 0.6rem 0 0.6rem; min-height: 28px; padding: 0.3rem 0.7rem; font-size: 0.78rem; vertical-align: middle; }
+.nx-object-row { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0.3rem; }
+.nx-episode-item.is-journal i { border-style: dashed; }
+.nx-dossier { grid-area: dossier; }
+
+.nx-panel { min-width: 0; border: 1px solid var(--nx-rule); border-radius: var(--nx-radius-lg); background: var(--nx-paper); display: grid; grid-template-rows: auto auto; }
+.nx-panel[data-state="open"], .nx-panel[data-state="deep"] { border-color: color-mix(in srgb, var(--nx-ink) 40%, transparent); }
+.nx-panel-head { display: grid; }
+/* TOGGLE: a panel head opens and closes its panel. A rule under it at rest,
+   the porcelain ground under the pointer, and one chevron that turns — the
+   affordance is a shape, not a word borrowed from the passive voice. */
+.nx-panel-toggle {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: baseline;
+  gap: 0.8rem;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--nx-rule);
+  background: transparent;
+  padding: 0.34rem 0.9rem;
+  text-align: left;
+  border-radius: var(--nx-radius-lg) var(--nx-radius-lg) 0 0;
+  transition: background-color var(--nx-motion-fast) var(--nx-ease);
+}
+.nx-panel-toggle:hover { background: var(--nx-porcelain); }
+.nx-panel[data-state="open"] .nx-panel-toggle, .nx-panel[data-state="deep"] .nx-panel-toggle { border-bottom-color: transparent; }
+.nx-panel-chevron {
+  justify-self: end;
+  align-self: center;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--nx-ink-2);
+  border-bottom: 1.5px solid var(--nx-ink-2);
+  transform: rotate(45deg) translate(-1px, -1px);
+  transition: transform var(--nx-motion), border-color var(--nx-motion);
+}
+.nx-panel-toggle:hover .nx-panel-chevron { border-color: var(--nx-ink); }
+.nx-panel-toggle[aria-expanded="true"] .nx-panel-chevron { transform: rotate(-135deg) translate(-1px, -1px); }
+.nx-panel-line { font-size: 0.92rem; font-weight: 500; letter-spacing: -0.01em; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx-panel-body { padding: 0 0.9rem 0.9rem; max-height: clamp(180px, calc(100vh - 620px), 420px); overflow-y: auto; outline: none; border-top: 1px solid var(--nx-rule); }
+/* Focus enters a panel body when it opens; the panel's own border says where
+   focus is, so the page's accent ring — which outranks the class alone — is
+   not drawn around the whole body. Every act inside keeps its ring. */
+.nx .nx-panel-body:focus-visible { outline: none; }
+.nx-panel-status { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.nx-panel-question { margin: 0.7rem 0 0.2rem; font-size: 0.88rem; color: var(--nx-ink); }
+.nx-panel-note { margin: 0.5rem 0 0; font-size: 0.84rem; color: var(--nx-ink-2); }
+/* An act inside a panel (.nx-act) and the signature act (.nx-signature) are
+   declared with the other acts in the controls section above, so all four
+   share one geometry and one cascade. */
+/* NAVIGATION: goes somewhere else. Underlined, always, with a real target. */
+.nx-link { border: 0; background: transparent; padding: 0.25rem 0; min-height: 24px; display: inline-flex; align-items: center; text-decoration: underline; text-underline-offset: 2px; font-size: 0.8rem; color: var(--nx-ink-2); text-align: left; }
+.nx-link:hover, .nx-link:focus-visible { color: var(--nx-ink); }
+/* TOGGLE: reveals in place. No underline; a chevron that turns. */
+.nx-disclose {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.8rem;
+  color: var(--nx-ink-2);
+  text-align: left;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.nx-disclose::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translate(-1px, -1px);
+  transition: transform var(--nx-motion);
+}
+.nx-disclose[aria-expanded="true"]::after { transform: rotate(-135deg) translate(-1px, -1px); }
+.nx-disclose:hover, .nx-disclose:focus-visible { color: var(--nx-ink); }
+.nx-panel-body > .nx-disclose { display: flex; margin-top: 0.9rem; min-height: 24px; }
+.nx-technical { margin-top: 0.5rem; }
+.nx-technical h4, .nx-receipt h4 { margin: 0.8rem 0 0.4rem; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--nx-ink-2); }
+.nx-technical dl, .nx-receipt dl { display: grid; gap: 0.45rem; margin: 0; }
+.nx-technical dt, .nx-receipt dt { font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nx-ink-2); }
+.nx-technical dd, .nx-receipt dd { margin: 0.1rem 0 0; font-size: 0.84rem; overflow-wrap: anywhere; }
+.nx-technical ul, .nx-receipt ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.2rem; }
+
+/* verifier — the verdict record's lists, read by verifier/VerifierSurface.tsx;
+   the instrument's own chrome lives in verifier/verifier.css. The embedded
+   panel's rules (.nx-verifier, .nx-verdict, .nx-drop-zone …) are gone with it. */
+.nx-panel-note[data-analyzing="true"]::after { content: " ·  ·  ·"; letter-spacing: 0.1em; animation: nx-working 1.2s steps(4, end) infinite; }
+@keyframes nx-working { from { opacity: 0.25; } 50% { opacity: 1; } to { opacity: 0.25; } }
+.nx-established, .nx-inspections, .nx-limits { list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; gap: 0.25rem; font-size: 0.8rem; }
+.nx-established li { display: grid; grid-template-columns: 8px 1fr auto; gap: 0.5rem; align-items: baseline; }
+/* An established line is a fact the verifier completed, in ink: a green dot
+   beside "established" inside an INDETERMINATE record read as an assurance
+   the record did not give. Only the verdict wears the verdict's colour. */
+.nx-established i { width: 8px; height: 8px; border-radius: 50%; background: var(--nx-ink); }
+.nx-established li[data-established="false"] i { background: transparent; border: 1px solid var(--nx-ink-2); }
+.nx-established b { font-weight: 500; font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nx-ink-2); }
+.nx-inspections li { display: flex; justify-content: space-between; gap: 0.6rem; }
+.nx-inspections b { font-weight: 500; font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nx-ink-2); white-space: nowrap; }
+.nx-limits li { color: var(--nx-ink-2); }
+.nx-limits li::before { content: "— "; }
+
+/* dossier */
+.nx-dossier-back { display: inline-block; margin: 0.6rem 0 0.2rem; }
+.nx-hierarchy { list-style: none; margin: 0.3rem 0 0; padding: 0; display: grid; }
+.nx-tier { position: relative; display: grid; grid-template-columns: 9rem 1fr; gap: 0.2rem 0.8rem; align-items: baseline; padding: 0.45rem 0 0.45rem 1rem; border-left: 1px solid var(--nx-mineral-2); }
+.nx-tier::before { content: ""; position: absolute; left: -3px; top: 0.85rem; width: 5px; height: 5px; border-radius: 50%; background: var(--nx-mineral-2); }
+.nx-tier:last-child { border-left-color: transparent; }
+.nx-tier > strong { font-weight: 500; font-size: 0.9rem; }
+.nx-tier > small { grid-column: 2; font-size: 0.7rem; color: var(--nx-ink-2); }
+.nx-groups { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.3rem; }
+/* Group filters: the neutral pill (NX4 §1) — the same mineral rule and the same
+   height as the header pills and the INSPECT tabs, the porcelain ground under
+   the pointer. */
+.nx-group { display: inline-flex; align-items: baseline; gap: 0.4rem; min-height: 28px; border: 1px solid var(--nx-mineral-2); border-radius: 999px; background: var(--nx-paper); padding: 0.2rem 0.7rem; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.02em; color: var(--nx-ink); cursor: pointer; transition: border-color var(--nx-motion-fast) var(--nx-ease), background-color var(--nx-motion-fast) var(--nx-ease); }
+.nx-group b { font-weight: 500; color: var(--nx-ink-2); font-size: 0.7rem; }
+.nx-group:hover, .nx-group:focus-visible { border-color: var(--nx-ink); background: var(--nx-porcelain); }
+.nx-object { display: inline-flex; align-items: center; gap: 0.5rem; border: 1px solid var(--nx-ink); border-radius: var(--nx-radius-md); background: var(--nx-paper); padding: 0.3rem 0.7rem; font-size: 0.8rem; cursor: pointer; transition: background-color var(--nx-motion-fast) var(--nx-ease); }
+.nx-object:hover { background: var(--nx-porcelain); }
+.nx-object i { width: 10px; height: 10px; border-radius: var(--nx-radius-sm); background: var(--nx-ink); }
+.nx-object b { font-weight: 500; font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nx-ink-2); }
+/* The PEB: a precise, calm, manipulable object — paper, a rule, the folder corner. No slab, no gradient. */
+.nx-object-peb { border-style: solid; border-radius: var(--nx-radius-sm) var(--nx-radius-lg) var(--nx-radius-sm) var(--nx-radius-sm); }
+.nx-object-peb i { border-radius: 1px; background: transparent; border: 1.5px solid var(--nx-ink); }
+.nx-peb-state { margin: 0.2rem 0 0.6rem; font-size: 0.78rem; }
+.nx-peb-record, .nx-final-record { border-top: 1px solid var(--nx-rule); padding-top: 0.6rem; }
+.nx-dossier-filter { margin: 0 0 0.6rem; }
+.nx-episode { padding: 0.5rem 0 0.4rem; }
+.nx-episode h3 { margin: 0 0 0.4rem; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--nx-ink-2); }
+.nx-episode ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15rem; }
+.nx-episode-item { display: grid; grid-template-columns: 10px 1fr; column-gap: 0.6rem; align-items: center; width: 100%; border: 0; background: transparent; padding: 0.3rem 0.2rem; text-align: left; border-radius: var(--nx-radius-md); cursor: pointer; }
+.nx-episode-item:hover, .nx-episode-item:focus-visible { background: var(--nx-porcelain); }
+/* The same bubble as on the proof: the family on the rim, named in the caption. */
+.nx-episode-item i { width: 9px; height: 9px; border-radius: 50%; border: 1.2px solid color-mix(in srgb, var(--family, var(--nx-ink-2)) 78%, var(--nx-ink)); background: radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.95) 0, color-mix(in srgb, var(--family, var(--nx-mineral-2)) 34%, white) 100%); }
+.nx-episode-item span { font-size: 0.88rem; }
+.nx-episode-item small { grid-column: 2; font-family: "JetBrains Mono", Consolas, monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--nx-ink-2); }
+.nx-episode-count { margin: 0.4rem 0 0; font-size: 0.72rem; color: var(--nx-ink-2); }
+.nx-receipt { padding-top: 0.4rem; }
+.nx-receipt h3 { margin: 0.2rem 0 0.7rem; font-size: 1.05rem; font-weight: 500; letter-spacing: -0.01em; }
+.nx-receipt h3 .nx-ordinal { font-size: 0.72rem; vertical-align: 0.15em; margin-right: 0.35rem; border: 1px solid var(--nx-rule); border-radius: var(--nx-radius-sm); padding: 0.05rem 0.3rem; }
+.nx-receipt dd .nx-link { font-size: 0.84rem; color: var(--nx-ink); }
+
+/* --- responsive: world, fact, evidence, action keep priority ---------------- */
+@media (max-height: 780px) {
+  .nx-stage { max-height: min(10.5vh, 76px); }
+  .nx:not([data-workspace="compact"]) .nx-stage { max-height: 60px; }
+  .nx-top { padding-top: 0.35rem; padding-bottom: 0.15rem; }
+  .nx-fact { min-height: 0; padding-top: 0; }
+  .nx-fact h1 { font-size: clamp(1.1rem, 1.9vw, 1.35rem); }
+  .nx-evidence { padding-top: 0.1rem; padding-bottom: 0.15rem; }
+  .nx-proof { min-height: 220px; }
+  .nx-controls { padding-top: 0.2rem; padding-bottom: 0.2rem; }
+  .nx-primary { padding: 0.4rem 1.1rem; }
+  .nx-secondary { padding: 0.4rem 1rem; }
+  .nx-workspace { padding-top: 0.2rem; padding-bottom: 0.25rem; gap: 0.2rem 0.8rem; }
+  .nx-reconciliation { padding-top: 0.14rem; padding-bottom: 0.14rem; }
+  .nx-panel-toggle { padding-top: 0.28rem; padding-bottom: 0.28rem; }
+  .nx-peb-chip { padding-top: 0.1rem; padding-bottom: 0.1rem; }
+}
+@media (max-width: 900px) {
+  .nx-workspace { grid-template-columns: 1fr; grid-template-areas: "reconciliation" "dossier"; }
+  .nx-tier { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .nx { height: auto; min-height: 100vh; grid-template-rows: auto auto auto minmax(280px, auto) auto auto; }
+  .nx-top, .nx-fact, .nx-evidence, .nx-controls, .nx-workspace { padding-left: 1rem; padding-right: 1rem; }
+  .nx-fact h1 { font-size: clamp(1.5rem, 7vw, 2.3rem); }
+  .nx-controls { grid-template-columns: 1fr; }
+  .nx-branch-label { font-size: 0.6rem; letter-spacing: 0.06em; }
+  .nx-bead-caption { display: none; }
+  .nx-panel-toggle { grid-template-columns: 1fr auto; }
+  .nx-panel-line { grid-column: 1 / -1; white-space: normal; }
+  .nx-link-chip small { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nx *, .nx *::before, .nx *::after { animation: none !important; transition: none !important; }
+  .is-pulsing .nx-pulse { opacity: 0.6; }
+}
+
+/* Cross-surface navigation; canonical NX state colours remain unchanged. */
+.nx-surface-link { font-size: 13px; padding: 7px 12px; border: 1px solid var(--nx-rule); border-radius: 999px; text-decoration: none; }
+.nx-surface-link:hover { background: rgba(22, 23, 27, 0.045); }
+.nx-fact .boundary-key { margin-block: 4px; }
+.nx-width-note { display: none; }
+@media (max-width: 959px) {
+  .nx-width-note { display: block; font-size: 12px; padding: 8px 16px; }
+  .nx-top { flex-wrap: wrap; }
+  .nx-evidence { overflow-x: auto; }
+}
+
+@media (max-width: 959px) { .nx-evidence > .nx-proof { min-width: 960px; } }
+
+/* PEB presentation: layered artifact. State remains engine-owned. */
+.nx-peb-glyph { display: block; flex: 0 0 auto; width: 24px; height: 29px; color: currentColor; }
+.nx-peb-chip { border-radius: 2px; padding: .3rem .65rem .3rem .35rem; min-height: 38px; box-shadow: 2px 2px 0 var(--nx-mineral); gap: .55rem; }
+.nx-peb-chip .nx-peb-glyph { width: 22px; height: 26px; }
+.nx-object-peb { border-radius: 2px; padding: .65rem; border-left: 4px solid var(--nx-ink); }
+.nx-peb-artifact { display: flex; align-items: flex-start; gap: 20px; padding: 20px; margin: 10px 8px 20px 0; border: 1px solid var(--nx-rule); border-left: 6px solid var(--nx-ink); background: var(--nx-paper); box-shadow: 4px 4px 0 var(--nx-porcelain), 5px 5px 0 var(--nx-mineral); }
+.nx-peb-artifact > .nx-peb-glyph { width: 42px; height: 50px; }
+.nx-peb-artifact__cover { min-width: 0; flex: 1; }
+.nx-peb-artifact__cover h3 { margin: .5rem 0 .7rem; font-size: 1.1rem; line-height: 1.2; }
+.nx-peb-artifact__cover > code { display: block; font-size: .61rem; overflow-wrap: anywhere; color: var(--nx-ink-2); }
+.nx-peb-artifact__contents { display: flex; flex-wrap: wrap; gap: 20px; border-top: 1px solid var(--nx-rule); margin-top: 15px; padding-top: 12px; }
+.nx-peb-artifact__contents > span { display: grid; gap: 4px; font-size: .61rem; color: var(--nx-ink-2); }
+.nx-peb-artifact__contents b { font: 1.1rem "JetBrains Mono", monospace; color: var(--nx-ink); }
+
+/* FS-R2 object continuity and explicit submission surface. Canonical tokens remain above. */
+.nx-peb-glyph .evidence-object { width: 100%; min-width: 0; flex-basis: auto; }
+.nx-peb-chip .nx-peb-glyph { width: 44px; height: 33px; }
+.nx-peb-chip { border-radius: 3px; }
+.nx-peb-artifact { display: grid; grid-template-columns: minmax(170px, .65fr) minmax(0, 1fr); align-items: center; gap: 20px; border: 1px solid var(--nx-rule); border-left: 3px solid var(--nx-ink); box-shadow: none; padding: 8px 22px 8px 4px; }
+.nx-peb-artifact > .evidence-object { max-width: 330px; }
+.nx-peb-artifact__cover h3 { font-size: 1.25rem; letter-spacing: -.025em; }
+.nx-handoff-gate { border: 1px solid var(--nx-ink); background: var(--nx-paper); padding: 14px 18px; display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; margin-top: 10px; }
+.nx-handoff-gate__actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.nx-handoff-status { color: var(--nx-ink-2); font-size: .75rem; line-height: 1.5; }
+.nx-handoff-gate h2 { margin: 0; font-size: .95rem; }
+.nx-handoff-gate[data-over="true"] { outline: 2px solid var(--nx-accent); outline-offset: 3px; }
+@media (max-width: 720px) { .nx-peb-artifact { grid-template-columns: 1fr; padding: 12px 18px; } .nx-peb-artifact > .evidence-object { max-width: 280px; justify-self: center; } }
+
+/* An explicit handoff row must not squeeze the mission world or fact into overlap. */
+.nx:has(> .nx-handoff-gate:not([hidden])) { height: auto; min-height: 100vh; grid-template-rows: auto auto auto minmax(260px, 1fr) auto auto auto; }
+.nx:has(> .nx-handoff-gate:not([hidden])) > .nx-world { min-height: 112px; }
+.nx:has(> .nx-handoff-gate:not([hidden])) > .nx-fact { min-height: min-content; }
+.nx-handoff-gate__actions .nx-act { border-radius: 3px; gap: 8px; }
+
+/* Read-only Demo proof workspace; independent verification remains in its own tab. */
+.nx:has(> .nx-demo-inspection) { height: auto; min-height: 100vh; grid-template-rows: auto auto auto minmax(260px, 1fr) auto auto; }
+.nx:has(> .nx-demo-inspection) > .nx-world { min-height: 112px; }
+.nx:has(> .nx-demo-inspection) > .nx-fact { min-height: min-content; }
+.nx-demo-inspection { margin: 24px 32px 32px; padding: 24px; border: 1px solid var(--nx-mineral-2); border-top: 3px solid var(--nx-ink); background: var(--nx-paper); min-width: 0; scroll-margin-top: 16px; }
+.nx-demo-inspection__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+.nx-demo-inspection__head h2 { margin: 0 0 10px; font-size: 23px; letter-spacing: -.025em; }
+.nx-demo-inspection__head p { font-size: 13px; line-height: 1.6; color: var(--nx-ink-2); max-width: 85ch; }
+.nx-demo-inspection .nx-vs-canvas { overflow-x: auto; }
+.nx-demo-inspection .nx-vs-canvas .g2-canvas { min-width: 960px; }
+.nx-demo-inspection .nx-act, .nx-top > .nx-act { border-radius: 3px; gap: 8px; }
+@media (max-width: 760px) { .nx-demo-inspection { margin: 16px; padding: 16px; } .nx-demo-inspection__head { flex-wrap: wrap; } }
+.nx-handoff-gate[hidden] { display: none; }
+
+/* The same exact artifact remains visibly held across the tab boundary. */
+.nx-held-identity { display: grid; gap: 5px; margin: 12px 0 0; font-size: .7rem; }
+.nx-held-identity > div { display: grid; grid-template-columns: 145px minmax(0, 1fr); gap: 12px; }
+.nx-held-identity dt { color: var(--nx-ink-2); }
+.nx-held-identity dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.nx-held-identity code { font-size: .66rem; }
+.nx-handoff-gate > div:first-child { min-width: 0; flex: 1 1 540px; }
+.nx-handoff-gate__actions > .nx-act:first-child { color: var(--nx-accent-ink); background: var(--nx-accent); border-color: var(--nx-accent); }
+@media (max-width: 720px) { .nx-held-identity > div { grid-template-columns: 1fr; gap: 3px; } }

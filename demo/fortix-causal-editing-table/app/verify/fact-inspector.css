@@ -1,0 +1,50 @@
+/* Shared fact inspector. Doubled class: it is hosted by panels whose own
+   dl/dt/dd/p/section rules have single-class specificity and may load later. */
+.fact-inspector.fact-inspector { display: grid; gap: 12px; min-width: 0; color: #172033; }
+.fact-inspector.fact-inspector > * { min-width: 0; margin: 0; }
+.fact-inspector.fact-inspector .fact-inspector-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.fact-inspector.fact-inspector .fact-inspector-kicker { margin: 0 0 4px; color: #526170; font-size: 11px; font-weight: 700; letter-spacing: .06em; line-height: 1.4; text-transform: uppercase; }
+.fact-inspector.fact-inspector .fact-inspector-head h1,
+.fact-inspector.fact-inspector .fact-inspector-head h2,
+.fact-inspector.fact-inspector .fact-inspector-head h3 { margin: 0; color: #172033; font-size: 20px; font-weight: 650; letter-spacing: -.01em; line-height: 1.3; overflow-wrap: anywhere; }
+.fact-inspector.fact-inspector .fact-inspector-head h1 { font-size: clamp(1.5rem, 3.4vw, 2.2rem); line-height: 1.2; }
+.fact-inspector.fact-inspector .fact-inspector-close { flex: 0 0 auto; min-height: 36px; padding: 6px 10px; font-size: 12px; }
+.fact-inspector.fact-inspector .fact-provenance { margin: 0; font-size: 13px; }
+.fact-inspector.fact-inspector .fact-provenance p { margin: 2px 0; font-size: 13px; line-height: 1.5; }
+.fact-inspector.fact-inspector .fact-provenance details summary { min-height: 32px; color: #173d66; font-size: 12px; }
+.fact-inspector.fact-inspector > .network-fact.network-fact { margin: 0; border-top: 0; border-right: 0; border-bottom: 0; }
+.fact-inspector.fact-inspector .network-fact-subtitle { margin: 0 0 8px; font-size: 14px; line-height: 1.45; }
+.fact-inspector.fact-inspector .fact-inspector-facts { display: grid; gap: 7px; margin: 0; padding: 10px 0 0; border-top: 1px solid #e5e9f0; }
+.fact-inspector.fact-inspector .fact-inspector-facts > div { display: grid; grid-template-columns: minmax(96px, 30%) minmax(0, 1fr); gap: 10px; margin: 0; padding: 0; border: 0; background: transparent; }
+.fact-inspector.fact-inspector .fact-inspector-facts dt { margin: 0; color: #526170; font-size: 12px; font-weight: 400; letter-spacing: 0; text-transform: none; }
+.fact-inspector.fact-inspector .fact-inspector-facts dd { margin: 0; color: #172033; font-size: 13px; font-weight: 400; line-height: 1.45; overflow-wrap: anywhere; }
+.fact-inspector.fact-inspector .fact-inspector-facts dd small { display: block; margin-top: 1px; color: #526170; font-size: 12px; }
+.fact-inspector.fact-inspector .fact-inspector-facts ul { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.fact-inspector.fact-inspector .fact-inspector-facts dd li { margin: 0; font-size: 13px; line-height: 1.45; }
+.fact-inspector.fact-inspector .fact-inspector-link { display: inline; min-height: 0; margin: 0; padding: 0; border: 0; background: none; color: #173d66; font: inherit; text-align: left; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.fact-inspector.fact-inspector .fact-inspector-none { color: #6b7685; }
+.fact-inspector.fact-inspector .fact-inspector-limits { padding: 8px 10px; border-left: 3px solid #b7791f; background: #fdf8ee; }
+.fact-inspector.fact-inspector .fact-inspector-limits ul { margin: 0; padding-left: 18px; }
+.fact-inspector.fact-inspector .fact-inspector-limits ul li { margin: 2px 0; font-size: 13px; line-height: 1.45; }
+.fact-inspector.fact-inspector .fact-inspector-actions { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding-top: 10px; border-top: 1px solid #e5e9f0; }
+.fact-inspector.fact-inspector .fact-inspector-actions a,
+.fact-inspector.fact-inspector .fact-inspector-actions button { display: inline-flex; align-items: center; min-height: 36px; margin: 0; padding: 0; border: 0; background: none; color: #173d66; font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.fact-inspector.fact-inspector .fact-inspector-actions .fact-inspector-primary { padding: 7px 12px; border: 1px solid #2146b6; border-radius: 6px; background: #2146b6; color: #fff; text-decoration: none; }
+.fact-inspector.fact-inspector .fact-inspector-actions .fact-inspector-new-tab { font-weight: 400; }
+
+/* Full-page reading (Event, Path) and Network view: a light card, never inside a dark hero. */
+.modular-event-inspector.fact-inspector, .network-view > .fact-inspector { padding: 18px 20px; border: 1px solid #dfe5ee; border-top: 3px solid #2146b6; border-radius: 8px; background: #fff; }
+.guided-story-view > .fact-inspector { margin: 1.25rem 0; }
+.guided-story-view > .fact-inspector .fact-inspector-head h1 { max-width: 32ch; }
+.modular-event-toolbar { display: flex; justify-content: flex-end; margin: 0 0 8px; }
+
+@media (max-width: 760px) {
+  /* On a phone the selected fact is read right below the timeline, not after the whole journey. */
+  .guided-reading-layout[data-has-selection=true] { display: flex; flex-direction: column; }
+  .guided-reading-layout > .fact-inspector { order: -1; margin: 0 0 14px; }
+}
+@media (max-width: 600px) {
+  .fact-inspector.fact-inspector .fact-inspector-facts > div { grid-template-columns: minmax(0, 1fr); gap: 1px; }
+  .fact-inspector.fact-inspector .fact-inspector-actions { gap: 4px 12px; }
+  .modular-event-inspector.fact-inspector, .network-view > .fact-inspector { padding: 14px; }
+}

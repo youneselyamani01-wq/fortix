@@ -1,0 +1,9 @@
+.boundary-key { font-family: Inter, system-ui, sans-serif; color: var(--nx-ink-2, var(--ink-soft)); font-size: 12px; line-height: 1.5; margin-block: 12px; }
+.boundary-key summary { cursor: pointer; width: fit-content; min-height: 24px; }
+.boundary-key ul { display: flex; flex-wrap: wrap; gap: 12px 24px; list-style: none; padding: 8px 0; margin: 0; }
+.boundary-key li { display: flex; align-items: center; gap: 8px; }
+.boundary-key i { display: inline-block; flex: none; color: var(--nx-ink, var(--ink)); }
+.boundary-key__zone { width: 24px; height: 18px; border: 1px solid currentColor; border-radius: 3px; }
+.boundary-key__edge { width: 24px; border-top: 1px solid currentColor; }
+.boundary-key__bead { width: 10px; height: 10px; border: 1px solid currentColor; border-radius: 50%; }
+.boundary-key p { max-width: 90ch; margin: 0; }
