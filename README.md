@@ -4,6 +4,8 @@ Status: CURRENT.
 
 ## English Version
 
+**Official website:** https://fortix.cloud
+
 FortiX packages evidence of a digital action so another party can verify it from the received bytes, without access to the producing systems.
 
 **FortiX does not orchestrate. FortiX verifies.**
@@ -73,6 +75,8 @@ Local installation and testing commands describe technical reproduction. They do
 - [License](LICENSE) and [security reporting](SECURITY.md).
 
 ## Version Française
+
+**Site officiel :** https://fortix.cloud
 
 FortiX rassemble les preuves d’une action numérique pour qu’un tiers les vérifie depuis les octets reçus, sans accès aux systèmes producteurs. **FortiX n’orchestre pas. FortiX vérifie.**
 
