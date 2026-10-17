@@ -14,6 +14,7 @@ import { Standards } from "../components/sections/Standards";
 import { OpenVerification } from "../components/sections/OpenVerification";
 import { FinalStatement } from "../components/sections/FinalStatement";
 import { PilotSpace } from "../components/sections/PilotSpace";
+import { D006Teaser } from "../components/teaser/D006Teaser";
 import { Footer } from "../components/footer/Footer";
 
 export function App() {
@@ -28,6 +29,7 @@ export function App() {
       <Navigation />
       <main id="main-content">
         <Hero />
+        <D006Teaser />
         <ControlGap />
         <IndependentByDesign />
         <HowItWorks />
