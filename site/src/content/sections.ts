@@ -15,6 +15,7 @@ export const SECTION_IDS = {
   architecture: "architecture",
   standards: "standards",
   openVerification: "open-verification",
+  pilot: "pilot-space",
   finalStatement: "final-statement",
 } as const;
 
