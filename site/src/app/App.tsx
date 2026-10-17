@@ -13,6 +13,7 @@ import { Architecture } from "../components/architecture/Architecture";
 import { Standards } from "../components/sections/Standards";
 import { OpenVerification } from "../components/sections/OpenVerification";
 import { FinalStatement } from "../components/sections/FinalStatement";
+import { PilotSpace } from "../components/sections/PilotSpace";
 import { Footer } from "../components/footer/Footer";
 
 export function App() {
@@ -37,6 +38,7 @@ export function App() {
         <Architecture />
         <Standards />
         <OpenVerification />
+        <PilotSpace />
         <FinalStatement />
       </main>
       <Footer />
