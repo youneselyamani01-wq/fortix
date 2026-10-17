@@ -47,6 +47,7 @@ export function Navigation() {
               {t.nav[key]}
             </button>
           ))}
+          <button type="button" className="nav__link" onClick={() => handleNavigate("pilot-space")}>{t.nav.pilot}</button>
           <a
             className="nav__link"
             href={DEMO_URL}
@@ -99,6 +100,7 @@ export function Navigation() {
               {t.nav[key]}
             </button>
           ))}
+          <button type="button" onClick={() => handleNavigate("pilot-space")}>{t.nav.pilot}</button>
           <a href={DEMO_URL} target="_blank" rel="noopener noreferrer">
             {t.nav.demo}
           </a>
