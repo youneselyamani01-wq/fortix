@@ -296,6 +296,17 @@ export const en: Dictionary = {
     ],
   },
 
+  teaser: {
+    kicker: "D-006 · Simulated illustration",
+    title: "One journey. Evidence that travels.",
+    body: "An animated preview of the autonomous taxi. Explore the mission and its evidence in the demo.",
+    cta: "Explore the demo",
+    play: "Play animation",
+    pause: "Pause animation",
+    close: "Dismiss preview",
+    sceneDescription: "Simulated illustration: a taxi drives, stops at a signal, then moves again. An NR symbol represents NanoReceipts.",
+  },
+
   pilot: {
     kicker: "PILOT SPACE · OPEN TO CONVERSATIONS",
     title: "Bring us a case worth verifying.",
