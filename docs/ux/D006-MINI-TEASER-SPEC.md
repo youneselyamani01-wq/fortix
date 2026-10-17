@@ -1,5 +1,5 @@
 # FORTIX WEB — D-006 MINIATURE TEASER
-Status: UX/UI implementation brief — proposed, **not implemented or tested**
+Status: Illustrated React/CSS prototype committed on feature branch — **not built, browser-tested or deployed**
 Date: 2026-10-17
 Scope: `site/` homepage. Canonical mission remains `/nx`, independent verifier `/verify`.
 Branch: `work/public-verification-path-20261017`
@@ -88,3 +88,10 @@ No second D-006 engine, no embedded verifier, no evidence export from the teaser
 
 ## Open implementation dependency
 An **approved D-006 media clip and poster do not yet exist in this work item**. Produce them only from verified/sanitized demo visuals; use a poster-only variant in staging until that gate is satisfied.
+
+## 9. Prototype implementation (17 October 2026)
+A lightweight React + CSS/SVG teaser was created in `site/src/components/teaser/` and mounted after the homepage hero. This is an **illustrative animation**, not footage recorded from `/nx`, and it is not a sampled replay of the canonical engine. The car is intentionally stylized, per owner acceptance that its silhouette need not match the main website. The simulated label is always visible. The NR glyph is generic; no real receipt count, ID, hash, signed evidence or verifier verdict is claimed by the teaser. The separate public PEB and independent verifier remain the paths for inspecting actual evidence.
+
+This implementation replaces the preferred-MP4 **medium** for the initial iteration, reducing dependencies, size and the risk of releasing machine capture data. The 12-second loop illustrates motion → stop → restart; the exact canonical event timeline is **not** replayed. Real mission data, if needed, must still be inspected in `/nx`.
+
+React tests are added to cover controls, route, locale and reduced-motion behavior. These tests and the site build **have not been executed** by this GitHub edit session; run the release gates and browser staging checks before merge. The component is not yet publicly deployed.
