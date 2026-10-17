@@ -296,6 +296,17 @@ export const fr: Dictionary = {
     ],
   },
 
+  teaser: {
+    kicker: "D-006 · Illustration simulée",
+    title: "Un trajet. Des preuves.",
+    body: "Un aperçu animé du taxi autonome. Explorez la mission et les preuves dans la démo.",
+    cta: "Explorer la démo",
+    play: "Lire l’animation",
+    pause: "Mettre l’animation en pause",
+    close: "Fermer l’aperçu",
+    sceneDescription: "Illustration simulée : un taxi avance, s’arrête à un feu, puis reprend sa route. Un symbole NR représente les NanoReceipts.",
+  },
+
   pilot: {
     kicker: "ESPACE PILOTE · ÉCHANGES OUVERTS",
     title: "Votre cas d’usage mérite d’être examiné.",
