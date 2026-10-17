@@ -21,7 +21,8 @@ export function D006Teaser() {
   const [paused, setPaused] = useState(false);
   const [explicitPlay, setExplicitPlay] = useState(false);
   const [inView, setInView] = useState(true);
-  const [pageVisible, setPageVisible] = useState(() => document.visibilityState !== "hidden");
+  const [criticalSectionVisible, setCriticalSectionVisible] = useState(false);
+  const [pageVisible, setPageVisible] = useState(() => typeof document === "undefined" || document.visibilityState !== "hidden");
 
   useEffect(() => {
     const sync = () => setPageVisible(document.visibilityState !== "hidden");
@@ -39,9 +40,24 @@ export function D006Teaser() {
     return () => observer.disconnect();
   }, [dismissed]);
 
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const targets = ["peb-intake", "open-verification", "pilot-space"]
+      .map(id => document.getElementById(id))
+      .filter((node): node is HTMLElement => node !== null);
+    if (targets.length === 0) return;
+    const current = new Map<Element, boolean>();
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) current.set(entry.target, entry.isIntersecting);
+      setCriticalSectionVisible([...current.values()].some(Boolean));
+    }, { threshold: 0.1 });
+    targets.forEach(node => observer.observe(node));
+    return () => observer.disconnect();
+  }, []);
+
   if (dismissed) return null;
 
-  const playing = !paused && (explicitPlay || !reducedMotion) && inView && pageVisible;
+  const playing = !paused && (explicitPlay || !reducedMotion) && inView && pageVisible && !criticalSectionVisible;
   const close = () => {
     try { window.sessionStorage.setItem(DISMISSED_KEY, "1"); } catch { /* storage may be unavailable */ }
     setDismissed(true);
@@ -58,6 +74,7 @@ export function D006Teaser() {
       aria-labelledby="d006-teaser-title"
       data-playing={playing ? "true" : "false"}
       data-simulated="true"
+      data-critical-visible={criticalSectionVisible ? "true" : "false"}
     >
       <div className="d006-teaser__top">
         <span className="d006-teaser__eyebrow">{t.teaser.kicker}</span>
