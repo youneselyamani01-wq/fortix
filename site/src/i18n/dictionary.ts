@@ -199,6 +199,17 @@ export interface Dictionary {
     }[];
   };
 
+  teaser: {
+    kicker: string;
+    title: string;
+    body: string;
+    cta: string;
+    play: string;
+    pause: string;
+    close: string;
+    sceneDescription: string;
+  };
+
   pilot: {
     kicker: string;
     title: string;
