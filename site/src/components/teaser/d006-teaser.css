@@ -36,20 +36,27 @@
   text-decoration: none;
 }
 .d006-teaser__cta:hover { text-decoration: underline; }
-.d006-teaser__taxi { transform: translateX(0); }
-.d006-teaser__receipt { opacity: 0; transform: translateY(7px); }
-.d006-teaser__lamp-red, .d006-teaser__lamp-green { opacity: .35; }
-.d006-teaser[data-playing="true"] .d006-teaser__taxi {
+.d006-teaser__taxi {
   animation: d006-teaser-taxi 12s linear infinite both;
+  animation-play-state: paused;
 }
-.d006-teaser[data-playing="true"] .d006-teaser__receipt {
+.d006-teaser__receipt {
   animation: d006-teaser-receipt 12s ease-in-out infinite both;
+  animation-play-state: paused;
 }
-.d006-teaser[data-playing="true"] .d006-teaser__lamp-red {
+.d006-teaser__lamp-red {
   animation: d006-teaser-red 12s linear infinite both;
+  animation-play-state: paused;
 }
-.d006-teaser[data-playing="true"] .d006-teaser__lamp-green {
+.d006-teaser__lamp-green {
   animation: d006-teaser-green 12s linear infinite both;
+  animation-play-state: paused;
+}
+.d006-teaser[data-playing="true"] .d006-teaser__taxi,
+.d006-teaser[data-playing="true"] .d006-teaser__receipt,
+.d006-teaser[data-playing="true"] .d006-teaser__lamp-red,
+.d006-teaser[data-playing="true"] .d006-teaser__lamp-green {
+  animation-play-state: running;
 }
 @keyframes d006-teaser-taxi {
   0% { transform: translateX(-25px); }
@@ -77,4 +84,12 @@
 @media (max-width: 767px) {
   .d006-teaser { margin-block: 0 30px; }
   .d006-teaser__scene { aspect-ratio: 2 / 1; }
+}
+
+@media (min-width: 1200px) {
+  .d006-teaser[data-critical-visible="true"] {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
 }
