@@ -17,6 +17,7 @@ export const fr: Dictionary = {
     architecture: "Architecture",
     demo: "Démonstration",
     docs: "Documentation",
+    pilot: "Espace pilote",
     languageLabel: "Langue",
     themeLabel: "Basculer entre les thèmes clair et sombre",
     openMenu: "Ouvrir le menu de navigation",
@@ -293,6 +294,22 @@ export const fr: Dictionary = {
       { label: "ADR Core (Python)", status: "available", body: "L’implémentation Python exerce les 15 vecteurs normatifs figés. ADR est le socle à reçu unitaire." },
       { label: "Vérificateur indépendant D-006", status: "demonstrative", body: "Recalcule depuis les octets du PEB reçu. Une preuve authentique de démonstration reste INDETERMINATE ; aucun verdict VALID de production n’est revendiqué." },
     ],
+  },
+
+  pilot: {
+    kicker: "ESPACE PILOTE · ÉCHANGES OUVERTS",
+    title: "Votre cas d’usage mérite d’être examiné.",
+    body: "Vous développez des agents IA, opérez des systèmes numériques ou devez examiner des actions contestées ? FortiX est ouvert aux propositions de pilotes, d’évaluations techniques et de collaborations. Présentez-nous le problème à vérifier ; nous étudierons ensemble ce que les preuves permettent réellement d’établir.",
+    cta: "Présenter une proposition",
+    note: "Première prise de contact par e-mail. Aucun programme de partenariat, engagement ni délai de réponse n’est annoncé. Ne transmettez pas de données sensibles dans votre premier message.",
+    examplesTitle: "Quelques terrains d’exploration",
+    examples: [
+      "Actions d’agents IA et délégations d’autorité.",
+      "Paiements, approbations et responsabilités entre parties.",
+      "Exécution logicielle, sécurité et changements de contexte.",
+      "Vérification indépendante et échange de preuves entre organisations.",
+    ],
+    outro: "Ces exemples ne limitent pas le périmètre des propositions. FortiX vérifie les preuves ; il ne pilote pas les systèmes qui agissent.",
   },
 
   finalStatement: {
