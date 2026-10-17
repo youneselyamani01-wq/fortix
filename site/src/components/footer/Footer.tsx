@@ -32,6 +32,7 @@ export function Footer() {
                 {t.footer.verifierLink}
               </button>
             </li>
+            <li><button type="button" onClick={() => scrollToId(SECTION_IDS.pilot)}>{t.nav.pilot}</button></li>
             <li>
               {DOCS_URL ? (
                 <a href={DOCS_URL} target="_blank" rel="noopener noreferrer">
