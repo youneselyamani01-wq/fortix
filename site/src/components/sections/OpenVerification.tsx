@@ -64,7 +64,7 @@ export function OpenVerification() {
             <a className="button button--ghost" href="https://github.com/youneselyamani01-wq/fortix/issues/2" target="_blank" rel="noopener noreferrer">
               {locale === "fr" ? "Empreinte et identité attendues" : "Expected digest and identity"}
             </a>
-            <a className="button button--ghost" href="https://github.com/youneselyamani01-wq/fortix/blob/main/docs/evidence/D006-PUBLIC-REFERENCE.md" target="_blank" rel="noopener noreferrer">
+            <a className="button button--ghost" href="https://github.com/youneselyamani01-wq/fortix/blob/727dc6844da69938079c37457e63a29f4e7a0e20/docs/evidence/D006-PUBLIC-REFERENCE.md" target="_blank" rel="noopener noreferrer">
               {locale === "fr" ? "Portée et guide de vérification" : "Verification guide and limits"}
             </a>
           </div>
