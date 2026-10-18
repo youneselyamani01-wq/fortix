@@ -123,8 +123,10 @@ export type MissionEngine = Readonly<{
    * say which one a viewer is at.
    */
   presentationTimeMs: number;
-  /** A fresh CONNECTED baseline must be observed once before starting this run. */
+  /** True only when a fresh physical CONNECTED baseline is actually admitted. */
   networkBaselineReady: boolean;
+  /** Read-only public simulation never claims physical observation. */
+  experienceMode: "PUBLIC_SIMULATION" | "PHYSICAL_SENTINEL";
   activeConnectivityMedium: ConnectivityMedium | null;
   connectivityPaths: readonly ConnectivityObservation[];
   physicalAdapterBinding: PhysicalAdapterBinding | null;
@@ -158,6 +160,8 @@ export type MissionEngine = Readonly<{
 }>;
 
 export type MissionEngineOptions = Readonly<{
+  /** Explicit boundary between a playable public simulation and a real local physical test. */
+  experienceMode?: "PUBLIC_SIMULATION" | "PHYSICAL_SENTINEL";
   /**
    * Review deep link: the reviewer's own authority decision, declared in the
    * link (`?decision=approved`) so a review can open past the boundary. The
@@ -199,6 +203,8 @@ export { journalAt } from "./missionJournal.ts";
 import { journalAt } from "./missionJournal.ts";
 
 export function useMissionEngine(initialMasterTimeMs = 0, options: MissionEngineOptions = {}): MissionEngine {
+  const experienceMode = options.experienceMode ?? "PHYSICAL_SENTINEL";
+  const publicSimulation = experienceMode === "PUBLIC_SIMULATION";
   const initialDecision: HumanDecision = options.decision ?? "PENDING";
   const initialTime = constrainReviewTime(initialMasterTimeMs, "INTERACTIVE", initialDecision);
   const [liveSession, setLiveSession] = useState<OfflineEvidenceSession>(() => journalAt(createOfflineEvidenceSession(UNRESOLVED_RUN_ID, null, MISSION_ID), initialTime));
@@ -330,12 +336,12 @@ export function useMissionEngine(initialMasterTimeMs = 0, options: MissionEngine
   }, [humanDecision, playing]);
 
   const play = useCallback(() => {
-    if (!physicalBaseline.current.ready || masterTimeRef.current >= EXPERIENCE_DURATION_MS) return;
+    if ((!publicSimulation && !physicalBaseline.current.ready) || masterTimeRef.current >= EXPERIENCE_DURATION_MS) return;
     setPlaying(true);
-  }, []);
+  }, [publicSimulation]);
   const pause = useCallback(() => setPlaying(false), []);
   const seek = useCallback((value: number) => {
-    if (!physicalBaseline.current.ready) return;
+    if (!publicSimulation && !physicalBaseline.current.ready) return;
     const constrained = constrainReviewTime(value, "INTERACTIVE", humanDecision);
     setPlaying(false);
     masterTimeRef.current = constrained;
@@ -344,7 +350,7 @@ export function useMissionEngine(initialMasterTimeMs = 0, options: MissionEngine
     const reached = journalAt(liveSessionRef.current, constrained);
     liveSessionRef.current = reached;
     setLiveSession(reached);
-  }, [humanDecision]);
+  }, [humanDecision, publicSimulation]);
   const restart = useCallback(() => {
     previousActiveMedium.current = null;
     setAdapterBinding(null);
@@ -416,7 +422,7 @@ export function useMissionEngine(initialMasterTimeMs = 0, options: MissionEngine
   const waitingForAuthority = humanDecision === "PENDING" && effectiveStoryTime === HUMAN_AUTHORITY_GATE_MS;
 
   const decide = useCallback((decision: Exclude<HumanDecision, "PENDING">) => {
-    if (!physicalBaseline.current.ready || !waitingForAuthority) return;
+    if ((!publicSimulation && !physicalBaseline.current.ready) || !waitingForAuthority) return;
     const applied = applyHumanDecision(decision);
     setHumanDecision(applied.decision);
     masterTimeRef.current = applied.masterTime;
@@ -438,7 +444,7 @@ export function useMissionEngine(initialMasterTimeMs = 0, options: MissionEngine
       liveSessionRef.current = denied;
       setLiveSession(denied);
     }
-  }, [waitingForAuthority]);
+  }, [waitingForAuthority, publicSimulation]);
 
   const physical = useMemo(() => derivePhysicalState(masterTime, routingExecutionAuthorized), [masterTime, routingExecutionAuthorized]);
   const motion = useMemo(() => derivePresentationMotion(masterTime, routingExecutionAuthorized), [masterTime, routingExecutionAuthorized]);
@@ -586,6 +592,8 @@ export function useMissionEngine(initialMasterTimeMs = 0, options: MissionEngine
   // sample goes through the shared runtime, which asks the engine's machine
   // and appends the engine's record — or rolls back and reports a refusal.
   useEffect(() => {
+    // Public simulation must NEVER call the sentinel nor mint physical network NanoReceipts.
+    if (publicSimulation) return;
     const runId = liveSession.runId;
     if (runId === UNRESOLVED_RUN_ID) return;
     const generation = lifecycleGeneration.current;
@@ -681,7 +689,7 @@ export function useMissionEngine(initialMasterTimeMs = 0, options: MissionEngine
       if (activeLinkRead.current === activeController) activeLinkRead.current = null;
       if (transitionFlashTimer.current !== null) { clearTimeout(transitionFlashTimer.current); transitionFlashTimer.current = null; }
     };
-  }, [readSentinel, liveSession.runId]);
+  }, [readSentinel, liveSession.runId, publicSimulation]);
 
   const linkPhase = networkBaselineReady ? visibleLinkPhase(linkReport, networkState, linkObservationCurrent) : baselinePhysicalLink;
   const reconciliationWindowKey = awaitingReconciliationWindowKey(session);
@@ -697,7 +705,7 @@ export function useMissionEngine(initialMasterTimeMs = 0, options: MissionEngine
   // artifact exists yet, so nothing is acknowledged and the phase ends at
   // RECONCILED, never ACKNOWLEDGED.
   useEffect(() => {
-    if (linkPhase !== "CONNECTED" || reconciliationWindowKey === null) return;
+    if (publicSimulation || linkPhase !== "CONNECTED" || reconciliationWindowKey === null) return;
     if (reconciliationStartedRef.current) return;
     reconciliationStartedRef.current = true;
     let cancelled = false;
@@ -773,7 +781,7 @@ export function useMissionEngine(initialMasterTimeMs = 0, options: MissionEngine
       // must be eligible again when the same restoration becomes current.
       if (!attemptFinished) reconciliationStartedRef.current = false;
     };
-  }, [linkPhase, reconciliationWindowKey, session.runId]);
+  }, [linkPhase, reconciliationWindowKey, session.runId, publicSimulation]);
 
   const snapshot = useMemo<EngineSnapshot>(() => ({
     masterTimeMs: masterTime,
@@ -808,7 +816,7 @@ export function useMissionEngine(initialMasterTimeMs = 0, options: MissionEngine
   }), [baseTransfer, closure, closureState.reason, effectiveAnalysisRequested, effectiveStoryTime, effectiveTransferStage, finalReceipt, handoffArtifact, handoffNetworkState, humanDecision, linkObservationCurrent, linkPhase, linkReport.sentinel, masterTime, motion, networkState, passenger, physical, playing, portablePeb, receiptBindings, reconciliation, routing, session, syncPhase, transitionFlash, unsequencedObservation, verdictNetworkState, verification]);
 
   return useMemo(
-    () => ({ snapshot, presentationTimeMs: presentationTime, networkBaselineReady, activeConnectivityMedium: connectivity.activeMedium, connectivityPaths: connectivity.observations, physicalAdapterBinding: adapterBinding, play, pause, seek, restart, decide, pick, drop, release, analyze }),
-    [adapterBinding, analyze, connectivity.activeMedium, connectivity.observations, decide, drop, networkBaselineReady, pause, pick, play, presentationTime, release, restart, seek, snapshot],
+    () => ({ snapshot, presentationTimeMs: presentationTime, networkBaselineReady, experienceMode, activeConnectivityMedium: connectivity.activeMedium, connectivityPaths: connectivity.observations, physicalAdapterBinding: adapterBinding, play, pause, seek, restart, decide, pick, drop, release, analyze }),
+    [adapterBinding, analyze, connectivity.activeMedium, connectivity.observations, decide, drop, experienceMode, networkBaselineReady, pause, pick, play, presentationTime, release, restart, seek, snapshot],
   );
 }
