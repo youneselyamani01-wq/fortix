@@ -49,6 +49,7 @@ export const frames = { now: 0, step: 64, delay: 4 };
 const React = (await import("react")).default;
 const { createRoot } = await import("react-dom/client");
 const { useMissionEngine } = await import("../../app/nx/adapter/useMissionEngine.ts");
+type MissionEngineOptions = import("../../app/nx/adapter/useMissionEngine.ts").MissionEngineOptions;
 type MissionEngine = ReturnType<typeof useMissionEngine>;
 
 /** The physical routes the fake sentinel reports. Flip them like a cable. */
@@ -95,10 +96,10 @@ export async function until(predicate: () => boolean, label: string, timeoutMs =
 export type MountedEngine = Readonly<{ engine: () => MissionEngine; unmount: () => void }>;
 
 /** Mounts the hook in StrictMode, the way the /nx page runs it in development. */
-export function mountEngine(initialMasterTimeMs = 0): MountedEngine {
+export function mountEngine(initialMasterTimeMs = 0, options: MissionEngineOptions = {}): MountedEngine {
   let current: MissionEngine | null = null;
   function Probe() {
-    current = useMissionEngine(initialMasterTimeMs, { readSentinel });
+    current = useMissionEngine(initialMasterTimeMs, { readSentinel, ...options });
     return null;
   }
   const root = createRoot(container as unknown as Element);
