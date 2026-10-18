@@ -76,3 +76,61 @@ jobs:
         run: npm run check:links
       - name: Production build
         run: npm run build
+
+  staging-package:
+    name: Assemble staging candidate (no deployment)
+    needs: [public-reference, website]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout exact PR revision
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Node 22.23.2
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22.23.2'
+          cache: npm
+          cache-dependency-path: |
+            site/package-lock.json
+            demo/fortix-causal-editing-table/package-lock.json
+      - name: Install both locked dependency trees
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund --prefix site
+          npm ci --ignore-scripts --no-audit --no-fund --prefix demo/fortix-causal-editing-table
+      - name: Build public static site
+        env:
+          VITE_DEMO_URL: /demo
+          VITE_VERIFIER_URL: /verify
+          VITE_GITHUB_URL: https://github.com/youneselyamani01-wq/fortix
+          VITE_CANONICAL_ORIGIN: https://fortix.cloud
+        run: npm run build --prefix site
+      - name: Build D-006 Worker without deployment
+        run: npm run build --prefix demo/fortix-causal-editing-table
+      - name: Assemble combined static assets and exact staging routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d demo/fortix-causal-editing-table/dist/server
+          test -d demo/fortix-causal-editing-table/dist/client
+          test -f site/dist/index.html
+          mkdir -p demo/fortix-causal-editing-table/dist/client
+          cp -a site/dist/. demo/fortix-causal-editing-table/dist/client/
+          printf '/demo /nx 302\\n/demo/ /nx 302\\n' > demo/fortix-causal-editing-table/dist/client/_redirects
+          test -f demo/fortix-causal-editing-table/dist/client/evidence/d006-reference-peb.json
+          test -f demo/fortix-causal-editing-table/dist/client/index.html
+          if find demo/fortix-causal-editing-table/dist/client -type f \\( -name '.env' -o -name '*.map' -o -name '*secret*' \\) | grep .; then echo 'Unexpected files in public assets'; exit 1; fi
+          (cd demo/fortix-causal-editing-table/dist && find server client -type f -print | LC_ALL=C sort > staging-file-list.txt)
+          printf '{"source_sha":"%s","target_worker":"fortix-launch-staging","production_deployment":false,"build":"site + vinext","release_gate":"manual staging review"}\\n' "$GITHUB_SHA" > demo/fortix-causal-editing-table/dist/STAGING-MANIFEST.json
+          du -sh demo/fortix-causal-editing-table/dist/client demo/fortix-causal-editing-table/dist/server
+      - name: Export exact candidate for staging deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: fortix-staging-candidate
+          path: demo/fortix-causal-editing-table/dist/
+          include-hidden-files: false
+          retention-days: 7
+          if-no-files-found: error
