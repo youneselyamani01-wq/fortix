@@ -212,12 +212,51 @@ jobs:
         if: steps.auth.outputs.enabled == 'true'
         working-directory: demo/fortix-causal-editing-table
         run: node_modules/.bin/wrangler deploy --config dist/server/wrangler.json --name fortix-launch-staging --dry-run
-      - name: Deploy to isolated staging Workers.dev only
+      - name: Upload and deploy version to isolated staging only
         if: steps.auth.outputs.enabled == 'true'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         working-directory: demo/fortix-causal-editing-table
-        run: node_modules/.bin/wrangler deploy --config dist/server/wrangler.json --name fortix-launch-staging
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from "node:fs";
+          import { join } from "node:path";
+          import { spawnSync } from "node:child_process";
+          const worker = "fortix-launch-staging";
+          const api = "https://api.cloudflare.com/client/v4/accounts/" + process.env.CLOUDFLARE_ACCOUNT_ID + "/workers/scripts/" + worker;
+          const headers = { Authorization: "Bearer " + process.env.CLOUDFLARE_API_TOKEN };
+          async function get(path) {
+            const response = await fetch(api + path, { headers });
+            const body = await response.json();
+            if (!response.ok || !body.success) throw Error("Staging API read failed: " + response.status);
+            return body.result;
+          }
+          const before = await get("/deployments");
+          const previousVersion = before.deployments[0]?.versions;
+          if (!previousVersion?.length) throw Error("Missing rollback version");
+          const subdomain = await get("/subdomain");
+          if (!subdomain.enabled || subdomain.previews_enabled) throw Error("Expected existing staging Workers.dev with version previews disabled");
+          const config = JSON.parse(readFileSync("dist/server/wrangler.json", "utf8"));
+          if (config.routes?.length || config.route || config.env || config.triggers?.crons?.length) throw Error("Unexpected staging routing or trigger configuration");
+          const outputFile = join(process.env.RUNNER_TEMP, "fortix-version-upload.ndjson");
+          writeFileSync(outputFile, "");
+          const env = { ...process.env, WRANGLER_OUTPUT_FILE_PATH: outputFile };
+          function wrangler(args) {
+            const result = spawnSync("node_modules/.bin/wrangler", args, { stdio: "inherit", env });
+            if (result.error || result.status !== 0) throw Error("Wrangler command did not complete successfully");
+          }
+          const common = ["--config", "dist/server/wrangler.json", "--name", worker];
+          wrangler(["versions", "upload", ...common, "--message", "Staging CI " + process.env.GITHUB_SHA]);
+          const uploaded = readFileSync(outputFile, "utf8").trim().split("\n").map(line => JSON.parse(line)).filter(row => row.type === "version-upload").at(-1);
+          if (uploaded?.worker_name !== worker || !/^[0-9a-f-]{36}$/.test(uploaded.version_id)) throw Error("Missing exact staging upload identity");
+          wrangler(["versions", "deploy", uploaded.version_id + "@100%", ...common, "--yes", "--message", "Staging CI " + process.env.GITHUB_SHA]);
+          const after = await get("/deployments");
+          const active = after.deployments[0];
+          if (active?.versions?.length !== 1 || active.versions[0].version_id !== uploaded.version_id || active.versions[0].percentage !== 100) throw Error("Cloudflare active deployment does not match upload");
+          const record = { source_sha: process.env.GITHUB_SHA, worker, previous_versions: previousVersion, deployed_version: uploaded.version_id, deployment_id: active.id };
+          writeFileSync(join(process.env.RUNNER_TEMP, "fortix-staging-deployment.json"), JSON.stringify(record, null, 2));
+          console.log("CONFIRMED STAGING DEPLOYMENT", JSON.stringify(record));
+          NODE
       - name: Verify deployed routes and public reference bytes
         if: steps.auth.outputs.enabled == 'true'
         working-directory: demo/fortix-causal-editing-table
