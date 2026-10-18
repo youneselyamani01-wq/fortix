@@ -39,6 +39,8 @@ jobs:
         run: npm run test:d006nx3
       - name: Verify continuity and network transitions
         run: npm run test:network-continuity
+      - name: Full D-006 validation (environment, types, lint, unit, build and rendered)
+        run: npm run validate
 
   website:
     name: Site FR/EN, PEB download and teaser
