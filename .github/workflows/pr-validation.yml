@@ -1,0 +1,280 @@
+name: FortiX PR Verification
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fortix-pr-verify-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  public-reference:
+    name: D-006 pinned PEB & adversarial tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: demo/fortix-causal-editing-table
+    steps:
+      - name: Checkout exact PR revision
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Node 22.23.2
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22.23.2'
+          cache: npm
+          cache-dependency-path: demo/fortix-causal-editing-table/package-lock.json
+      - name: Install demo dependencies without postinstall scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify public PEB and pinned digest
+        run: npm run test:public-reference
+      - name: Verify D-006 independent verifier and adversarial controls
+        run: npm run test:d006nx3
+      - name: Verify continuity and network transitions
+        run: npm run test:network-continuity
+      - name: Install shared site dependencies for D-006 TypeScript imports
+        run: npm ci --ignore-scripts --no-audit --no-fund --prefix ../../site
+      - name: Full D-006 validation (environment, types, lint, unit, build and rendered)
+        run: npm run validate
+
+  website:
+    name: Site FR/EN, PEB download and teaser
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - name: Checkout exact PR revision
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Node 22.23.2
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22.23.2'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Install site dependencies without postinstall scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Type check
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Unit tests
+        run: npm test
+      - name: Verify bilingual parity
+        run: npm run check:i18n
+      - name: Verify internal links
+        run: npm run check:links
+      - name: Production build
+        run: npm run build
+
+  staging-package:
+    name: Assemble staging candidate (no deployment)
+    needs: [public-reference, website]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout exact PR revision
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Node 22.23.2
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22.23.2'
+          cache: npm
+          cache-dependency-path: |
+            site/package-lock.json
+            demo/fortix-causal-editing-table/package-lock.json
+      - name: Install both locked dependency trees
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund --prefix site
+          npm ci --ignore-scripts --no-audit --no-fund --prefix demo/fortix-causal-editing-table
+      - name: Build public static site
+        env:
+          VITE_DEMO_URL: /demo
+          VITE_VERIFIER_URL: /verify
+          VITE_GITHUB_URL: https://github.com/youneselyamani01-wq/fortix
+          VITE_CANONICAL_ORIGIN: https://fortix.cloud
+        run: npm run build --prefix site
+      - name: Build D-006 Worker without deployment
+        run: npm run build --prefix demo/fortix-causal-editing-table
+      - name: Assemble combined static assets and exact staging routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d demo/fortix-causal-editing-table/dist/server
+          test -d demo/fortix-causal-editing-table/dist/client
+          test -f site/dist/index.html
+          mkdir -p demo/fortix-causal-editing-table/dist/client
+          cp -a site/dist/. demo/fortix-causal-editing-table/dist/client/
+          printf '%s\n' '/demo /nx 302' '/demo/ /nx 302' > demo/fortix-causal-editing-table/dist/client/_redirects
+          test -f demo/fortix-causal-editing-table/dist/client/evidence/d006-reference-peb.json
+          test -f demo/fortix-causal-editing-table/dist/client/index.html
+          if find demo/fortix-causal-editing-table/dist/client -type f | grep -E '(^|/)\.env$|\.map$|secret' ; then echo 'Unexpected files in public assets'; exit 1; fi
+          (cd demo/fortix-causal-editing-table/dist && find server client -type f -print | LC_ALL=C sort > staging-file-list.txt)
+          printf '%s\n' "{\"source_sha\":\"$GITHUB_SHA\",\"target_worker\":\"fortix-launch-staging\",\"production_deployment\":false,\"build\":\"site + vinext\",\"release_gate\":\"manual staging review\"}" > demo/fortix-causal-editing-table/dist/STAGING-MANIFEST.json
+          du -sh demo/fortix-causal-editing-table/dist/client demo/fortix-causal-editing-table/dist/server
+      - name: Verify staging target and Wrangler dry-run
+        run: |
+          cd demo/fortix-causal-editing-table
+          node_modules/.bin/wrangler deploy --config dist/server/wrangler.json --name fortix-launch-staging --dry-run
+      - name: Export exact candidate for staging deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: fortix-staging-candidate
+          path: demo/fortix-causal-editing-table/dist/
+          include-hidden-files: false
+          retention-days: 7
+          if-no-files-found: error
+
+  staging-deploy:
+    name: Deploy ONLY fortix-launch-staging
+    needs: [staging-package]
+    # A normal PR commit only validates/packages. A maintainer must manually re-run
+    # this pull_request run after reviewing its exact SHA to authorize staging.
+    if: ${{ github.run_attempt > 1 && github.triggering_actor == github.repository_owner && github.event_name == 'pull_request' && github.event.pull_request.number == 1 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'work/public-verification-path-20261017' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      STAGING_URL: https://fortix-launch-staging.younes-elyamani01.workers.dev
+      CLOUDFLARE_ACCOUNT_ID: f9285891dc1b50628dbffcb58ea1047a
+    steps:
+      - name: Check whether scoped Cloudflare credential is configured
+        id: auth
+        env:
+          STAGING_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          if [ -z "$STAGING_TOKEN" ]; then
+            echo "::error title=STAGING BLOCKED::CLOUDFLARE_API_TOKEN is missing. No deployment occurred."
+            printf '%s\n' '## STAGING — NOT DEPLOYED' 'The scoped GitHub secret CLOUDFLARE_API_TOKEN is missing. The staging Worker was NOT changed.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Checkout exact vetted PR revision
+        if: steps.auth.outputs.enabled == 'true'
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Install Node 22.23.2
+        if: steps.auth.outputs.enabled == 'true'
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22.23.2'
+          cache: npm
+          cache-dependency-path: demo/fortix-causal-editing-table/package-lock.json
+      - name: Install pinned Wrangler dependencies
+        if: steps.auth.outputs.enabled == 'true'
+        run: npm ci --ignore-scripts --no-audit --no-fund --prefix demo/fortix-causal-editing-table
+      - name: Download vetted staging build from this workflow run
+        if: steps.auth.outputs.enabled == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: fortix-staging-candidate
+          path: demo/fortix-causal-editing-table/dist/
+      - name: Gate exact reference bytes and staging-only target
+        if: steps.auth.outputs.enabled == 'true'
+        working-directory: demo/fortix-causal-editing-table
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f dist/server/wrangler.json
+          test -f dist/client/index.html
+          test -f dist/client/evidence/d006-reference-peb.json
+          node --input-type=module <<'NODE'
+          import {readFileSync} from "node:fs";
+          import {blake3} from "@noble/hashes/blake3.js";
+          import {bytesToHex} from "@noble/hashes/utils.js";
+          const config=JSON.parse(readFileSync("dist/server/wrangler.json","utf8"));
+          const manifest=JSON.parse(readFileSync("dist/STAGING-MANIFEST.json","utf8"));
+          const data=readFileSync("dist/client/evidence/d006-reference-peb.json");
+          if(config.assets?.directory!=="../client" || config.main!=="index.js") throw Error("Unsafe Wrangler assets/main configuration");
+          if(manifest.target_worker!=="fortix-launch-staging" || manifest.production_deployment!==false || manifest.source_sha!==process.env.GITHUB_SHA) throw Error("Staging artifact mismatch");
+          if(data.byteLength!==264966 || bytesToHex(blake3(data))!=="cb2786db914459e56f64c0a70f7993d8f44db5a6403c1a77c6015ed3ddb0e1a1") throw Error("Public PEB checksum mismatch");
+          console.log("Staging-only artifact gate PASS");
+          NODE
+      - name: Verify Wrangler deployment before changing Cloudflare
+        if: steps.auth.outputs.enabled == 'true'
+        working-directory: demo/fortix-causal-editing-table
+        run: node_modules/.bin/wrangler deploy --config dist/server/wrangler.json --name fortix-launch-staging --dry-run
+      - name: Upload and deploy version to isolated staging only
+        if: steps.auth.outputs.enabled == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        working-directory: demo/fortix-causal-editing-table
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from "node:fs";
+          import { join } from "node:path";
+          import { spawnSync } from "node:child_process";
+          const worker = "fortix-launch-staging";
+          const api = "https://api.cloudflare.com/client/v4/accounts/" + process.env.CLOUDFLARE_ACCOUNT_ID + "/workers/scripts/" + worker;
+          const headers = { Authorization: "Bearer " + process.env.CLOUDFLARE_API_TOKEN };
+          async function get(path) {
+            const response = await fetch(api + path, { headers });
+            const body = await response.json();
+            if (!response.ok || !body.success) throw Error("Staging API read failed: " + response.status);
+            return body.result;
+          }
+          const before = await get("/deployments");
+          const previousVersion = before.deployments[0]?.versions;
+          if (!previousVersion?.length) throw Error("Missing rollback version");
+          const subdomain = await get("/subdomain");
+          if (!subdomain.enabled || subdomain.previews_enabled) throw Error("Expected existing staging Workers.dev with version previews disabled");
+          const config = JSON.parse(readFileSync("dist/server/wrangler.json", "utf8"));
+          if (config.routes?.length || config.route || config.env || config.triggers?.crons?.length) throw Error("Unexpected staging routing or trigger configuration");
+          const outputFile = join(process.env.RUNNER_TEMP, "fortix-version-upload.ndjson");
+          writeFileSync(outputFile, "");
+          const env = { ...process.env, WRANGLER_OUTPUT_FILE_PATH: outputFile };
+          function wrangler(args) {
+            const result = spawnSync("node_modules/.bin/wrangler", args, { stdio: "inherit", env });
+            if (result.error || result.status !== 0) throw Error("Wrangler command did not complete successfully");
+          }
+          const common = ["--config", "dist/server/wrangler.json", "--name", worker];
+          wrangler(["versions", "upload", ...common, "--message", "Staging CI " + process.env.GITHUB_SHA]);
+          const uploaded = readFileSync(outputFile, "utf8").trim().split("\n").map(line => JSON.parse(line)).filter(row => row.type === "version-upload").at(-1);
+          if (uploaded?.worker_name !== worker || !/^[0-9a-f-]{36}$/.test(uploaded.version_id)) throw Error("Missing exact staging upload identity");
+          wrangler(["versions", "deploy", uploaded.version_id + "@100%", ...common, "--yes", "--message", "Staging CI " + process.env.GITHUB_SHA]);
+          const after = await get("/deployments");
+          const active = after.deployments[0];
+          if (active?.versions?.length !== 1 || active.versions[0].version_id !== uploaded.version_id || active.versions[0].percentage !== 100) throw Error("Cloudflare active deployment does not match upload");
+          const record = { source_sha: process.env.GITHUB_SHA, worker, previous_versions: previousVersion, deployed_version: uploaded.version_id, deployment_id: active.id };
+          writeFileSync(join(process.env.RUNNER_TEMP, "fortix-staging-deployment.json"), JSON.stringify(record, null, 2));
+          console.log("CONFIRMED STAGING DEPLOYMENT", JSON.stringify(record));
+          NODE
+      - name: Verify deployed routes and public reference bytes
+        if: steps.auth.outputs.enabled == 'true'
+        working-directory: demo/fortix-causal-editing-table
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/fortix-stage-smoke"
+          for route in / /nx /verify /demo; do
+            curl --fail --location --silent --show-error --retry 6 --retry-delay 3 "$STAGING_URL$route" -o "$RUNNER_TEMP/fortix-stage-smoke/$(echo "$route" | tr '/' '_').html"
+            echo "PASS: $route"
+          done
+          curl --fail --silent --show-error --retry 6 --retry-delay 3 "$STAGING_URL/evidence/d006-reference-peb.json" -o "$RUNNER_TEMP/fortix-stage-smoke/peb.json"
+          STAGING_PEB="$RUNNER_TEMP/fortix-stage-smoke/peb.json" node --input-type=module <<'NODE'
+          import {readFileSync} from "node:fs";
+          import {blake3} from "@noble/hashes/blake3.js";
+          import {bytesToHex} from "@noble/hashes/utils.js";
+          const bytes=readFileSync(process.env.STAGING_PEB);
+          if(bytes.byteLength!==264966||bytesToHex(blake3(bytes))!=="cb2786db914459e56f64c0a70f7993d8f44db5a6403c1a77c6015ed3ddb0e1a1")throw Error("Staging served incorrect PEB bytes");
+          console.log("PASS: D-006 public PEB exact-byte BLAKE3");
+          NODE
+          printf '%s\\n' '## STAGING — DEPLOYED AND SMOKE-TESTED' "$STAGING_URL" 'Production Worker fortix-web-prod was not a deploy target.' >> "$GITHUB_STEP_SUMMARY"

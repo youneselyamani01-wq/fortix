@@ -117,6 +117,14 @@ asserts their verdict under the current code. They are pretty-printed, and the V
 fingerprints the exact bytes it receives, so the expected transfer digest for a stored
 file is the BLAKE3 digest of that file.
 
+## Distinct content digests and public reference
+
+For D-006 the builder first hashes the canonical draft PEB with the `bundleId` and `manifest.bundleDigest` fields blank: this yields `bundleId`. It then hashes the canonical bundle with the computed `bundleId` and blank `manifest.bundleDigest` to obtain the **manifest digest**. The **transfer digest** is different: BLAKE3-256 of the **exact UTF-8 text handed to the verifier**, including spaces and newline bytes. These values are not interchangeable.
+
+The [D-006 public reference](D006-PUBLIC-REFERENCE.md), also recorded [outside the JSON in GitHub issue #2](https://github.com/youneselyamani01-wq/fortix/issues/2), supplies the expected transfer digest `cb2786db914459e56f64c0a70f7993d8f44db5a6403c1a77c6015ed3ddb0e1a1`, Mission ID, Run ID and Final Receipt ID. Preserve LF line endings; changing to CRLF changes the transfer digest.
+
+The two local-sentinel-labeled network events in this reference are runtime journal observations, **not individually signed claims**. A structural rebuild can yield a new internally consistent but different journal; only a separate pinned expected digest protects the *identity of this published file* against such substitution. Neither runtime integrity nor the presence of a `PHYSICAL_SENTINEL` label alone establishes physical event truth. The verifier also uses fixed D-006 scenario expectations: it is not yet a generic workflow verifier.
+
 ## Tests
 
 - [`tests/d006c1-portable-evidence.test.ts`](../../demo/fortix-causal-editing-table/tests/d006c1-portable-evidence.test.ts):

@@ -45,6 +45,7 @@ export interface Dictionary {
     architecture: string;
     demo: string;
     docs: string;
+    pilot: string;
     languageLabel: string;
     themeLabel: string;
     openMenu: string;
@@ -196,6 +197,28 @@ export interface Dictionary {
       status: "available" | "experimental" | "demonstrative" | "roadmap";
       body: string;
     }[];
+  };
+
+  teaser: {
+    kicker: string;
+    title: string;
+    body: string;
+    cta: string;
+    play: string;
+    pause: string;
+    close: string;
+    sceneDescription: string;
+  };
+
+  pilot: {
+    kicker: string;
+    title: string;
+    body: string;
+    cta: string;
+    note: string;
+    examplesTitle: string;
+    examples: string[];
+    outro: string;
   };
 
   finalStatement: {

@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { App } from "../src/app/App";
-import { ThemeProvider } from "../src/hooks/useTheme";
-import { LanguageProvider } from "../src/i18n/context";
+import { ThemeProvider } from "../src/hooks/ThemeProvider";
+import { LanguageProvider } from "../src/i18n/LanguageProvider";
 import { SECTION_IDS } from "../src/content/sections";
 
 function renderApp() {

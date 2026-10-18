@@ -100,5 +100,9 @@ function selectionFrom(params: SearchParams | undefined): string | null {
 
 export default async function NxPage({ searchParams }: { searchParams?: Promise<SearchParams> | SearchParams }) {
   const params = searchParams === undefined ? undefined : await searchParams;
-  return <NxExperience initialMasterTimeMs={initialTimeFrom(params)} initialWorkspace={workspaceFrom(params)} initialActs={actsFrom(params)} initialSelection={selectionFrom(params)} />;
+  // Public visitors can explore the fictional mission without hardware.
+  // The explicit physical mode retains the actual sentinel baseline gate.
+  const requestedMode = params?.mode;
+  const physicalMode = (Array.isArray(requestedMode) ? requestedMode[0] : requestedMode) === "physical";
+  return <NxExperience initialExperienceMode={physicalMode ? "PHYSICAL_SENTINEL" : "PUBLIC_SIMULATION"} initialMasterTimeMs={initialTimeFrom(params)} initialWorkspace={workspaceFrom(params)} initialActs={actsFrom(params)} initialSelection={selectionFrom(params)} />;
 }

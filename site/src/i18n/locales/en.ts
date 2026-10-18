@@ -17,6 +17,7 @@ export const en: Dictionary = {
     architecture: "Architecture",
     demo: "Demo",
     docs: "Documentation",
+    pilot: "Pilot space",
     languageLabel: "Language",
     themeLabel: "Toggle light or dark theme",
     openMenu: "Open navigation menu",
@@ -293,6 +294,33 @@ export const en: Dictionary = {
       { label: "ADR Core (Python)", status: "available", body: "The Python implementation exercises the 15 frozen normative vectors. ADR is the foundational single-receipt layer." },
       { label: "D-006 Independent Verifier", status: "demonstrative", body: "Recomputes from received PEB bytes. Genuine demonstration evidence remains INDETERMINATE; no production VALID verdict is claimed." },
     ],
+  },
+
+  teaser: {
+    kicker: "D-006 · Simulated illustration",
+    title: "One journey. Evidence that travels.",
+    body: "An animated preview of the autonomous taxi. Explore the mission and its evidence in the demo.",
+    cta: "Explore the demo",
+    play: "Play animation",
+    pause: "Pause animation",
+    close: "Dismiss preview",
+    sceneDescription: "Simulated illustration: a taxi drives, stops at a signal, then moves again. An NR symbol represents NanoReceipts.",
+  },
+
+  pilot: {
+    kicker: "PILOT SPACE · OPEN TO CONVERSATIONS",
+    title: "Bring us a case worth verifying.",
+    body: "Building AI agents, operating digital systems or investigating disputed actions? FortiX welcomes proposals for exploratory pilots, technical evaluations and collaboration. Tell us what needs to be verified; together we can examine what the available evidence can actually establish.",
+    cta: "Share a proposal",
+    note: "First contact by email. No established partner programme, commitment or response time is implied. Do not include sensitive information in your first message.",
+    examplesTitle: "Possible areas to explore",
+    examples: [
+      "AI-agent actions and delegated authority.",
+      "Payments, approvals and cross-party accountability.",
+      "Software execution, security and context changes.",
+      "Independent verification and evidence exchange across organizations.",
+    ],
+    outro: "These examples do not limit the scope of proposals. FortiX verifies evidence; it does not orchestrate the acting systems.",
   },
 
   finalStatement: {

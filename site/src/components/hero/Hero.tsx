@@ -6,7 +6,7 @@ import { DEMO_URL, VERIFIER_URL } from "../../content/links";
 import "./hero.css";
 
 export function Hero() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   return (
     <section id={SECTION_IDS.hero} className="hero" aria-labelledby="hero-title">
@@ -24,6 +24,9 @@ export function Hero() {
           </a>
           <a className="button button--ghost" href={VERIFIER_URL} target="_blank" rel="noopener noreferrer">
             {t.nav.verifier}
+          </a>
+          <a className="button button--ghost" href="#open-verification">
+            {locale === "fr" ? "Examiner une preuve publique" : "Inspect public evidence"}
           </a>
         </div>
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ThemeProvider } from "../src/hooks/useTheme";
-import { LanguageProvider } from "../src/i18n/context";
+import { ThemeProvider } from "../src/hooks/ThemeProvider";
+import { LanguageProvider } from "../src/i18n/LanguageProvider";
 import { App } from "../src/app/App";
 import { en } from "../src/i18n/locales/en";
 import { VERIFIER_URL, DEMO_URL } from "../src/content/links";

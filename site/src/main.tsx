@@ -8,8 +8,8 @@ import "./styles/global.css";
 import "./styles/site-light.css";
 import "./styles/editorial.css";
 
-import { ThemeProvider } from "./hooks/useTheme";
-import { LanguageProvider } from "./i18n/context";
+import { ThemeProvider } from "./hooks/ThemeProvider";
+import { LanguageProvider } from "./i18n/LanguageProvider";
 import { App } from "./app/App";
 
 const rootElement = document.getElementById("root");

@@ -5,7 +5,8 @@ import { ProofJourney } from "../src/components/cinematic-scene/ProofJourney";
 import { useScrollProgress } from "../src/hooks/useScrollProgress";
 import { useWebglSupport } from "../src/hooks/useWebglSupport";
 import { useReducedMotionPreference } from "../src/hooks/useReducedMotionPreference";
-import { LanguageProvider, useI18n } from "../src/i18n/context";
+import { LanguageProvider } from "../src/i18n/LanguageProvider";
+import { useI18n } from "../src/i18n/context";
 import { en } from "../src/i18n/locales/en";
 import { fr } from "../src/i18n/locales/fr";
 

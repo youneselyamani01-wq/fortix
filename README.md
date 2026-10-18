@@ -37,6 +37,12 @@ npm run dev
 
 Run `npm run validate` there for runtime, type, lint, unit, convergence, build and rendered checks. Additional public checks: `npm run test:d006nx1`, `npm run test:d006nx2`, `npm run test:d006nx3`, and `npm run test:network-continuity`.
 
+### Public D-006 reference: inspect and compare
+
+For an independent evaluation, retrieve the [public PEB reference and its limits](docs/evidence/D006-PUBLIC-REFERENCE.md). The expected values are also [published separately from the PEB](https://github.com/youneselyamani01-wq/fortix/issues/2): transfer BLAKE3 `cb2786db914459e56f64c0a70f7993d8f44db5a6403c1a77c6015ed3ddb0e1a1` (264966 exact UTF-8 bytes with LF), Mission ID `fortix.demo.d005.operational-cycle-001`, Run ID `fortix.d006.audit.after`. A comparison against a digest recomputed only from the candidate PEB is not external authentication.
+
+The **reference network observations** were written during a distinct local sentinel test; the **public web mission** normally has physical link `UNKNOWN` unless a local sentinel is configured. The runtime journal is not individually signed, so its internal digest coherence does not independently attest physical observations. D-006 tests known scenario steps and payloads; it is not a general verifier of arbitrary agents. Genuine D-006 verification remains `INDETERMINATE`.
+
 ### Python foundational layer
 
 ADR v1 is the foundational single-receipt protocol, separate from the D-006 multi-domain PEB profile. The retained Python runtime, SDK and 15 frozen normative vectors support reproducible ADR signing and verification checks. D-006's four verdicts do not replace the result vocabularies of earlier layers.
