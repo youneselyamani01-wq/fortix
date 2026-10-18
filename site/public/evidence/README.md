@@ -16,7 +16,9 @@ Status: DEMONSTRATION / REVIEW CANDIDATE — not a production trust assertion.
 
 ## Reproduce
 
-1. Download the JSON file from the website (or this directory).
+1. On the official website, use **Download the PEB (.json)**. The site fetches the same-origin static PEB, checks the expected JSON profile and requests a browser download with the name `FortiX_D006_PEB_reference.json`. Depending on browser settings, a Save As dialog may appear; the site cannot dictate the user's Downloads directory. The file bytes are not reserialized.
+   - While the website changes remain in a draft PR, the public GitHub fixture can be downloaded by opening its raw JSON view and using **Ctrl+S** in the browser.
+   - Cloudflare staging must serve `/evidence/d006-reference-peb.json` as the actual JSON asset, not the site's HTML fallback. A missing or incorrect response produces a visible error instead of a fake download.
 2. Open the [independent verifier](https://fortix.cloud/verify) and provide the downloaded file.
 3. Trigger **Analyze**; record the actual verdict, reason codes and completed checks.
 4. As a separate experiment, alter a byte in a copied PEB and compare the resulting verdict. Do not modify the baseline file.
