@@ -126,6 +126,10 @@ jobs:
           (cd demo/fortix-causal-editing-table/dist && find server client -type f -print | LC_ALL=C sort > staging-file-list.txt)
           printf '{"source_sha":"%s","target_worker":"fortix-launch-staging","production_deployment":false,"build":"site + vinext","release_gate":"manual staging review"}\\n' "$GITHUB_SHA" > demo/fortix-causal-editing-table/dist/STAGING-MANIFEST.json
           du -sh demo/fortix-causal-editing-table/dist/client demo/fortix-causal-editing-table/dist/server
+      - name: Verify staging target and Wrangler dry-run
+        run: |
+          cd demo/fortix-causal-editing-table
+          node_modules/.bin/wrangler deploy --config dist/server/wrangler.json --name fortix-launch-staging --dry-run
       - name: Export exact candidate for staging deployment
         uses: actions/upload-artifact@v4
         with:
