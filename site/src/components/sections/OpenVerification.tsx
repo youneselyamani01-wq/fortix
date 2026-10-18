@@ -1,9 +1,23 @@
+import { useState } from "react";
 import { useI18n } from "../../i18n/context";
+import { downloadReferencePeb } from "../../verification/downloadReferencePeb";
 import { SECTION_IDS } from "../../content/sections";
 import "./open-verification.css";
 
 export function OpenVerification() {
   const { t, locale } = useI18n();
+  const [downloadState, setDownloadState] = useState<"idle" | "loading" | "started" | "error">("idle");
+
+  const handleDownload = async () => {
+    if (downloadState === "loading") return;
+    setDownloadState("loading");
+    try {
+      await downloadReferencePeb();
+      setDownloadState("started");
+    } catch {
+      setDownloadState("error");
+    }
+  };
 
   return (
     <section
@@ -39,9 +53,11 @@ export function OpenVerification() {
             ? "Un PEB D-006 de démonstration est téléchargeable sans lancer la mission. Analysez-le dans le Vérificateur indépendant, puis testez une copie modifiée. Verdict attendu : INDETERMINATE, et non VALID en production."
             : "Download a D-006 demonstration PEB without running the mission. Analyze it in the Independent Verifier, then test an altered copy. Expected verdict: INDETERMINATE, not production VALID."}</p>
           <div className="open-verification__actions">
-            <a className="button button--primary" href="/evidence/d006-reference-peb.json" download="d006-reference-peb.json">
-              {locale === "fr" ? "Télécharger le PEB" : "Download the PEB"}
-            </a>
+            <button className="button button--primary" type="button" onClick={() => { void handleDownload(); }} disabled={downloadState === "loading"}>
+              {downloadState === "loading"
+                ? (locale === "fr" ? "Préparation du fichier…" : "Preparing file…")
+                : (locale === "fr" ? "Télécharger le PEB (.json)" : "Download the PEB (.json)")}
+            </button>
             <a className="button button--ghost" href="/verify" target="_blank" rel="noopener noreferrer">
               {locale === "fr" ? "Ouvrir le Vérificateur" : "Open the Verifier"}
             </a>
@@ -49,6 +65,13 @@ export function OpenVerification() {
               {locale === "fr" ? "Guide et spécification" : "Guide and specification"}
             </a>
           </div>
+          <p className="open-verification__download-status" role="status" aria-live="polite">
+            {downloadState === "started"
+              ? (locale === "fr" ? "Téléchargement demandé. Consultez vos téléchargements Edge." : "Download requested. Check your browser downloads.")
+              : downloadState === "error"
+                ? (locale === "fr" ? "Téléchargement indisponible pour le moment. Aucun fichier n’a été enregistré." : "Download unavailable. No file was saved.")
+                : ""}
+          </p>
           <p className="open-verification__limits">{locale === "fr"
             ? "Scénario simulé ; confiance de production et temps de confiance non établis. Aucune preuve de règlement bancaire ou d'événement physique réel."
             : "Simulated scenario; production trust and trusted time not established. No proof of bank settlement or real-world physical events."}</p>
