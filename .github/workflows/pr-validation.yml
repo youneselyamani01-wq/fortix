@@ -142,7 +142,9 @@ jobs:
   staging-deploy:
     name: Deploy ONLY fortix-launch-staging
     needs: [staging-package]
-    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 1 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'work/public-verification-path-20261017' }}
+    # A normal PR commit only validates/packages. A maintainer must manually re-run
+    # this pull_request run after reviewing its exact SHA to authorize staging.
+    if: ${{ github.run_attempt > 1 && github.triggering_actor == github.repository_owner && github.event_name == 'pull_request' && github.event.pull_request.number == 1 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'work/public-verification-path-20261017' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
@@ -158,9 +160,9 @@ jobs:
         shell: bash
         run: |
           if [ -z "$STAGING_TOKEN" ]; then
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::notice title=STAGING BLOCKED::Set the GitHub Actions repository secret CLOUDFLARE_API_TOKEN. No deployment occurred."
-            printf '%s\\n' '## STAGING — NOT DEPLOYED' 'The scoped GitHub secret CLOUDFLARE_API_TOKEN is missing. Tests remain valid; the staging Worker was NOT changed.' >> "$GITHUB_STEP_SUMMARY"
+            echo "::error title=STAGING BLOCKED::CLOUDFLARE_API_TOKEN is missing. No deployment occurred."
+            printf '%s\n' '## STAGING — NOT DEPLOYED' 'The scoped GitHub secret CLOUDFLARE_API_TOKEN is missing. The staging Worker was NOT changed.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
           else
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           fi
