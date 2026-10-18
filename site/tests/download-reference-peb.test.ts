@@ -1,10 +1,17 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { downloadReferencePeb, REFERENCE_PEB_URL, REFERENCE_PEB_FILENAME } from "../src/verification/downloadReferencePeb";
 
+const originalCreateObjectURL = Object.getOwnPropertyDescriptor(URL, "createObjectURL");
+const originalRevokeObjectURL = Object.getOwnPropertyDescriptor(URL, "revokeObjectURL");
+
 afterEach(() => {
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
   vi.useRealTimers();
+  if (originalCreateObjectURL) Object.defineProperty(URL, "createObjectURL", originalCreateObjectURL);
+  else Reflect.deleteProperty(URL, "createObjectURL");
+  if (originalRevokeObjectURL) Object.defineProperty(URL, "revokeObjectURL", originalRevokeObjectURL);
+  else Reflect.deleteProperty(URL, "revokeObjectURL");
 });
 
 function stubTransfer(raw: string, options: { ok?: boolean; status?: number; size?: number } = {}) {
