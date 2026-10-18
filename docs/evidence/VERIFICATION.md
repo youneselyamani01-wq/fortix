@@ -96,6 +96,16 @@ These views display the analysis; they do not compute verdicts.
   individual signatures. The verdict is only as strong as the source of that expected
   digest.
 
+## Public D-006 reference and profile limits
+
+The public test PEB must be compared to expectations that are not read from the PEB. See the [published out-of-file reference](D006-PUBLIC-REFERENCE.md) and [separate GitHub issue](https://github.com/youneselyamani01-wq/fortix/issues/2), containing the BLAKE3 transfer digest `cb2786db914459e56f64c0a70f7993d8f44db5a6403c1a77c6015ed3ddb0e1a1`, expected Mission ID and Run ID. Reformatting the file changes the exact-byte digest; use LF original bytes, not a prettified or CRLF-rewritten copy. A recomputed digest taken from the very file being questioned is **not** independent evidence of origin.
+
+**Unsigned runtime limitation.** A producer able to alter an unsigned runtime journal and recalculate its internal hashes can create a second self-consistent D-006 PEB with a different Final Receipt and transfer digest. The same high-level `INDETERMINATE` verdict does **not** prove the artifacts are identical. Such a candidate fails comparison to the *previously published original* transfer digest. The runtime journal does not cryptographically attest the source of the events; `PRESENTED` and `ELIGIBLE` are not proof of producer authenticity.
+
+**D-006-specific checks.** `MISSION_EVIDENCE_SPECS`, `validateRequiredRuntimeRecord` and reason `REQUIRED_RUNTIME_EVIDENCE_MUTATED` deliberately require known expected event identifiers, payloads and steps. Therefore the D-006 verifier assesses **this simulation profile**; its acceptance is not evidence of generic verification for arbitrary enterprise workflows or agents.
+
+**Network distinction.** The reference PEB contains local-sentinel-labeled network transitions from a separate local test, unlike a default web mission with physical network status `UNKNOWN`. Such labels in an unsigned journal are declarations, not independent signed attestation that a physical link changed. Production trust and trusted time remain unestablished.
+
 ## Other verifiers in this repository
 
 Each layer keeps its own result vocabulary:
