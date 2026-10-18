@@ -119,7 +119,7 @@ jobs:
           test -f site/dist/index.html
           mkdir -p demo/fortix-causal-editing-table/dist/client
           cp -a site/dist/. demo/fortix-causal-editing-table/dist/client/
-          printf '/demo /nx 302\\n/demo/ /nx 302\\n' > demo/fortix-causal-editing-table/dist/client/_redirects
+          printf '%s\n' '/demo /nx 302' '/demo/ /nx 302' > demo/fortix-causal-editing-table/dist/client/_redirects
           test -f demo/fortix-causal-editing-table/dist/client/evidence/d006-reference-peb.json
           test -f demo/fortix-causal-editing-table/dist/client/index.html
           if find demo/fortix-causal-editing-table/dist/client -type f | grep -E '(^|/)\.env$|\.map$|secret' ; then echo 'Unexpected files in public assets'; exit 1; fi
