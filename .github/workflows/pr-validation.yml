@@ -122,7 +122,7 @@ jobs:
           printf '/demo /nx 302\\n/demo/ /nx 302\\n' > demo/fortix-causal-editing-table/dist/client/_redirects
           test -f demo/fortix-causal-editing-table/dist/client/evidence/d006-reference-peb.json
           test -f demo/fortix-causal-editing-table/dist/client/index.html
-          if find demo/fortix-causal-editing-table/dist/client -type f \\( -name '.env' -o -name '*.map' -o -name '*secret*' \\) | grep .; then echo 'Unexpected files in public assets'; exit 1; fi
+          if find demo/fortix-causal-editing-table/dist/client -type f | grep -E '(^|/)\.env$|\.map$|secret' ; then echo 'Unexpected files in public assets'; exit 1; fi
           (cd demo/fortix-causal-editing-table/dist && find server client -type f -print | LC_ALL=C sort > staging-file-list.txt)
           printf '{"source_sha":"%s","target_worker":"fortix-launch-staging","production_deployment":false,"build":"site + vinext","release_gate":"manual staging review"}\\n' "$GITHUB_SHA" > demo/fortix-causal-editing-table/dist/STAGING-MANIFEST.json
           du -sh demo/fortix-causal-editing-table/dist/client demo/fortix-causal-editing-table/dist/server
