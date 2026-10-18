@@ -24,8 +24,13 @@ test("public visitor without sentinel can run D-006 simulation and receive a tru
     engine().play();
     await until(() => engine().snapshot.playing, "simulated playback starts");
     engine().pause();
+    // Wait for React to commit the pause and dispose of its outstanding
+    // requestAnimationFrame before seeking, otherwise a queued frame may reset
+    // the clock after the seek in the headless harness.
+    await until(() => !engine().snapshot.playing, "paused public playback");
     engine().seek(HUMAN_AUTHORITY_GATE_MS);
-    await until(() => engine().snapshot.masterTimeMs === HUMAN_AUTHORITY_GATE_MS, "authority decision gate");
+    await until(() => engine().snapshot.masterTimeMs === HUMAN_AUTHORITY_GATE_MS, "authority decision gate: " +
+      JSON.stringify({ time: engine().snapshot.masterTimeMs, mode: engine().experienceMode, ready: engine().networkBaselineReady }), 10_000);
     engine().decide("APPROVED");
     await until(() => engine().snapshot.humanDecision === "APPROVED", "human approval");
     engine().pause();
