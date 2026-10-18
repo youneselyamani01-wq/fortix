@@ -61,8 +61,11 @@ export function OpenVerification() {
             <a className="button button--ghost" href="/verify" target="_blank" rel="noopener noreferrer">
               {locale === "fr" ? "Ouvrir le Vérificateur" : "Open the Verifier"}
             </a>
-            <a className="button button--ghost" href="https://github.com/youneselyamani01-wq/fortix/blob/main/docs/evidence/PUBLIC-VERIFICATION-WALKTHROUGH.md" target="_blank" rel="noopener noreferrer">
-              {locale === "fr" ? "Guide et spécification" : "Guide and specification"}
+            <a className="button button--ghost" href="https://github.com/youneselyamani01-wq/fortix/issues/2" target="_blank" rel="noopener noreferrer">
+              {locale === "fr" ? "Empreinte et identité attendues" : "Expected digest and identity"}
+            </a>
+            <a className="button button--ghost" href="https://github.com/youneselyamani01-wq/fortix/blob/main/docs/evidence/D006-PUBLIC-REFERENCE.md" target="_blank" rel="noopener noreferrer">
+              {locale === "fr" ? "Portée et guide de vérification" : "Verification guide and limits"}
             </a>
           </div>
           <p className="open-verification__download-status" role="status" aria-live="polite">
@@ -71,6 +74,11 @@ export function OpenVerification() {
               : downloadState === "error"
                 ? (locale === "fr" ? "Téléchargement indisponible pour le moment. Aucun fichier n’a été enregistré." : "Download unavailable. No file was saved.")
                 : ""}
+          </p>
+          <p className="open-verification__reference-note">
+            {locale === "fr"
+              ? "Avant d’analyser : comparer les octets reçus aux valeurs de référence publiées hors du PEB. Journal runtime non signé individuellement ; profil de scénario D-006, pas vérification générique."
+              : "Before analysis: compare received bytes against reference values published outside the PEB. Runtime journal not individually signed; D-006 is a scenario-specific profile, not generic verification."}
           </p>
           <p className="open-verification__limits">{locale === "fr"
             ? "Scénario simulé ; confiance de production et temps de confiance non établis. Aucune preuve de règlement bancaire ou d'événement physique réel."
