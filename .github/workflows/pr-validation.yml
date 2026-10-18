@@ -138,3 +138,102 @@ jobs:
           include-hidden-files: false
           retention-days: 7
           if-no-files-found: error
+
+  staging-deploy:
+    name: Deploy ONLY fortix-launch-staging
+    needs: [staging-package]
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 1 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'work/public-verification-path-20261017' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      STAGING_URL: https://fortix-launch-staging.younes-elyamani01.workers.dev
+      CLOUDFLARE_ACCOUNT_ID: f9285891dc1b50628dbffcb58ea1047a
+    steps:
+      - name: Check whether scoped Cloudflare credential is configured
+        id: auth
+        env:
+          STAGING_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          if [ -z "$STAGING_TOKEN" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=STAGING BLOCKED::Set the GitHub Actions repository secret CLOUDFLARE_API_TOKEN. No deployment occurred."
+            printf '%s\\n' '## STAGING — NOT DEPLOYED' 'The scoped GitHub secret CLOUDFLARE_API_TOKEN is missing. Tests remain valid; the staging Worker was NOT changed.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Checkout exact vetted PR revision
+        if: steps.auth.outputs.enabled == 'true'
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Install Node 22.23.2
+        if: steps.auth.outputs.enabled == 'true'
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22.23.2'
+          cache: npm
+          cache-dependency-path: demo/fortix-causal-editing-table/package-lock.json
+      - name: Install pinned Wrangler dependencies
+        if: steps.auth.outputs.enabled == 'true'
+        run: npm ci --ignore-scripts --no-audit --no-fund --prefix demo/fortix-causal-editing-table
+      - name: Download vetted staging build from this workflow run
+        if: steps.auth.outputs.enabled == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: fortix-staging-candidate
+          path: demo/fortix-causal-editing-table/dist/
+      - name: Gate exact reference bytes and staging-only target
+        if: steps.auth.outputs.enabled == 'true'
+        working-directory: demo/fortix-causal-editing-table
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f dist/server/wrangler.json
+          test -f dist/client/index.html
+          test -f dist/client/evidence/d006-reference-peb.json
+          node --input-type=module <<'NODE'
+          import {readFileSync} from "node:fs";
+          import {blake3} from "@noble/hashes/blake3.js";
+          import {bytesToHex} from "@noble/hashes/utils.js";
+          const config=JSON.parse(readFileSync("dist/server/wrangler.json","utf8"));
+          const manifest=JSON.parse(readFileSync("dist/STAGING-MANIFEST.json","utf8"));
+          const data=readFileSync("dist/client/evidence/d006-reference-peb.json");
+          if(config.assets?.directory!=="../client" || config.main!=="index.js") throw Error("Unsafe Wrangler assets/main configuration");
+          if(manifest.target_worker!=="fortix-launch-staging" || manifest.production_deployment!==false || manifest.source_sha!==process.env.GITHUB_SHA) throw Error("Staging artifact mismatch");
+          if(data.byteLength!==264966 || bytesToHex(blake3(data))!=="cb2786db914459e56f64c0a70f7993d8f44db5a6403c1a77c6015ed3ddb0e1a1") throw Error("Public PEB checksum mismatch");
+          console.log("Staging-only artifact gate PASS");
+          NODE
+      - name: Verify Wrangler deployment before changing Cloudflare
+        if: steps.auth.outputs.enabled == 'true'
+        working-directory: demo/fortix-causal-editing-table
+        run: node_modules/.bin/wrangler deploy --config dist/server/wrangler.json --name fortix-launch-staging --dry-run
+      - name: Deploy to isolated staging Workers.dev only
+        if: steps.auth.outputs.enabled == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        working-directory: demo/fortix-causal-editing-table
+        run: node_modules/.bin/wrangler deploy --config dist/server/wrangler.json --name fortix-launch-staging
+      - name: Verify deployed routes and public reference bytes
+        if: steps.auth.outputs.enabled == 'true'
+        working-directory: demo/fortix-causal-editing-table
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/fortix-stage-smoke"
+          for route in / /nx /verify /demo; do
+            curl --fail --location --silent --show-error --retry 6 --retry-delay 3 "$STAGING_URL$route" -o "$RUNNER_TEMP/fortix-stage-smoke/$(echo "$route" | tr '/' '_').html"
+            echo "PASS: $route"
+          done
+          curl --fail --silent --show-error --retry 6 --retry-delay 3 "$STAGING_URL/evidence/d006-reference-peb.json" -o "$RUNNER_TEMP/fortix-stage-smoke/peb.json"
+          STAGING_PEB="$RUNNER_TEMP/fortix-stage-smoke/peb.json" node --input-type=module <<'NODE'
+          import {readFileSync} from "node:fs";
+          import {blake3} from "@noble/hashes/blake3.js";
+          import {bytesToHex} from "@noble/hashes/utils.js";
+          const bytes=readFileSync(process.env.STAGING_PEB);
+          if(bytes.byteLength!==264966||bytesToHex(blake3(bytes))!=="cb2786db914459e56f64c0a70f7993d8f44db5a6403c1a77c6015ed3ddb0e1a1")throw Error("Staging served incorrect PEB bytes");
+          console.log("PASS: D-006 public PEB exact-byte BLAKE3");
+          NODE
+          printf '%s\\n' '## STAGING — DEPLOYED AND SMOKE-TESTED' "$STAGING_URL" 'Production Worker fortix-web-prod was not a deploy target.' >> "$GITHUB_STEP_SUMMARY"
