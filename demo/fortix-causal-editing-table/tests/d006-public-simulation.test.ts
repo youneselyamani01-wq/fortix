@@ -34,8 +34,19 @@ test("public visitor without sentinel can run D-006 simulation and receive a tru
     engine().decide("APPROVED");
     await until(() => engine().snapshot.humanDecision === "APPROVED", "human approval");
     engine().pause();
+    await until(() => !engine().snapshot.playing, "paused after human approval");
     engine().seek(EXPERIENCE_DURATION_MS);
-    await until(() => engine().snapshot.handoffArtifact !== null, "signed source + simulated runtime PEB", 60_000);
+    await until(() => engine().snapshot.masterTimeMs === EXPERIENCE_DURATION_MS, "end-of-mission seek", 10_000);
+    await until(() => engine().snapshot.handoffArtifact !== null,
+      "simulated PEB: " + JSON.stringify({
+        at: engine().snapshot.masterTimeMs,
+        phase: engine().snapshot.humanDecision,
+        sealed: engine().snapshot.session.finalReceiptRuntimeSeal !== null,
+        records: engine().snapshot.session.records.length,
+        closureReason: engine().snapshot.closureReason,
+        final: engine().snapshot.finalReceipt !== null,
+        peb: engine().snapshot.portablePeb !== null,
+      }), 10_000);
     const snap = engine().snapshot;
     const events = snap.session.records.filter(r => r.eventType === "NETWORK_LINK_LOST" || r.eventType === "NETWORK_LINK_RESTORED");
     assert.equal(events.length, 0, "a no-sentinel run must NEVER mint a physical network transition");
