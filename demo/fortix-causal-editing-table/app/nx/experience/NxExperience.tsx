@@ -33,8 +33,10 @@ export type WorkspaceState = Readonly<{
 }>;
 
 
-export function NxExperience({ initialMasterTimeMs = 0, initialActs = {} }: {
+export function NxExperience({ initialMasterTimeMs = 0, initialActs = {}, initialExperienceMode = "PUBLIC_SIMULATION" }: {
   initialMasterTimeMs?: number;
+  /** Public playback is separately declared; physical local tests retain sentinel admission. */
+  initialExperienceMode?: "PUBLIC_SIMULATION" | "PHYSICAL_SENTINEL";
   /** Legacy presentation hints are accepted but cannot reopen removed inspection surfaces. */
   initialWorkspace?: WorkspaceState;
   /** Review deep link only: human acts already performed (`?decision=approved&handoff=done&analysis=requested`). */
@@ -44,7 +46,9 @@ export function NxExperience({ initialMasterTimeMs = 0, initialActs = {} }: {
 } = {}) {
   const { locale, t, setLocale } = useI18n();
   const nx = t.nx;
-  const engine = useMissionEngine(initialMasterTimeMs, initialActs);
+  const engine = useMissionEngine(initialMasterTimeMs, { ...initialActs, experienceMode: initialExperienceMode });
+  const isPublicSimulation = engine.experienceMode === "PUBLIC_SIMULATION";
+  const missionPlayable = isPublicSimulation || engine.networkBaselineReady;
   // The mission (what is true) and the presentation cursor (how far a viewer
   // has been walked through it) are separate inputs, and only the first has any
   // authority. C-R1's queue reads the second to serialise arrivals.
@@ -162,6 +166,7 @@ export function NxExperience({ initialMasterTimeMs = 0, initialActs = {} }: {
       data-presented-evidence-count={availableReceipts.presentedCount}
       data-network-nr-count={availableReceipts.networkCount}
       data-network-baseline-ready={engine.networkBaselineReady}
+      data-experience-mode={engine.experienceMode}
       data-active-connectivity={engine.activeConnectivityMedium ?? ""}
       data-connectivity-paths={engine.connectivityPaths.map((path) => `${path.medium}:${path.state}`).join(" ")}
       data-bound-adapter-guid={engine.physicalAdapterBinding?.interfaceGuid ?? ""}
@@ -259,11 +264,11 @@ export function NxExperience({ initialMasterTimeMs = 0, initialActs = {} }: {
           <div className="nx-authority" role="group" aria-label={t.d006c2.authority.aria}>
             <span className="nx-kicker">{t.d006c2.authority.required}</span>
             <p>{t.d006c2.authority.question}</p>
-            <button type="button" className="nx-primary" disabled={!engine.networkBaselineReady} onClick={() => engine.decide("APPROVED")}>{t.d006c2.authority.allow}</button>
-            <button type="button" className="nx-secondary" disabled={!engine.networkBaselineReady} onClick={() => engine.decide("DENIED")}>{t.d006c2.authority.deny}</button>
+            <button type="button" className="nx-primary" disabled={!missionPlayable} onClick={() => engine.decide("APPROVED")}>{t.d006c2.authority.allow}</button>
+            <button type="button" className="nx-secondary" disabled={!missionPlayable} onClick={() => engine.decide("DENIED")}>{t.d006c2.authority.deny}</button>
           </div>
         ) : (
-          <button type="button" className="nx-primary" disabled={!engine.networkBaselineReady && phase !== "COMPLETE" && phase !== "STOPPED_BY_DENIAL"} onClick={onPrimary}>
+          <button type="button" className="nx-primary" disabled={!missionPlayable && phase !== "COMPLETE" && phase !== "STOPPED_BY_DENIAL"} onClick={onPrimary}>
             {primaryLabel}
           </button>
         )}
@@ -271,17 +276,22 @@ export function NxExperience({ initialMasterTimeMs = 0, initialActs = {} }: {
         <div className="nx-connectivity-route" data-connectivity-route={engine.activeConnectivityMedium ?? "none"} role="status">
           <span>{locale === "fr" ? "Voie réseau automatique" : "Automatic network route"}</span>
           <strong>{activeRouteLabel}</strong>
-          <small>{locale === "fr" ? "RJ45 et Wi-Fi observés · 5G et satellite modélisés" : "RJ45 and Wi-Fi observed · 5G and satellite modeled"}</small>
+          <small>{isPublicSimulation
+            ? (locale === "fr" ? "Simulation publique : aucune interface physique observée" : "Public simulation: no physical adapter observed")
+            : (locale === "fr" ? "RJ45 et Wi-Fi observés uniquement par la sentinelle locale · 5G et satellite modélisés" : "RJ45 and Wi-Fi observed only by a local sentinel · 5G and satellite modeled")}</small>
         </div>
         {model.mission.masterTimeMs === 0 && engine.snapshot.session.records.length > 0 && <span className="nx-reset-status" role="status">{locale === "fr" ? "Lecture au début · historique de cette mission conservé." : "Reading from the beginning · this mission’s history is retained."}</span>}
-        {!engine.networkBaselineReady && <span className="nx-reset-status" role="status">{locale === "fr" ? "En attente d’une voie réseau physique confirmée pour démarrer cette mission." : "Waiting for a confirmed physical network route before starting this mission."}</span>}
+        {isPublicSimulation && <div className="nx-reset-status" role="status" data-simulation-notice="true">{locale === "fr"
+          ? "Mode public simulé : la mission peut être parcourue sans sentinelle. Réseau physique UNKNOWN ; aucune observation RJ45/Wi-Fi ni nouvelle preuve physique. Les événements de démonstration ne décrivent pas un véhicule réel."
+          : "Public simulation mode: the mission can be explored without a sentinel. Physical network UNKNOWN; no RJ45/Wi-Fi observation or new physical proof. Demo events are not real vehicle activity."} <a href="/nx?mode=physical">{locale === "fr" ? "Essai physique local" : "Local physical test"}</a></div>}
+        {!isPublicSimulation && !engine.networkBaselineReady && <span className="nx-reset-status" role="status">{locale === "fr" ? "En attente d’une voie réseau physique confirmée pour démarrer cette mission." : "Waiting for a confirmed physical network route before starting this mission."}</span>}
         <label className="nx-scrub">
           <span>{nx.missionTime}</span>
           {/* One arrow press moves a beat, not a millisecond, and the value is
               spoken as mission time rather than as a raw count. */}
           <input
             type="range"
-            disabled={!engine.networkBaselineReady}
+            disabled={!missionPlayable}
             min={0}
             max={model.mission.durationMs}
             step={250}
