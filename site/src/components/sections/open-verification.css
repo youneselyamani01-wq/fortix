@@ -36,3 +36,7 @@
 .open-verification__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 24px; }
 .open-verification__actions .button { white-space: normal; text-align: center; }
 .open-verification__limits { font-size: 12px; max-width: 72ch; }
+
+.open-verification__download-status { margin-top: 4px; min-height: 20px; font-size: 12px; line-height: 1.5; color: var(--ink-soft); }
+.open-verification__download-status:empty { display: none; }
+.open-verification__actions button:disabled { opacity: .7; cursor: wait; }
