@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { LanguageProvider } from "../src/i18n/context";
+import { LanguageProvider } from "../src/i18n/LanguageProvider";
 import { D006Teaser } from "../src/components/teaser/D006Teaser";
 import { en } from "../src/i18n/locales/en";
 import { fr } from "../src/i18n/locales/fr";
