@@ -12,6 +12,8 @@ Status: CURRENT. A test result is established only by the launch-readiness repor
 | Site intake requires a matching origin, window and nonce and preserves exact bytes | `site/src/verification/pebHandoff.ts` | `site/tests/peb-handoff.test.ts`, `PebIntake.test.tsx` |
 | The Python ADR foundation uses frozen normative vectors and fails closed without signing configuration | `app/core/`, `app/gateway/` | `tests/test_vectors_runner.py`, `tests/test_adr_signing_fail_closed.py` |
 
+**Public-reference boundary (2026-10-18):** an independently checked BLAKE3-256 exact-file transfer digest and expected Mission/Run identities are available in the [D-006 reference note](evidence/D006-PUBLIC-REFERENCE.md) and [a separately published GitHub issue](https://github.com/youneselyamani01-wq/fortix/issues/2). This out-of-file reference does not constitute an independent signature or trusted timestamp. Runtime journal entries are not individually signed. Network physical-sentinel fields in the reference PEB are unverified source declarations. The D-006 verifier has scenario-specific expected event payloads; it is not a generic agent-workflow verifier. See the reference note before using this PEB for any claim.
+
 D-006 vehicle, city and routing are simulated. Physical network evidence requires
 local configuration. Production trust anchors, trusted time and settlement are not
 demonstrated. The included historical PEB inputs are inspection fixtures, not a
