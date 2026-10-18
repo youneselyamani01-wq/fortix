@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { LanguageProvider } from "../src/i18n/context";
+import { LanguageProvider } from "../src/i18n/LanguageProvider";
 import { PebIntake } from "../src/components/verifier/PebIntake";
 import { pebIntakeCopy } from "../src/components/verifier/pebIntakeCopy";
 
