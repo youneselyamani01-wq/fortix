@@ -1,0 +1,24 @@
+FORTIX — USE CASES / PRÉPARATION DU 19 OCTOBRE 2026
+
+Livré : catalogue structuré FR/EN de huit domaines et prototype autonome index.html ; filtres, cartes, fiches natives dialog, labels de statut et navigation clavier. Les huit illustrations SVG sont originales, créées pour cette préparation, sans police distante ni image tierce. Aucun nom de client, certification ou installation réelle n’est inventé. X noir dans le mot-symbole de prévisualisation.
+
+Ce prototype est une proposition d’intégration. Le fichier de la maquette validée mentionnée au mandat n’était pas accessible ; la fidélité à cette maquette n’est donc pas établie. La typographie et le mot-symbole finaux devront être raccordés aux composants officiels du site, sans en recréer la marque.
+
+Arborescence proposée dans une branche distincte de PR #1 :
+  docs/use-cases/IMPLEMENTATION-PLAN.txt
+  site/use-cases-preview/index.html
+  site/use-cases-preview/catalogue.json
+  site/use-cases-preview/{mobility,finance,industry,cybersecurity,health,cloud,enterprise,logistics}.svg
+
+Intégration suivante dans l’application :
+  UseCasesSection → StatusFilter + UseCaseGrid → UseCaseCard → UseCaseDetail
+  Catalogue partagé versionné, raccordé au fournisseur i18n existant.
+  Illustrations servies localement avec intitulés accessibles ; réutiliser logo et tokens sans serif officiels.
+  Fiches détaillées dans un dialog natif ou des routes /use-cases/:id si une URL par fiche devient nécessaire.
+  Ne pas incorporer le prototype autonome en iframe dans la production.
+
+Validation : huit domaines et sept champs éditoriaux dans chaque langue ; chaque illustration présente ; vérification syntaxique du script ; essais navigateur de langue, filtre et fiche. Le résultat responsive est testé au niveau de la grille CSS et par capture, sans prétendre à un essai matériel sur téléphone.
+
+Portée : D-006 seulement est une démonstration existante. Le domaine agents d’entreprise est une piste de pilote sans partenaire engagé ; six autres domaines restent conceptuels. La finance cite D-006 comme exemple partiel, sans faire croire à un connecteur bancaire réel. Les capacités futures sont formulées au conditionnel.
+
+Droits : aucun asset tiers ; les fichiers préparés suivent la licence existante du dépôt. Aucune licence additionnelle sur le protocole ni aucune modification du LICENSE n’est introduite. La publication de l’interface sur fortix.cloud reste une décision distincte.
