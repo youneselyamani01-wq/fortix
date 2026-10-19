@@ -1,0 +1,178 @@
+[
+  {
+    "id": "mobility",
+    "status": "demonstration",
+    "fr": {
+      "title": "Mobilité autonome",
+      "scenario": "D-006 : une mission de taxi traverse ville, véhicule, choix de route, approbation humaine et paiement. Le monde et le routage sont simulés.",
+      "actors": "Ville, véhicule, fournisseur de route, humain, prestataire de paiement, banque.",
+      "boundaries": "Décision de circulation → véhicule ; sélection → résolution du modèle ; autorisation → ordre bancaire.",
+      "evidence": "Événements sources signés, journal runtime, liens causaux, décision humaine liée, Final Receipt et PEB.",
+      "can": "Recalculer les signatures prises en charge, les identités attendues et la fermeture du profil D-006 ; distinguer les preuves manquantes.",
+      "cannot": "Prouver un trajet physique, le bon jugement de conduite, l’origine des événements runtime ou le règlement bancaire."
+    },
+    "en": {
+      "title": "Autonomous mobility",
+      "scenario": "D-006: a taxi mission crosses city, vehicle, route selection, human approval and payment. The world and routing are simulated.",
+      "actors": "City, vehicle, routing provider, human, payment provider and bank.",
+      "boundaries": "Traffic decision → vehicle; model selection → resolution; authorization → bank instruction.",
+      "evidence": "Signed source events, runtime journal, causal links, bound human decision, Final Receipt and PEB.",
+      "can": "Recompute supported signatures, expected identities and D-006 profile closure; distinguish missing evidence.",
+      "cannot": "Prove physical travel, driving judgment, runtime event origin or bank settlement."
+    }
+  },
+  {
+    "id": "finance",
+    "status": "concept",
+    "fr": {
+      "title": "Finance et paiements agentiques",
+      "scenario": "Un agent prépare un paiement ; une autorité autorise le montant et le bénéficiaire ; une banque confirme ou laisse le résultat inconnu. D-006 illustre seulement une partie de ces frontières.",
+      "actors": "Agent, donneur d’ordre, approbateur, prestataire et banque.",
+      "boundaries": "Intention → autorisation ; ordre → acceptation ; acceptation → effet sur compte.",
+      "evidence": "Objet de paiement exact, mandat, approbation signée, accusé fournisseur, observation bancaire et identifiants de corrélation.",
+      "can": "Un profil futur pourrait vérifier la cohérence des attestations et conserver l’incertitude si un accusé manque.",
+      "cannot": "Certifier KYC/AML, licéité, solvabilité ou règlement réel sans preuve de banque authentifiée ; ce cas n’est pas un connecteur livré."
+    },
+    "en": {
+      "title": "Finance and agentic payments",
+      "scenario": "An agent prepares a payment; an authority approves its amount and beneficiary; a bank confirms the result or leaves it unknown. D-006 illustrates only part of these boundaries.",
+      "actors": "Agent, principal, approver, payment provider and bank.",
+      "boundaries": "Intent → authorization; order → acceptance; acceptance → account effect.",
+      "evidence": "Exact payment object, mandate, signed approval, provider acknowledgment, bank observation and correlation IDs.",
+      "can": "A future profile could verify attestation consistency and preserve uncertainty when an acknowledgment is missing.",
+      "cannot": "Certify KYC/AML, legality, creditworthiness or real settlement without authenticated bank evidence; this is not a shipped connector."
+    }
+  },
+  {
+    "id": "industry",
+    "status": "concept",
+    "fr": {
+      "title": "Industrie et robotique",
+      "scenario": "Un robot reçoit une consigne, franchit une autorisation de sécurité puis présente un compte rendu d’exécution.",
+      "actors": "Ordonnanceur, automate, robot, opérateur, capteur indépendant.",
+      "boundaries": "Planification → commande ; autorisation sécurité → exécution ; exécution → mesure.",
+      "evidence": "Commande exacte, version du programme, accord d’opérateur, accusé automate et mesure de capteur attestée.",
+      "can": "Un profil à construire pourrait relier la commande aux attestations disponibles et indiquer un effet non observé.",
+      "cannot": "Garantir la sécurité fonctionnelle, l’absence de défaut mécanique ou un mouvement réel à partir d’un journal seul."
+    },
+    "en": {
+      "title": "Industry and robotics",
+      "scenario": "A robot receives an instruction, crosses a safety approval boundary and returns an execution report.",
+      "actors": "Scheduler, controller, robot, operator and independent sensor.",
+      "boundaries": "Planning → command; safety authorization → execution; execution → measurement.",
+      "evidence": "Exact command, program version, operator approval, controller acknowledgment and attested sensor measurement.",
+      "can": "A future profile could bind commands to available attestations and identify an unobserved effect.",
+      "cannot": "Guarantee functional safety, mechanical soundness or physical movement from a log alone."
+    }
+  },
+  {
+    "id": "cybersecurity",
+    "status": "concept",
+    "fr": {
+      "title": "Cybersécurité",
+      "scenario": "Un agent propose une mise en quarantaine ; le responsable autorise un périmètre ; un contrôle indépendant observe son application.",
+      "actors": "Agent de sécurité, analyste, autorité, point de contrôle et observateur.",
+      "boundaries": "Détection → décision ; approbation → changement ; changement → observation.",
+      "evidence": "Empreinte de l’alerte, cible exacte, mandat, approbation, accusé de configuration et mesure indépendante.",
+      "can": "Un profil futur pourrait séparer ce qui a été autorisé, demandé et observé, avec une piste causale.",
+      "cannot": "Garantir qu’une attaque est stoppée, qu’une cible est saine ou qu’une politique est correcte sans observations adaptées."
+    },
+    "en": {
+      "title": "Cybersecurity",
+      "scenario": "An agent proposes quarantine; a responsible authority approves its scope; an independent check observes application.",
+      "actors": "Security agent, analyst, authority, enforcement point and observer.",
+      "boundaries": "Detection → decision; approval → change; change → observation.",
+      "evidence": "Alert digest, exact target, mandate, approval, configuration acknowledgment and independent measurement.",
+      "can": "A future profile could separate authorized, requested and observed states with a causal trail.",
+      "cannot": "Guarantee an attack has stopped, a target is clean or a policy is correct without appropriate observations."
+    }
+  },
+  {
+    "id": "health",
+    "status": "concept",
+    "fr": {
+      "title": "Santé",
+      "scenario": "Un assistant prépare une recommandation administrative ou clinique à relire ; un professionnel décide et le système trace la suite. Aucune donnée patient n’est utilisée dans cette illustration.",
+      "actors": "Assistant, professionnel habilité, système métier et dépositaire de preuves.",
+      "boundaries": "Sortie du modèle → revue humaine ; décision → enregistrement ; enregistrement → action.",
+      "evidence": "Version du modèle, références de données minimisées, décision humaine liée et accusés du système.",
+      "can": "Un profil futur pourrait vérifier des attestations et tracer les frontières de responsabilité sans divulguer le dossier complet.",
+      "cannot": "Établir une efficacité clinique, une décision médicale correcte, un consentement valide ou une conformité à partir de signatures seules."
+    },
+    "en": {
+      "title": "Healthcare",
+      "scenario": "An assistant prepares an administrative or clinical recommendation for review; a qualified professional decides and the system records what follows. No patient data is used in this illustration.",
+      "actors": "Assistant, qualified professional, business system and evidence custodian.",
+      "boundaries": "Model output → human review; decision → record; record → action.",
+      "evidence": "Model version, minimized data references, bound human decision and system acknowledgments.",
+      "can": "A future profile could verify attestations and trace responsibility boundaries without disclosing a full record.",
+      "cannot": "Establish clinical efficacy, a correct medical decision, valid consent or compliance from signatures alone."
+    }
+  },
+  {
+    "id": "cloud",
+    "status": "concept",
+    "fr": {
+      "title": "Cloud et souveraineté",
+      "scenario": "Un agent demande une migration de charge vers une région autorisée ; le fournisseur répond et des observations documentent le placement effectif.",
+      "actors": "Agent, propriétaire de charge, fournisseur cloud et observateur.",
+      "boundaries": "Politique → sélection fournisseur ; API → déploiement ; déclaration de région → observation.",
+      "evidence": "Politique versionnée, identité du fournisseur, ordre exact, accusé API et observation de placement attestée.",
+      "can": "Un profil futur pourrait comparer région demandée, région déclarée et éléments d’observation disponibles.",
+      "cannot": "Garantir une souveraineté juridique, l’absence de réplication ou la résidence physique de données sans sources indépendantes suffisantes."
+    },
+    "en": {
+      "title": "Cloud and sovereignty",
+      "scenario": "An agent requests workload migration to an allowed region; the provider responds and observations document actual placement.",
+      "actors": "Agent, workload owner, cloud provider and observer.",
+      "boundaries": "Policy → provider selection; API → deployment; region declaration → observation.",
+      "evidence": "Versioned policy, provider identity, exact instruction, API acknowledgment and attested placement observation.",
+      "can": "A future profile could compare requested region, declared region and available observations.",
+      "cannot": "Guarantee legal sovereignty, absence of replication or physical data residency without sufficient independent sources."
+    }
+  },
+  {
+    "id": "enterprise",
+    "status": "pilot",
+    "fr": {
+      "title": "Agents IA d’entreprise",
+      "scenario": "Piste de pilote envisagé : un agent prépare une modification métier, un humain autorise l’action exacte et le système fournit son résultat. Aucun client ou partenaire n’est engagé.",
+      "actors": "Agent, propriétaire de processus, approbateur, outil et vérificateur.",
+      "boundaries": "Mandat → appel d’outil ; sélection de modèle → résolution ; approbation → effet.",
+      "evidence": "Mandat borné, provenance modèle/fournisseur, objet d’action exact, preuve d’approbation et accusé d’outil.",
+      "can": "Un pilote à définir pourrait mesurer la traçabilité et le refus d’une action dépourvue des preuves requises, avec un contrôle d’exécution distinct.",
+      "cannot": "Fournir aujourd’hui un contrôle générique de tous les outils, prouver la qualité d’un modèle ou la réussite d’une opération réelle."
+    },
+    "en": {
+      "title": "Enterprise AI agents",
+      "scenario": "Proposed pilot direction: an agent prepares a business change, a human authorizes the exact action and the system reports its result. No customer or partner is committed.",
+      "actors": "Agent, process owner, approver, tool and verifier.",
+      "boundaries": "Mandate → tool call; model selection → resolution; approval → effect.",
+      "evidence": "Bounded mandate, model/provider provenance, exact action object, approval evidence and tool acknowledgment.",
+      "can": "A future pilot could measure traceability and refusal when required evidence is missing, with separate execution enforcement.",
+      "cannot": "Provide generic control of every tool today, prove model quality or prove a real operation succeeded."
+    }
+  },
+  {
+    "id": "logistics",
+    "status": "concept",
+    "fr": {
+      "title": "Logistique",
+      "scenario": "Un transporteur remet un colis à un autre acteur ; deux parties attestent la prise en charge et un destinataire confirme ou conteste la livraison.",
+      "actors": "Expéditeur, transporteurs, capteur, destinataire et vérificateur.",
+      "boundaries": "Garde A → garde B ; scan → transfert ; accusé → livraison physique.",
+      "evidence": "Identifiant de colis pseudonymisé, attestations des deux parties, liens de transfert et observation de livraison.",
+      "can": "Un profil futur pourrait détecter des attestations contradictoires et montrer où la chaîne de garde reste incomplète.",
+      "cannot": "Prouver le contenu du colis, son état physique ou une livraison réelle avec un simple scan non attesté."
+    },
+    "en": {
+      "title": "Logistics",
+      "scenario": "A carrier hands a parcel to another party; both attest custody and a recipient confirms or disputes delivery.",
+      "actors": "Sender, carriers, sensor, recipient and verifier.",
+      "boundaries": "Custody A → custody B; scan → transfer; acknowledgment → physical delivery.",
+      "evidence": "Pseudonymous parcel ID, both parties’ attestations, transfer links and delivery observation.",
+      "can": "A future profile could detect conflicting attestations and show where custody evidence remains incomplete.",
+      "cannot": "Prove parcel contents, physical condition or real delivery from an unattested scan."
+    }
+  }
+]
