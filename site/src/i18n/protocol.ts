@@ -1,13 +1,14 @@
 /**
- * Strings that are never translated, per the brand and doctrine rules this
- * site follows: the canonical signature, the four normative verdicts, and
- * standards/algorithm names. These are used directly in components — they
- * intentionally do not live in the per-locale dictionaries, so there is no
- * dictionary key a translator could accidentally localize.
+ * Brand signature is localized here; protocol verdicts and standards stay
+ * canonical in both languages. The site dictionaries do not duplicate the
+ * signature, so display copy cannot drift from the approved wording.
  */
 
-/** Canonical brand signature. Exact casing and punctuation, both locales. */
-export const BRAND_SIGNATURE = "Don’t trust. Verify.";
+/** Approved institutional signature for each site language. */
+export const BRAND_SIGNATURE = {
+  en: "Trust is built on evidence.",
+  fr: "La confiance se construit sur des preuves.",
+} as const;
 
 export const VERDICTS = ["VALID", "INVALID", "INDETERMINATE", "REVOKED"] as const;
 export type Verdict = (typeof VERDICTS)[number];
