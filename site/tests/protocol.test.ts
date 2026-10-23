@@ -4,8 +4,11 @@ import { en } from "../src/i18n/locales/en";
 import { fr } from "../src/i18n/locales/fr";
 
 describe("protocol invariants", () => {
-  it("keeps the canonical signature in exactly its specified form", () => {
-    expect(BRAND_SIGNATURE).toBe("Don’t trust. Verify.");
+  it("keeps the approved institutional signature in each site language", () => {
+    expect(BRAND_SIGNATURE).toEqual({
+      en: "Trust is built on evidence.",
+      fr: "La confiance se construit sur des preuves.",
+    });
   });
 
   it("exposes exactly the four normative verdicts", () => {
@@ -15,8 +18,8 @@ describe("protocol invariants", () => {
   it("never duplicates the signature inside either locale dictionary", () => {
     const enJson = JSON.stringify(en);
     const frJson = JSON.stringify(fr);
-    expect(enJson.includes(BRAND_SIGNATURE)).toBe(false);
-    expect(frJson.includes(BRAND_SIGNATURE)).toBe(false);
+    expect(enJson.includes(BRAND_SIGNATURE.en)).toBe(false);
+    expect(frJson.includes(BRAND_SIGNATURE.fr)).toBe(false);
   });
 
   it("keeps standards names untranslated between locales", () => {

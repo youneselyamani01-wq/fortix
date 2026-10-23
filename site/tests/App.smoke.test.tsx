@@ -24,7 +24,7 @@ describe("App", () => {
     renderApp();
     const heroHeading = screen.getByRole("heading", { level: 1 });
     expect(heroHeading).toHaveTextContent("Independently prove what you actually did.");
-    expect(screen.getAllByText("Don’t trust. Verify.").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Trust is built on evidence.").length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: /view the demo/i }).length).toBeGreaterThan(0);
   });
 
@@ -51,7 +51,7 @@ describe("App", () => {
     await user.click(within(header).getByRole("button", { name: /language|langue/i }));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(fr.hero.title);
-    expect(screen.getAllByText("Don’t trust. Verify.").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("La confiance se construit sur des preuves.").length).toBeGreaterThan(0);
     const actions = document.getElementById("use-cases")!;
     for (const action of Object.values(fr.useCases.classes)) {
       expect(within(actions).getByRole("heading", { name: action.title, level: 3 })).toBeInTheDocument();

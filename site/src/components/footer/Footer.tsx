@@ -80,7 +80,7 @@ export function Footer() {
 
       <div className="container footer__legal">
         <p>{t.footer.disclaimer}</p>
-        <p className="footer__signature">{BRAND_SIGNATURE}</p>
+        <p className="footer__signature">{BRAND_SIGNATURE[locale]}</p>
       </div>
     </footer>
   );

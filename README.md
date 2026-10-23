@@ -1,5 +1,7 @@
 # FortiX
 
+**Trust is built on evidence.**
+
 Status: CURRENT.
 
 ## English Version
