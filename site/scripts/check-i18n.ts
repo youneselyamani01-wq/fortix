@@ -8,7 +8,7 @@
  * is a second, independent check that runs against the actual runtime
  * objects: it asserts deep key-set equality between locales, flags any
  * value left empty, and enforces the two rules the dictionary type alone
- * cannot express — that the canonical signature is never present inside a
+ * cannot express — that each localized signature is never present inside a
  * translated dictionary (it is only ever imported from `i18n/protocol.ts`
  * directly) and that no locale accidentally translates one of the four
  * normative verdict words.
@@ -96,14 +96,14 @@ for (const [path, value] of [...enStrings, ...frStrings]) {
 }
 
 for (const [path, value] of enStrings) {
-  if (value.includes(BRAND_SIGNATURE)) {
+  if (value.includes(BRAND_SIGNATURE.en)) {
     errors.push(
       `Canonical signature must not be duplicated inside the EN dictionary (found at ${path}); import it from i18n/protocol.ts instead.`,
     );
   }
 }
 for (const [path, value] of frStrings) {
-  if (value.includes(BRAND_SIGNATURE)) {
+  if (value.includes(BRAND_SIGNATURE.fr)) {
     errors.push(
       `Canonical signature must not be duplicated inside the FR dictionary (found at ${path}); import it from i18n/protocol.ts instead.`,
     );
