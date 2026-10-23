@@ -6,7 +6,7 @@ import { EvidenceArtifact } from "../evidence-artifact/EvidenceArtifact";
 import "./final-statement.css";
 
 export function FinalStatement() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   return (
     <section
@@ -25,7 +25,7 @@ export function FinalStatement() {
           <span className="final-statement__line--emphasis">{t.finalStatement.line3}</span>
         </h2>
 
-        <p className="final-statement__signature">{BRAND_SIGNATURE}</p>
+        <p className="final-statement__signature">{BRAND_SIGNATURE[locale]}</p>
 
         <div className="final-statement__actions">
           <a className="button button--primary" href={DEMO_URL} target="_blank" rel="noopener noreferrer">
